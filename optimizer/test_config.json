@@ -1,0 +1,19 @@
+{
+    "nRDC": 1,
+    "nEDC": 10,
+    "nClustersPerEDC": 3,
+    "actClusterMetrics": 10,
+    "anomalies": {
+        "nAnomalyFunctions": 5,
+        "weightAnomaly": [0.1, 0.5, 0.2, 0.15, 0.5],
+        "nMetricsPerAnomaly": 4,
+        "weightDistAnomaly": "random",
+        "maxTTD": [10, 5, 60, 30, 80]
+    },
+    "baselines": {
+        "minFrequency": 0.001,
+        "maxFrequency": 1,
+        "staticFrequency": 0.3
+    }
+    
+}
