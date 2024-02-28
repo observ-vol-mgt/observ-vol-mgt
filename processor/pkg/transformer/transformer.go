@@ -16,7 +16,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/store/storepb/prompb"
 
-	"github.ibm.com/dynamic-freq/sqlite/pkg/benchmarker"
+	"github.ibm.com/dynamic-freq/PMF/processor/pkg/benchmarker"
 )
 
 type Transformer struct {
