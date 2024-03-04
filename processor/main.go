@@ -118,7 +118,7 @@ func main() {
 	var target = flag.String("target", "http://localhost:19291", "Cortex/Thanos metrics endpoint")
 	var listen = flag.String("listen", "0.0.0.0:8081", "Prometheus remote write listener endpoint")
 	flag.Parse()
-	readAndStoreConfig()
+	//readAndStoreConfig()
 
 	// log.SetLevel(logrus.DebugLevel)
 
@@ -146,7 +146,7 @@ func main() {
 	<-ctx.Done()
 
 	// Call cleanup function
-	mercury.cleanup(cfg.OutputDir)
+	//mercury.cleanup(cfg.OutputDir)
 
 	// Exit the program
 	os.Exit(1)
