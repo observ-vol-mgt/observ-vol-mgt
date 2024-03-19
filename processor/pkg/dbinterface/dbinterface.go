@@ -158,7 +158,7 @@ func (DB *DB) Insert(metrics []prompb.TimeSeries) {
 				}
 			}
 
-			_, err := DB.InsertQueries["freq"].Exec(phash)
+			_, err := DB.InsertQueries["freq"].Exec(phash) //dummy row timestamp 0 by default
 			if err != nil {
 				log.Errorf("Error inserting into frequency: %s", err)
 			}
@@ -195,7 +195,7 @@ func (DB *DB) QRtoLabels(qr []QueryResult) []prompb.TimeSeries {
 	metrics := make([]prompb.TimeSeries, len(qr))
 	DB.phashMap.Lock.Lock()
 	for i, result := range qr {
-		metrics[i] = prompb.TimeSeries{Labels: DB.phashMap.Map[result.Phash], Samples: []prompb.Sample{{Timestamp: result.Timestamp, Value: result.Val}}}
+		metrics[i] = prompb.TimeSeries{Labels: DB.phashMap.Map[result.Phash], Samples: []prompb.Sample{{Timestamp: result.Timestamp, Value: result.Val}}} //samples is array of timestamp and value
 	}
 	DB.phashMap.Lock.Unlock()
 	return metrics
@@ -231,7 +231,7 @@ func (DB *DB) Exec(m morpher.Morpher) []prompb.TimeSeries {
 		return []prompb.TimeSeries{}
 	}
 
-	_, err = tx.Exec(CreateIndex)
+	_, err = tx.Exec(CreateIndex) //make search query faster, index on a table
 	if err != nil {
 		log.Errorf("Error executing %s\n", err)
 		return []prompb.TimeSeries{}

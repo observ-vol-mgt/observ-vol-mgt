@@ -136,7 +136,7 @@ func (txfm *Transformer) modifyRequest(req *http.Request) {
 	}
 	// fmt.Printf("Request => %s -> [%v] in %s.\n", logHeaders, len(encoded), elapsed)
 	if elapsed.Seconds() > 0.03 {
-		txfm.Timings.AddTiming("E2E", elapsed)
+		txfm.Timings.AddTiming("E2E", elapsed) //differentitate from empty request which take 1 ms correct ones are ~300ms
 	}
 
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(encoded))

@@ -62,7 +62,7 @@ func selectorsToString(selectors []Selector) string {
 	for i, selector := range selectors {
 		filled_strings[i] = fmt.Sprintf(template_string, selector.Key, selector.Value)
 	}
-	query_string := `(` + strings.Join(filled_strings, " INTERSECT ") + ")"
+	query_string := `(` + strings.Join(filled_strings, " INTERSECT ") + ")" //multiple selectors
 	log.Info(query_string)
 	return query_string
 }
@@ -115,7 +115,7 @@ func (mu *MorphUnit) CompileQuery(parent string, id int, leaf bool) {
 		values[i+3] = p
 	}
 
-	mu.Query = fmt.Sprintf(baseString, values...)
+	mu.Query = fmt.Sprintf(baseString, values...) // 1 is name of table, 2 is name of parent table, 3 is slector, this is to crate temp table suffixed with t(nameof the table)
 
 	if mu.Type == "drop" {
 		mu.Query = baseString
