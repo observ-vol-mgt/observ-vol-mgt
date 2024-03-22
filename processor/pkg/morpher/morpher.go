@@ -49,6 +49,7 @@ type MorphUnit struct {
 	Parameters  []float64
 	Query       string
 	DeleteQuery string
+        SelectorArray []Selector
 }
 
 type Selector struct {
