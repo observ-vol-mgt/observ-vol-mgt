@@ -14,9 +14,14 @@ def parse_configuration():
           is_config_file=True, help='config file path')
     p.add('-v', '--loglevel', help='logging level',
           default='info', env_var='LOGLEVEL')
-    p.add('--ingest_type', help='ingest type',
+    p.add('--ingest_type', help='ingest type (dummy, file or promql)',
           default='dummy', env_var='INGEST_TYPE')
-    p.add('--ingest_file', help='ingest file ( for file type )', env_var='INGEST_FILE')
+    p.add('--ingest_file', help='ingest file ( for file type )',
+          env_var='INGEST_FILE')
+    p.add('--ingest_url', help='ingest url ( for promql type )',
+          env_var='INGEST_URL')
+    p.add('--ingest_window', help='ingest window ( for promql type )',
+          env_var='INGEST_WINDOW')
 
     global configuration
     configuration = p.parse_args()
