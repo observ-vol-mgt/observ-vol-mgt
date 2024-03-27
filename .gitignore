@@ -4,3 +4,4 @@
 # ignore development data 
 **/__MACOSX/
 **/UCI*/
+**/.idea/
