@@ -15,7 +15,7 @@ The setup automatically starts  the following containers:
 | prometheus_one        | The first Prometheus server                                                  | 9001  |
 | prometheus_two        | The second Prometheus server                                                 | 9002  |
 | minio                 | A minio instance serving as Object Storage for store, compactor and sidecars | 9000  |
-| minio-console         |                                                                              | 9007  |
+| minio-console         | user: myaccesskey password: mysecretkey                                                 | 9007  |
 | thanos_sidecar_one    | First Thanos sidecar for prometheus_one                                      |       |
 | thanos_sidecar_two    | Second Thanos sidecar for prometheus_two                                     |       |
 | thanos_querier        | Thanos querier instance connected to both sidecars and Thanos store          | 10902 |
