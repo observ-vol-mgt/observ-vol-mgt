@@ -7,56 +7,116 @@ The tasks are parallelized and optimized to provide scalability and efficiency. 
 The controller also requires data persistency to operate against data structures and efficiently analyze observability data over time. Data persistency is decoupled from the computing tasks allowing flexibility of implementation for specific use cases. 
 The behavior of the controller is managed by a set of user-facing high-level semantic policies This allows the controller to be intent-based managed. The controller analyzes the policies and intersects them with the observed data to generate insights and configurations to manage the volume of observability data.
 
-## Basic controller flow 
+## controller task flows 
 
-For a basic use cases, the volume manager controller pipeline can be as follows:
-
-Here is a simple flow chart:
+For basic use cases, the volume manager controller tasks can be configured as follows:
 
 ```mermaid
 flowchart LR
-    T1{{Ingest}}-->T2{{User-Policy-Analyzer}}
+    direction TB
+    subgraph Ingress[" "]
+        direction TB
+        Ingress-Node["Ingest\n(prometheous metrics)"]
+    end
     subgraph User[" "]
         direction TB
-        I1(User-Policy)-.->T2
+        User-Policy{{"User\nPolicy"}}
+        User-Policy:::policyclass
+        User-Node["Rules\nEngine"]
+        User-Policy-.->User-Node
     end
-    T2-->T3{{Signal-Insight}}
-    T3-->T4{{Automation/configuration-generator}}
+    subgraph Insights[" "]
+        direction TB
+        Insights-Node["Volume reduction\nInsights"]
+    end   
     subgraph Automation[" "]
-      direction TB
-      I2(Automation-Policy)-.->T4
+        direction TB
+        Automation-Policy{{"Automation\nPolicy"}}
+        Automation-Policy:::policyclass
+        Automation-Node["Configuration\nGenerator"]
+        Automation-Policy-.->Automation-Node
     end
+    subgraph Egress[" "]
+        direction TB
+        Egress-Node["Egress\n(Processor\nConfiguration)"]
+    end     
+classDef policyclass fill:lightblue    
+Ingress --> User --> Insights --> Automation --> Egress
 ```
+Note: In such MVP configuration of the controller pipeline, only sub-set of the tasks are being used.
+
+In advanced use cases, the tasks pipeline can be extended to provide additional capabilities. For example:
 
 
-## Advanced controller flow 
 
-TBD
 
 ```mermaid
+flowchart LR
+    direction TB
+    subgraph MetricsIngress[" "]
+        direction TB
+        MetricsIngress-Node["Ingest\n(prometheous signals)"]
+    end
+    subgraph LogsIngress[" "]
+        direction TB
+        LogsIngress-Node["Ingest\n(logs signals)"]
+    end    
+    subgraph Grouping[" "]
+        direction TB
+        Grouping-Policy{{"Grouping\nPolicy"}}
+        Grouping-Policy:::policyclass
+        Grouping-Node["Signal-Grouping\n(labels)"]
+        Grouping-Policy-.->Grouping-Node        
+    end     subgraph Features[" "]
+        direction TB
+        Features-Node["Features-Extraction\n(labels)"]
+    end   
+  
+    subgraph ObserFeatures[" "]
+        direction TB
+        ObserFeatures-Node["Observability-Domain\nFeatures\n(Extra labels)"]
+    end      
+    subgraph User[" "]
+        direction TB
+        User-Policy{{"User\nPolicy"}}
+        User-Policy:::policyclass
+        User-Node["Rules\nEngine"]
+        User-Policy-.->User-Node
+    end
+    subgraph Insights[" "]
+        direction TB
+        Insights-Node["Volume reduction\nInsights"]
+    end   
+    subgraph Automation[" "]
+        direction TB
+        Automation-Policy{{"Automation\nPolicy"}}
+        Automation-Policy:::policyclass
+        Automation-Node["Configuration\nGenerator"]
+        Automation-Policy-.->Automation-Node
+    end
+    subgraph Egress[" "]
+        direction TB
+        Egress-Node["Egress\n(Processor\nConfiguration)"]
+    end     
+classDef policyclass fill:lightblue    
+MetricsIngress --> Grouping --> Features --> ObserFeatures --> User --> Insights --> Automation --> Egress
+LogsIngress --> Grouping
 ```
 
-Following are the task types, and a brief explanation of the functionality of each type:
+Following are basic explanations of the task types:
 
-- Ingest  Ingest tasks are responsible for ingesting information into the controller.  The main set of objects ingested into the controller is “signals”. Signals are based on common observability data sources: metrics, logs, traces, etc. Signals can be ingested into the controller synchronously or asynchronously. 
-
-- Grouping  Grouping tasks use information from the signals to cluster, group, and partition several signals into a signal group. The grouping rules are policy-driven and rely on meta-data and data from the signals. The categorization is typically based on labels provided as part of the signals. 
-
-- Feature-Extraction  Feature Extraction tasks are responsible for the basic statistical analysis of the signals. They analyze the signal behaviors and produce a basic set of understandings of the signals. 
-
-- Observability-Analysis  Observability analysis tasks are responsible for domain-specific analysis of signals generating observability-level understandings of signals 
-
-- User-Policy-Analyzer  The policy enforcer will intersect the user-provided policies with the observability signals information and analysis gathered by the controller to generate policy driver information.
-
-- System-Policy-Analyzer  system policy analyzer tasks are responsible for the analysis of system behavior and the correlation of system risk analysis with the observability data. The  tasks will annotate the signals with relevant information to identify the dynamic applicability of the signals according to the policies
-Signal-Insight  Insight tasks are responsible for the generation of volume management insights. Those insights are user-facing outputs of the pipelines and according to policies can be consumed by the users or pushed. The insights are tangible, environment-specific, and dynamic. They provide insights into volume management behaviors and action recommendations.
-Automation/configuration generator  Automation tasks are responsible for the generation of per-processor configuration based on the action recommendation of the insights tasks. The configurations are sent using a customer-provided control plane to the processors to enforce the volume management reductions automatically.
+| Task Type                          | Description                                                                                                                                                                                                                                                                                                                                                 |
+|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ingest                             | Ingest tasks are responsible for ingesting information into the controller. The objects ingested into the controller are “signals”. Signals can be each of the basic common observability data sources: metrics, logs, traces, etc. Signals can be ingested into the controller both synchronously and asynchronously.                                      |
+| Grouping                           | Grouping tasks use data from the signals to cluster, group, and partition multiple signals into a `signal group`. The grouping rules are policy-driven and rely on meta-data and data from the signals. The clustering is  based on raw labels provided as part of the signals.                                                                             |
+| Feature-Extraction                 | Feature Extraction tasks are responsible for the basic statistical analysis of the signals. They analyze the signal behaviors and produce a basic set of understandings of the signals.                                                                                                                                                                     |
+| Observability-Analysis             | Observability analysis tasks are responsible for domain-specific analysis of signals generating observability-level understandings of signals                                                                                                                                                                                                               |
+| User-Policy-Analyzer               | The policy enforcer will intersect the user-provided policies with the observability signals information and analysis gathered by the controller to generate policy driver information.                                                                                                                                                                     |
+| System-Policy-Analyzer             | system policy analyzer tasks are responsible for the analysis of system behavior and the correlation of system risk analysis with the observability data. The  tasks will annotate the signals with relevant information to identify the dynamic applicability of the signals according to the policies                                                     |
+| Signal-Insight                     | Insight tasks are responsible for the generation of volume management insights. Those insights are user-facing outputs of the pipelines and according to policies can be consumed by the users or pushed. The insights are tangible, environment-specific, and dynamic. They provide insights into volume management behaviors and action recommendations.  |
+| Automation/configuration generator | Automation tasks are responsible for the generation of per-processor configuration based on the action recommendation of the insights tasks. The configurations are sent using a customer-provided control plane to the processors to enforce the volume management reductions automatically.|
 
 
-
-
-
- 
 TBD:
 
 Configurations  the configuration tasks are 
