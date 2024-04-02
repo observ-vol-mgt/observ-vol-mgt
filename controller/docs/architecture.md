@@ -7,20 +7,34 @@ The tasks are parallelized and optimized to provide scalability and efficiency. 
 The controller also requires data persistency to operate against data structures and efficiently analyze observability data over time. Data persistency is decoupled from the computing tasks allowing flexibility of implementation for specific use cases. 
 The behavior of the controller is managed by a set of user-facing high-level semantic policies This allows the controller to be intent-based managed. The controller analyzes the policies and intersects them with the observed data to generate insights and configurations to manage the volume of observability data.
 
-## Basic use case
+## Basic controller flow 
 
 For a basic use cases, the volume manager controller pipeline can be as follows:
 
 Here is a simple flow chart:
 
 ```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+flowchart LR
+    T1{{Ingest}}-->T2{{User-Policy-Analyzer}}
+    subgraph User[" "]
+        direction TB
+        I1(User-Policy)-.->T2
+    end
+    T2-->T3{{Signal-Insight}}
+    T3-->T4{{Automation/configuration-generator}}
+    subgraph Automation[" "]
+      direction TB
+      I2(Automation-Policy)-.->T4
+    end
 ```
 
+
+## Advanced controller flow 
+
+TBD
+
+```mermaid
+```
 
 Following are the task types, and a brief explanation of the functionality of each type:
 
