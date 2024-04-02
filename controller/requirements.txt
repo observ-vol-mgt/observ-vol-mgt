@@ -2,3 +2,6 @@ tsfel
 tsfresh
 requests
 configargparse
+prometheus-api-client
+pytest
+requests_mock

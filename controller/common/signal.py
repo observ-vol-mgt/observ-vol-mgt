@@ -1,4 +1,4 @@
-from common import utils
+from . import utils
 
 
 class Signal:

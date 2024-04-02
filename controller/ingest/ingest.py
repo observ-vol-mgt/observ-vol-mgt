@@ -10,10 +10,13 @@ def ingest():
     if get_configuration().ingest_type == "dummy":
         logger.debug("using dummy ingest logger")
         from ingest.dummy_ingest import ingest
-        signal = ingest()
+        signals = ingest()
     elif get_configuration().ingest_type == "file":
         from ingest.file_ingest import ingest
-        signal = ingest()
+        signals = ingest()
+    elif get_configuration().ingest_type == "promql":
+        from ingest.promql_ingest import ingest
+        signals = ingest()
     else:
         raise "unsupported ingest configuration"
-    return signal
+    return signals
