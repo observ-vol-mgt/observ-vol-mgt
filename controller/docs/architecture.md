@@ -7,6 +7,21 @@ The tasks are parallelized and optimized to provide scalability and efficiency. 
 The controller also requires data persistency to operate against data structures and efficiently analyze observability data over time. Data persistency is decoupled from the computing tasks allowing flexibility of implementation for specific use cases. 
 The behavior of the controller is managed by a set of user-facing high-level semantic policies This allows the controller to be intent-based managed. The controller analyzes the policies and intersects them with the observed data to generate insights and configurations to manage the volume of observability data.
 
+## Basic use case
+
+For a basic use cases, the volume manager controller pipeline can be as follows:
+
+Here is a simple flow chart:
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+
+
 Following are the task types, and a brief explanation of the functionality of each type:
 
 - Ingest  Ingest tasks are responsible for ingesting information into the controller.  The main set of objects ingested into the controller is “signals”. Signals are based on common observability data sources: metrics, logs, traces, etc. Signals can be ingested into the controller synchronously or asynchronously. 
@@ -23,7 +38,7 @@ Following are the task types, and a brief explanation of the functionality of ea
 Signal-Insight  Insight tasks are responsible for the generation of volume management insights. Those insights are user-facing outputs of the pipelines and according to policies can be consumed by the users or pushed. The insights are tangible, environment-specific, and dynamic. They provide insights into volume management behaviors and action recommendations.
 Automation/configuration generator  Automation tasks are responsible for the generation of per-processor configuration based on the action recommendation of the insights tasks. The configurations are sent using a customer-provided control plane to the processors to enforce the volume management reductions automatically.
 
-For common use cases, the volume manager controller pipeline can be as follows:
+
 
 
 
