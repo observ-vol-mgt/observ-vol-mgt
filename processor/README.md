@@ -1,10 +1,6 @@
 go get github.com/ilyakaznacheev/cleanenv
 go get github.com/sirupsen/logrus
 go get github.com/thanos-io/thanos/pkg/store/storepb/prompb
-go get github.ibm.com/dynamic-freq/PMF/processor/pkg/dbinterface
-go get github.ibm.com/dynamic-freq/PMF/processor/pkg/morpher
-go get github.ibm.com/dynamic-freq/PMF/processor/pkg/transformer
-go get github.ibm.com/dynamic-freq/PMF/processor/pkg/benchmarker
 
 For a local setup:
 1. Install Prometheus
