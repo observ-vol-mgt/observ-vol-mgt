@@ -16,3 +16,10 @@ Running:
    `go run main.go`
 4. Start metric load-gen (ec-metric-gen):
    `python3 gen-metrics-gutentag.py --fake --nmetrics 100 --nlabels 10`
+
+
+## Using the morpher create REST endpoint
+
+```
+curl localhost:8100/morphchain/create --data-binary '@controller/dag_examples/filter.yaml'
+```
