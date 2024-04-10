@@ -1,0 +1,7 @@
+**/__pycache__/
+# ignore all zip files
+**.zip
+# ignore development data 
+**/__MACOSX/
+**/UCI*/
+**/.idea/

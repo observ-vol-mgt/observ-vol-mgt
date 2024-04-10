@@ -1,4 +1,0 @@
-bitmath
-numpy
-scipy
-gurobipy
