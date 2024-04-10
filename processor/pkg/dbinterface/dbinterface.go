@@ -15,8 +15,8 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/storepb/prompb"
 	// "golang.org/x/sync/errgroup"
 
-	"github.ibm.com/dynamic-freq/PMF/processor/pkg/benchmarker"
-	"github.ibm.com/dynamic-freq/PMF/processor/pkg/morpher"
+	"github.ibm.com/dynamic-freq/PMF/pkg/benchmarker"
+	"github.ibm.com/dynamic-freq/PMF/pkg/morpher"
 )
 
 var log = logrus.New()

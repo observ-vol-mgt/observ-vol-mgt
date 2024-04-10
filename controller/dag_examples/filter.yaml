@@ -1,6 +1,6 @@
 processors:
   - type: filter
-    metrics:
+    metric:
       metric_name: cluster_cpu_usage
       condition: cluster_id=wec1 and namespace_name=data-science
       action: include/exclude
