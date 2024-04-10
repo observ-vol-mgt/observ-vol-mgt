@@ -1,0 +1,15 @@
+name: '1'
+clusters: 
+  num_metrics: 1000
+hardware:
+  num_nodes: 5
+  num_metrics: 500
+apps:
+  - name: 'A'
+    num_metrics: 500
+  - name: 'B'
+    num_metrics: 500
+  - name: 'C'
+    num_metrics: 500
+  - name: 'D'
+    num_metrics: 500
