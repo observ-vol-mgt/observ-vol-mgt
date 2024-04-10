@@ -1,0 +1,12 @@
+groups:
+  - name: fake-metrics
+    rules:
+      - alert: Fake Usage Alert
+        annotations:
+          description: Usage metric of {{ $labels.label_0 }} of tenant {{ $labels.tenant_id }} is above 100.
+          summary: Usage {{ $labels.label_0 }} of tenant {{ $labels.tenant_id }} is above 100.
+                  ## Create alert if memory usage beyond 95%
+        expr: (fake_metric_0) > 100
+        for: 1s
+        labels:
+          severity: critical
