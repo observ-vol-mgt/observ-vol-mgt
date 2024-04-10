@@ -1,12 +1,10 @@
 package morpher
 
 /***
-
   Main Transformation package
 */
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -49,23 +47,11 @@ type MorphUnit struct {
 	Parameters  []float64
 	Query       string
 	DeleteQuery string
-        SelectorArray []Selector
 }
 
 type Selector struct {
 	Key   string
 	Value string
-}
-
-func selectorsToString(selectors []Selector) string {
-	template_string := `select distinct phash from labels where label = '%[1]s' and val = '%[2]s'`
-	filled_strings := make([]string, len(selectors))
-	for i, selector := range selectors {
-		filled_strings[i] = fmt.Sprintf(template_string, selector.Key, selector.Value)
-	}
-	query_string := `(` + strings.Join(filled_strings, " INTERSECT ") + ")" //multiple selectors
-	log.Info(query_string)
-	return query_string
 }
 
 func NewMorphUnit(typ string, selectors []Selector, parameters []float64) MorphUnit {
@@ -102,6 +88,8 @@ func (mu *MorphUnit) CompileQuery(parent string, id int, leaf bool) {
 		baseString = SimpleAdaptiveMorph
 	case "aggregate":
 		baseString = AggregateMorph
+	case "filter":
+		baseString = FilterMorph
 	case "drop":
 		baseString = DropMorph
 		exportSearchTable = parent
@@ -116,7 +104,7 @@ func (mu *MorphUnit) CompileQuery(parent string, id int, leaf bool) {
 		values[i+3] = p
 	}
 
-	mu.Query = fmt.Sprintf(baseString, values...) // 1 is name of table, 2 is name of parent table, 3 is slector, this is to crate temp table suffixed with t(nameof the table)
+	mu.Query = fmt.Sprintf(baseString, values...) // 1 is name of table, 2 is name of parent table, 3 is selector, this is to create temp table suffixed with t(name of the table)
 
 	if mu.Type == "drop" {
 		mu.Query = baseString
@@ -141,6 +129,12 @@ func NewMorphNode(unit MorphUnit) *MorphNode {
 		Children: []*MorphNode{},
 	}
 	return &node
+}
+
+func (m *Morpher) NewRootNode() *MorphNode {
+	rootNode := NewMorphNode(NewMorphUnitFromString("root", "", []float64{}))
+	m.DAG = rootNode
+	return rootNode
 }
 
 func (m *MorphNode) AddUnitChild(unit MorphUnit) {
@@ -201,6 +195,10 @@ func (m *Morpher) CompileMorphsRecursively(node *MorphNode, parent string) {
 	}
 }
 
+func (m *Morpher) CompileMorph() {
+	m.CompileMorphsRecursively(m.DAG, "")
+}
+
 func NewMorpher() Morpher {
 	morpher := Morpher{Counter: 0}
 	morpher.CreateTestChain()
@@ -210,22 +208,17 @@ func NewMorpher() Morpher {
 func (m *Morpher) StartServerAndRegister(addr string) {
 	r := mux.NewRouter()
 	r.HandleFunc("/morphchain/create", m.Create)
-	r.HandleFunc("/morphchain/modify", m.ModifyChain)
 	log.Fatal(http.ListenAndServe(addr, r))
 }
 
 func (m *Morpher) CreateTestChain() {
-	rootNode := NewMorphNode(NewMorphUnitFromString("root", "", []float64{}))
+	rootNode := m.NewRootNode()
 	// m.testDAG(rootNode, 15, "chain")
-	// m.testNSelectors(rootNode, 15)
+	// m.testNSelectors(rootNode, 2)
 	m.testFrequency(rootNode)
-	m.DAG = rootNode
-
-	// Traverse the DAG
-
 	start := time.Now()
-	m.CompileMorphsRecursively(m.DAG, "")
-	log.Info("Time to create DAG: ", time.Since(start))
+	m.CompileMorph()
+	log.Info("Time to compile: ", time.Since(start))
 	// m.DeleteQueries = DeleteQueries
 }
 
@@ -269,8 +262,6 @@ func (m *Morpher) testDAG(rootNode *MorphNode, nnodes int, dagtype string) {
 			parentNode.AddNodeChild(node)
 		}
 	}
-
-	//
 }
 
 func (m *Morpher) testChain(rootNode *MorphNode) {
@@ -302,18 +293,4 @@ func (m *Morpher) testSelector(rootNode *MorphNode) {
 func (m *Morpher) testIntersect(rootNode *MorphNode) {
 	rootNode.AddUnitChild(NewMorphUnit("drop", []Selector{{Key: "app", Value: "A"}, {Key: "cluster", Value: "1"}}, []float64{}))
 	rootNode.AddUnitChild(NewMorphUnit("drop", []Selector{{Key: "app", Value: "B"}, {Key: "cluster", Value: "1"}}, []float64{}))
-}
-
-// Receives an input of a morphchain
-func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
-	// Decode Request
-	err := json.NewDecoder(r.Body).Decode(&m.DAG)
-	if err != nil {
-		error := fmt.Errorf("Error in decoding create request: unexpected JSON body: %s", err)
-		log.Print(error)
-	}
-}
-
-// Edit a morph unit in the chain, either selector or parameters
-func (m *Morpher) ModifyChain(w http.ResponseWriter, r *http.Request) {
 }

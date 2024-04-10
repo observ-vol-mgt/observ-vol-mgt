@@ -13,12 +13,12 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/sirupsen/logrus"
 	"github.com/thanos-io/thanos/pkg/store/storepb/prompb"
-	rwt "github.ibm.com/dynamic-freq/PMF/processor/pkg/transformer"
+	rwt "github.ibm.com/dynamic-freq/PMF/pkg/transformer"
 	"gopkg.in/yaml.v2"
 
-	"github.ibm.com/dynamic-freq/PMF/processor/pkg/benchmarker"
-	"github.ibm.com/dynamic-freq/PMF/processor/pkg/dbinterface"
-	"github.ibm.com/dynamic-freq/PMF/processor/pkg/morpher"
+	"github.ibm.com/dynamic-freq/PMF/pkg/benchmarker"
+	"github.ibm.com/dynamic-freq/PMF/pkg/dbinterface"
+	"github.ibm.com/dynamic-freq/PMF/pkg/morpher"
 )
 
 var log = logrus.New()

@@ -1,4 +1,4 @@
-module dynamic-freq/PMF
+module github.ibm.com/dynamic-freq/PMF
 
 go 1.20
 
