@@ -9,6 +9,9 @@ install_requirements:
 	@pip install -q -r requirements.txt
 
 ##@ Development
+run_dev: install_requirements ## Execute the pipeline synchronously on synthetic data
+	python main.py --ingest_type=file --ingest_file=../contrib/examples/metrics/generated-syntetic-metrics-fake.json --feature_extraction_type=tsfel
+
 feature_extraction_tsfel: install_requirements ## Execute the feature extraction using tsfel
 	python feature_extraction/feature_extraction_tsfel.py
 	

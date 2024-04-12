@@ -22,6 +22,8 @@ def parse_configuration():
           env_var='INGEST_URL')
     p.add('--ingest_window', help='ingest window ( for promql type )',
           env_var='INGEST_WINDOW')
+    p.add('--feature_extraction_type', help='feature_extraction type (tsfel or tsfresh)',
+          env_var='FEATURE_EXTRACTION_TYPE')
 
     global configuration
     configuration = p.parse_args()
