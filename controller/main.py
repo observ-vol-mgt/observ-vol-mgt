@@ -1,6 +1,6 @@
 import logging
 
-from controller.ui.signal_visualization import flaskApp, fill_time_series, fill_insights
+from ui.signal_visualization import flaskApp, fill_time_series, fill_insights
 from ingest.ingest import ingest
 from feature_extraction.feature_extraction import feature_extraction
 from common.conf import parse_configuration

@@ -12,6 +12,12 @@
         h1 {
             text-align: center;
         }
+        h2 {
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
         form {
             max-width: 400px;
             margin: 0 auto;
@@ -39,11 +45,12 @@
     </style>
 </head>
 <body>
-    <h1>Time Series Visualization</h1>
-    <h2>The current insights are that:</h2>
-    <p style="font-size: larger;"><br>{{ insights }}</p>
+    <h1>Signals Analysis and Visualization</h1>
+    <br><br>
+    <h2>The current insights are:</h2>
+    <p style="font-size: larger;"><br>{{ insights }}<br><br><br><br></p>
     <form action="/visualize" method="post">
-        <label for="timeSeries">Choose one or more time series:</label><br>
+        <label for="timeSeries">Choose one or more signals:</label><br>
         <select id="timeSeries" name="timeSeries" multiple>
             {% for series_name in series_names %}
                 <option value="{{ series_name }}">{{ series_name }}</option>
