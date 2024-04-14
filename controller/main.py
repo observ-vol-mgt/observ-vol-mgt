@@ -1,4 +1,6 @@
 import logging
+
+from controller.ui.signal_visualization import flaskApp, fill_time_series, fill_insights
 from ingest.ingest import ingest
 from feature_extraction.feature_extraction import feature_extraction
 from common.conf import parse_configuration
@@ -22,8 +24,14 @@ def main():
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
     signals = ingest()
     logger.info(f"the ingested signals are: {signals}")
-    extracted_signals = feature_extraction(signals)
+    extracted_signals, insights = feature_extraction(signals)
     logger.info(f"the feature_extracted signals are: {extracted_signals}")
+
+    # Show the UI
+    logger.info(f"To Visualize the signals use the provided URL:")
+    fill_time_series(extracted_signals)
+    fill_insights(insights)
+    flaskApp.run(debug=False)
 
 
 if __name__ == '__main__':
