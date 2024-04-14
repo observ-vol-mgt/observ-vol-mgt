@@ -4,6 +4,7 @@ import logging
 from config import *
 import sys
 import os
+import yaml
 
 app = Flask(__name__)
 
@@ -34,14 +35,93 @@ def get_processor(processor_id):
             abort(404, f"Processor with id {processor_id} not found")
 
         with open(file_path, 'r') as file:
-            yaml_content = file.read()
+            processor_data = yaml.safe_load(file)
+
 
         logger.info(f"GET request successful for processor with id {processor_id}")
-        return yaml_content, 200, {'Content-Type': 'application/yaml'}
+        return jsonify([processor_data]), 200
 
     except Exception as e:
         logger.error(f"Error occurred while processing request: {str(e)}")
         abort(500, "An error occurred while processing the request")
+
+
+@app.route('/processors', methods=['GET'])
+def get_all_processors():
+    try:
+        processor_list = []
+        # Iterate over all files in the processors folder
+        for file_name in os.listdir(PROCESSORS_FOLDER):
+            if file_name.endswith(".yaml"):
+                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+                with open(file_path, 'r') as file:
+                    processor_data = yaml.safe_load(file)
+                    processor_list.append(processor_data)
+
+        logger.info("GET request successful for all processors")
+        return jsonify(processor_list), 200
+
+    except Exception as e:
+        logger.error(f"Error occurred while processing request: {str(e)}")
+        abort(500, "An error occurred while processing the request")
+
+@app.route('/processors/<processor_id>', methods=['POST'])
+def create_processor(processor_id):
+    logger.debug(f"CREATE request received for processor with id {processor_id}")
+    try:
+        processor_data = request.get_data(as_text=True)
+
+        # Validate if the provided data is valid YAML
+        try:
+            yaml.safe_load(processor_data)
+        except Exception as e:
+            abort(404, f"Invalid YAML data")
+
+        file_path = os.path.join(f"{PROCESSORS_FOLDER}", f"{processor_id}.yaml")
+
+        if not os.path.exists(file_path):
+            abort(404, f"Processor with id {processor_id} not found")
+
+        if os.path.getsize(file_path) > 0:
+            logger.warning(f"File with id {processor_id} already had some content. It will be replaced.")
+
+        with open(file_path, 'w') as file:
+            file.write(processor_data)
+
+        logger.info(f"POST request successful for processor with id {processor_id}")
+        return jsonify({"message":"success", "processor_id": processor_id}), 201
+
+    except Exception as e:
+        logger.error(f"Error occurred while creating processor: {str(e)}")
+        abort(500, "An error occurred while creating the processor")
+
+
+@app.route('/processors', methods=['POST'])
+def create_all_processors():
+    logger.debug("CREATE request received for all processors")
+    try:
+        processor_data = request.get_data(as_text=True)
+
+        # Validate if the provided data is valid YAML
+        try:
+            yaml.safe_load(processor_data)
+        except Exception as e:
+            abort(400, "Invalid YAML data")
+
+        # Iterate over all files in the processors folder
+        for file_name in os.listdir(PROCESSORS_FOLDER):
+            if file_name.endswith(".yaml"):
+                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+                with open(file_path, 'w') as file:
+                    file.write(processor_data)
+
+        logger.info("POST request successful for all processors")
+        return jsonify({"message": "All processors created successfully"}), 201
+
+    except Exception as e:
+        logger.error(f"Error occurred while creating all processors: {str(e)}")
+        abort(500, "An error occurred while creating all processors")
+
 
 if __name__ == '__main__':
     app.run(host=f"{HOST}", port=f"{PORT}", debug=True)
