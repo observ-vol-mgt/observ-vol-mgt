@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Series Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Time Series Visualization</h1>
+    <h2>The current insights are that:</h2>
+    <p style="font-size: larger;"><br>{{ insights }}</p>
+    <form action="/visualize" method="post">
+        <label for="timeSeries">Choose one or more time series:</label><br>
+        <select id="timeSeries" name="timeSeries" multiple>
+            {% for series_name in series_names %}
+                <option value="{{ series_name }}">{{ series_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" value="Visualize">
+    </form>
+</body>
+</html>
