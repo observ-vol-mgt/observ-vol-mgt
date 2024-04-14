@@ -8,6 +8,7 @@ import yaml
 
 app = Flask(__name__)
 
+
 # Filter variables from config.py that match the pattern 'PROCESSOR_*_URL' to get the URLs for the edge processors
 processor_urls = {key: value for key, value in globals().items() if key.endswith('_URL') and key.startswith('PROCESSOR_')}
 
@@ -32,19 +33,17 @@ def get_processor(processor_id):
     try:
         file_path = os.path.join(f"{PROCESSORS_FOLDER}", f"{processor_id}.yaml")
         if not os.path.exists(file_path):
-            abort(404, f"Processor with id {processor_id} not found")
+            return {"message":f"Processor with id {processor_id} not found"}, 404
 
         with open(file_path, 'r') as file:
             processor_data = yaml.safe_load(file)
 
-
         logger.info(f"GET request successful for processor with id {processor_id}")
-        return jsonify([processor_data]), 200
+        return jsonify(processor_data), 200
 
     except Exception as e:
         logger.error(f"Error occurred while processing request: {str(e)}")
         abort(500, "An error occurred while processing the request")
-
 
 @app.route('/processors', methods=['GET'])
 def get_all_processors():
@@ -75,13 +74,12 @@ def create_processor(processor_id):
         try:
             yaml.safe_load(processor_data)
         except Exception as e:
-            abort(404, f"Invalid YAML data")
+            logger.error("Invalid yaml data")
+            return {"message":"Invalid YAML data"}, 400
 
         file_path = os.path.join(f"{PROCESSORS_FOLDER}", f"{processor_id}.yaml")
-
         if not os.path.exists(file_path):
-            abort(404, f"Processor with id {processor_id} not found")
-
+            return {"message":f"Processor with id {processor_id} not found"}, 404
         if os.path.getsize(file_path) > 0:
             logger.warning(f"File with id {processor_id} already had some content. It will be replaced.")
 
@@ -106,7 +104,8 @@ def create_all_processors():
         try:
             yaml.safe_load(processor_data)
         except Exception as e:
-            abort(400, "Invalid YAML data")
+            logger.error("Invalid yaml data")
+            return {"message":"Invalid YAML data"}, 400
 
         # Iterate over all files in the processors folder
         for file_name in os.listdir(PROCESSORS_FOLDER):
@@ -122,6 +121,45 @@ def create_all_processors():
         logger.error(f"Error occurred while creating all processors: {str(e)}")
         abort(500, "An error occurred while creating all processors")
 
+
+@app.route('/processors/<processor_id>', methods=['DELETE'])
+def delete_processor(processor_id):
+    logger.debug(f"DELETE request received for processor with id {processor_id}")
+    try:
+        file_path = os.path.join(PROCESSORS_FOLDER, f"{processor_id}.yaml")
+
+        if not os.path.exists(file_path):
+            return {"message":f"Processor with id {processor_id} not found"}, 404
+
+        # Replace the content of the YAML file with an empty YAML content
+        with open(file_path, 'w') as file:
+            file.write("")
+
+        logger.info(f"DELETE request successful for processor with id {processor_id}")
+        return jsonify({"message": f"Processor with id {processor_id} deleted successfully"}), 200
+
+    except Exception as e:
+        logger.error(f"Error occurred while deleting processor: {str(e)}")
+        abort(500, "An error occurred while deleting the processor")
+
+
+@app.route('/processors', methods=['DELETE'])
+def delete_all_processors():
+    logger.debug("DELETE request received for all processors")
+    try:
+        # Iterate over all processor YAML files and replace their content with empty YAML content
+        for file_name in os.listdir(PROCESSORS_FOLDER):
+            if file_name.endswith(".yaml"):
+                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+                with open(file_path, 'w') as file:
+                    file.write("")
+
+        logger.info("DELETE request successful for all processors")
+        return {"message": "All processors deleted successfully"}, 200
+
+    except Exception as e:
+        logger.error(f"Error occurred while deleting processors: {str(e)}")
+        abort(500, "An error occurred while deleting the processors")
 
 if __name__ == '__main__':
     app.run(host=f"{HOST}", port=f"{PORT}", debug=True)
