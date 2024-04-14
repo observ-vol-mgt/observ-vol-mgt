@@ -15,5 +15,5 @@ def feature_extraction(signals):
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals)
     else:
-        raise "unsupported ingest configuration"
+        raise "unsupported feature_extraction configuration"
     return extracted_signals
