@@ -39,6 +39,7 @@ def visualize():
             time_stamps, data = zip(*time_series[series_name])
             time_values = [datetime.fromtimestamp(time_stamp) for time_stamp in time_stamps]
             plt.plot(time_values, data, marker='o', label=series_name)
+
         else:
             return "Error: Selected time series not found."
 

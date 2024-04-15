@@ -7,16 +7,26 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-        h1 {
-            text-align: center;
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
+        h1, h2 {
             text-align: center;
+            color: #333;
         }
         p {
             text-align: center;
+            font-size: 18px;
+            color: #666;
         }
         form {
             max-width: 400px;
@@ -28,6 +38,9 @@
             padding: 10px;
             margin-top: 10px;
             box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
         input[type="submit"] {
             width: 100%;
@@ -37,7 +50,9 @@
             background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         input[type="submit"]:hover {
             background-color: #45a049;
@@ -45,19 +60,20 @@
     </style>
 </head>
 <body>
-    <h1>Signals Analysis and Visualization</h1>
-    <br><br>
-    <h2>The current insights are:</h2>
-    <p style="font-size: larger;"><br>{{ insights }}<br><br><br><br></p>
-    <form action="/visualize" method="post">
-        <label for="timeSeries">Choose one or more signals:</label><br>
-        <select id="timeSeries" name="timeSeries" multiple>
-            {% for series_name in series_names %}
-                <option value="{{ series_name }}">{{ series_name }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <input type="submit" value="Visualize">
-    </form>
+    <div class="container">
+        <h1>Signals Analysis and Visualization</h1>
+        <h2>The current insights are:</h2>
+        <p>{{ insights }}</p>
+        <form action="/visualize" method="post">
+            <label for="timeSeries">Choose one or more signals:</label><br>
+            <select id="timeSeries" name="timeSeries" multiple>
+                {% for series_name in series_names %}
+                    <option value="{{ series_name }}">{{ series_name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <input type="submit" value="Visualize">
+        </form>
+    </div>
 </body>
 </html>

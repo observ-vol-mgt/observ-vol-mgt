@@ -6,7 +6,7 @@ time_series_type1 = [[10, '1'], [20, '2'], [30, '3']]
 
 @pytest.fixture
 def input_file(tmpdir):
-    # Create a temporary input file with json test data
+    # Create a temporary input file with json tests data
     input_data = """\
 {
   "status": "success",
