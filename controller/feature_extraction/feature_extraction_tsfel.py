@@ -6,6 +6,8 @@ import tsfel
 import pandas as pd
 from scipy.stats.stats import pearsonr
 
+from common.signal import Signals
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +42,7 @@ def extract_signal(signal):
 
 
 def extract(signals):
-    extracted_signals = []
+    extracted_signals = Signals()
 
     # features extraction
     for index, signal in enumerate(signals):
@@ -62,20 +64,11 @@ def extract(signals):
     threshold = 0.999
     corr_matrix = df_extracted_features.corr(method='pearson')
 
+    extracted_signals.metadata["corr_matrix"] = corr_matrix
+
     # label each of the signals with the correlation with all other signals
     for index, extracted_signal in enumerate(extracted_signals):
         extracted_signal_name = extracted_signal.metadata["__name__"]
         extracted_signal.metadata["corr_features"] = corr_matrix[extracted_signal_name]
 
-    # conclude the list of signals that cab be reduces
-    # -=--=-=-==--=
-    #
-    # Select upper triangle of correlation matrix
-    upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
-    # Find index and column name of features with correlation greater than 0.95
-    corr_features = [column for column in upper.columns if any(upper[column] > threshold)]
-    insights = f"We can reduce: {corr_features}"
-
-    logging.info(f"\n\n{insights}\n")
-
-    return extracted_signals, insights
+    return extracted_signals

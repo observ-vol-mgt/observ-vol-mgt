@@ -9,11 +9,11 @@ def feature_extraction(signals):
     if get_configuration().feature_extraction_type == "tsfel":
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
-        extracted_signals, insights = extract(signals)
+        extracted_signals = extract(signals)
     elif get_configuration().ingest_type == "tsfresh":
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
-        extracted_signals, insights = extract(signals)
+        extracted_signals = extract(signals)
     else:
         raise "unsupported feature_extraction configuration"
-    return extracted_signals, insights
+    return extracted_signals

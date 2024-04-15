@@ -1,5 +1,5 @@
 import logging
-from common.signal import Signal
+from common.signal import Signal, Signals
 from common.conf import get_configuration
 import json
 
@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def ingest():
-    signals = []
+    signals = Signals()
     conf = get_configuration()
     ingest_file = conf.ingest_file
     logger.info(f"Reading signals from {ingest_file}")

@@ -1,9 +1,9 @@
-from common.signal import Signal
+from common.signal import Signal, Signals
 from common.conf import get_configuration
 from prometheus_api_client import PrometheusConnect
 from prometheus_api_client.utils import parse_datetime
 
-signals = []
+signals = Signals()
 signal_type = "metric"
 
 
