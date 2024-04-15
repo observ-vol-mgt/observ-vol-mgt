@@ -50,11 +50,8 @@ def test_ingest(input_file):
         )
         mocked_get_configuration.return_value = config
 
-
         from ingest.file_ingest import ingest
         signals = ingest()
 
     assert signals[0].type == "metric"
     assert signals[0].time_series == time_series_type1
-
-

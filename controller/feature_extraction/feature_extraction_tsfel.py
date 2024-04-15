@@ -18,45 +18,20 @@ def extract_signal(signal):
     df_signal["Time"] = pd.to_datetime(df_signal["Time"], unit='s')
     df_signal = df_signal.set_index("Time")
     df_signal = df_signal.resample('30s').mean().interpolate('linear')
-    # If no argument is passed retrieves all available features
-    cfg_file = tsfel.get_features_by_domain('statistical')
-    # cfg_file = json.loads(
-    #     """
-    # {
-    #     "statistical": {
-    #         "Max": {
-    #             "function": "tsfel.calc_max",
-    #             "parameters": "",
-    #             "n_features": 1,
-    #             "use": "yes"
-    #         },
-    #         "Min": {
-    #             "function": "tsfel.calc_min",
-    #             "parameters": "",
-    #             "n_features": 1,
-    #             "use": "yes"
-    #         },
-    #         "Mean": {
-    #             "function": "tsfel.calc_mean",
-    #             "parameters": "",
-    #             "n_features": 1,
-    #             "use": "yes",
-    #             "tag": "inertial"
-    #         }
-    #     }
-    # }
-    # """
-    # )
+
+    # list of features to extract from configuration file
+    # cfg_file = tsfel.get_features_by_domain('statistical') # ==> this will use all the statistical features
+    file_path = "feature_extraction/tsfel_conf/minimum_statistical.json"
+    with open(file_path, 'r') as file:
+        # Load the JSON data from the file
+        cfg_file = json.load(file)
 
     # execute feature extraction
     extracted_features = tsfel.time_series_features_extractor(
         dict_features=cfg_file, signal_windows=df_signal, fs=(1 / 30), verbose=1)
 
-    logging.debug(extracted_features.head())
     logging.debug(extracted_features.shape)
     logging.debug(extracted_features.describe())
-    logging.debug(extracted_features.info())
-    logging.debug(extracted_features[:1].transpose().to_markdown())
 
     # append the features as labels to the signals
     signal.metadata["extracted_features"] = extracted_features
@@ -84,8 +59,8 @@ def extract(signals):
             pd.DataFrame(extracted_signal_features.transpose()).rename(columns={0: extracted_signal_name}))
         df_extracted_features = pd.concat([df_extracted_features, extracted_signal_features_as_column], axis=1)
 
-    threshold = 0.95
-    corr_matrix = df_extracted_features.corr(method='kendall')
+    threshold = 0.999
+    corr_matrix = df_extracted_features.corr(method='pearson')
 
     # label each of the signals with the correlation with all other signals
     for index, extracted_signal in enumerate(extracted_signals):

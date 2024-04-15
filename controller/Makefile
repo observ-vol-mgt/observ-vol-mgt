@@ -9,6 +9,9 @@ install_requirements:
 	@pip install -q -r requirements.txt
 
 ##@ Development
+tests: install_requirements ## Execute tests
+	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
+
 run_dev: install_requirements ## Execute the pipeline synchronously on synthetic data
 	python main.py --ingest_type=file --ingest_file=../contrib/examples/metrics/generated-syntetic-metrics-fake.json --feature_extraction_type=tsfel
 

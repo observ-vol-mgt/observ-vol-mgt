@@ -1,7 +1,6 @@
 from common.signal import Signal
 from common.conf import get_configuration
 from prometheus_api_client import PrometheusConnect
-from datetime import timedelta
 from prometheus_api_client.utils import parse_datetime
 
 signals = []

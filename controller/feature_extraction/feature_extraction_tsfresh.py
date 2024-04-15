@@ -5,6 +5,17 @@ import pandas as pd
 import os
 import file_utils
 
+
+def extract(signals):
+    extracted_signals = []
+    print("Not implemented")
+
+    return extracted_signals
+
+
+print("Not implemented")
+exit()
+
 # ref: https://tsfresh.readthedocs.io/en/latest/text/quick_start.html
 
 # if the data set file doesn't exist load from the internet

@@ -5,3 +5,4 @@ configargparse
 prometheus-api-client
 pytest
 requests_mock
+pandas==1.3.4
