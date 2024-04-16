@@ -1,90 +1,18 @@
+# Metric Generation
 
-Flask App port = 5000
+For local testing of the system we use a metric generator. The current version generates metrics in the prometheus formats comprising of a time series for each metric. Each metric is represented as set of labels and values. 
+The generator can be used to generate fake metrics as well as custom  metrics with user provided labels names. 
 
-Prometheus Client Port = 8000
+## Fake Metrics
+If the value of the metric name is not critical for the testing we can use the default mode to send the metrics.
+```
+python3 gen-metrics-gutentag.py --fake --nmetrics 100 --nlabels 10
+```
+You can vary the number of metrics and labels using the `--nmetrics` and `--nlabels` parameters respectively.
 
-Sample CURL statements:
+## With a conf file
 
-1. Set some metrics 
-
-    >curl --location --request POST 'localhost:5000' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "type": "SET",
-        "cluster": [
-        {
-        "name": "1",
-        "clustermetrics": ["1","2","3"],
-        "node": [
-            {
-            "name": "1",
-            "nodemetrics": ["2","3"]
-            },
-            {
-            "name": "2",
-            "nodemetrics": ["2","7"]
-            }
-        ],
-        "app": [
-            {
-            "name": "A",
-            "appmetrics": ["3","4","5"]
-            },
-            {
-            "name": "B",
-            "appmetrics": ["1","2"]
-            }
-        ]
-        }
-        ]
-    }'
-
-2. Reset the same metrics 
-
-    >curl --location --request POST 'localhost:5000' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "type": "RESET",
-        "cluster": [
-        {
-        "name": "1",
-        "clustermetrics": ["1","2","3"],
-        "node": [
-            {
-            "name": "1",
-            "nodemetrics": ["2","3"]
-            },
-            {
-            "name": "2",
-            "nodemetrics": ["2","7"]
-            }
-        ],
-        "app": [
-            {
-            "name": "A",
-            "appmetrics": ["3","4","5"]
-            },
-            {
-            "name": "B",
-            "appmetrics": ["1","2"]
-            }
-        ]
-        }
-        ]
-    }'
-
-3. Set all metrics
-
-    >curl --location --request POST 'localhost:5000' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "type": "SET ALL"
-    }'
-
-4. Reset all metrics
-
-    >curl --location --request POST 'localhost:5000' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
-        "type": "RESET ALL"
-    }'
+```
+python3 gen-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10
+```
+The current conf supports certain set of metric type such as as can be seen in t
