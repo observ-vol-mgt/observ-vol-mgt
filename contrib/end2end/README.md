@@ -22,4 +22,12 @@ The setup automatically starts  the following containers:
 | thanos_query_frontend | Thanos query frontend connected to querier                                   | 19090 |
 | thanos_store          | A Thanos store instance connected to minio                                   | 10912 |
 
+## query examples
+
+For example, in order to get the the `go_memstats_frees_total` metric values 
+from time stamp `1711895548` to timestamp `171189954` in steps of `560s` execute the query:
+
+```bash
+curl 'http://localhost:19090/api/v1/query_range?query=go_memstats_frees_total&start=1711895548&end=1711899548&step=560s' | jq
+```
 

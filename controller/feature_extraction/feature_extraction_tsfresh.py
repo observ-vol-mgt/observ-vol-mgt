@@ -4,6 +4,18 @@ import numpy as np
 import pandas as pd
 import os
 import file_utils
+from common.signal import Signals
+
+
+def extract(signals):
+    extracted_signals = Signals()
+    print("Not implemented")
+
+    return extracted_signals
+
+
+print("Not implemented")
+exit()
 
 # ref: https://tsfresh.readthedocs.io/en/latest/text/quick_start.html
 

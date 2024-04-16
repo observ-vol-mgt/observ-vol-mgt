@@ -1,6 +1,5 @@
 import re
 from unittest.mock import patch
-import requests
 import requests_mock
 
 time_series_type1 = ["7"]
