@@ -28,8 +28,8 @@ def read_yaml(yamlfile):
 def create_random_gutentag_ts():
     # curves = ["sine", "cylinder_bell_funnel", "square", "random_mode_jump"]
     curves = ["sine"]
-    ampl = random.randint(40, 60)
-    offset = random.randint(60, 100)
+    ampl = random.randint(100, 110) #0,50
+    offset = random.randint(60, 100) # 100,120
     freq = random.random()/2 + 0.5
     curve = random.sample(curves, 1)[0]
     if curve == "sine":
