@@ -3,14 +3,14 @@ processors:
     id: agg1
     metrics:
       metric_name: cluster_cpu_usage
-      condition: cluster_id='wec1' and namespace_name='data-science'
+      condition: cluster_id=wec1 and namespace_name=data-science
       function: avg
       time_window: 10m
   - type: enrichment
     id: enrich1
     metrics:
       metric_name: cluster_cpu_usage
-      condition: cluster_id='wec1' and namespace_name='data-science'
+      condition: cluster_id=wec1 and namespace_name=data-science
       enrich:
         - label_name: imp_metric
           label_value: true
@@ -20,23 +20,22 @@ processors:
     id: filter1
     metrics:
       metric_name: cluster_cpu_usage
-      condition: cluster_id='wec1' and namespace_name='data-science'
+      condition: cluster_id=wec1 and namespace_name=data-science
       action: include/exclude
   - type: adaptive
     id: adaptive1
     metrics:
       metric_name: cluster_cpu_usage
-      condition: cluster_id='wec1' and namespace_name='data-science'
+      condition: cluster_id=wec1 and namespace_name=data-science
       threshold: 125
   - type: frequency
     id: freq1
     metrics:
       metric_name: cluster_cpu_usage
-      condition: cluster_id='wec1' and namespace_name='data-science'
+      condition: cluster_id=wec1 and namespace_name=data-science
       interval: 10m
 dag:
-  vertices:
-    - [enrich1, filter1]
-    - [enrich1, adaptive1]
-    - [filter1, freq1]
-    - [filter1, agg1]
+  - node: enrich1
+    children: [filter1, adaptive1]
+  - node: filter1
+    children: [freq1, agg1]
