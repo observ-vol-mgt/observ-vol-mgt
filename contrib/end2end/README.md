@@ -6,8 +6,8 @@ The end-to-end tests are based upon local set-ups of two use cases:
 1. prometheus at the edges and thanos at the hub 
 2. oTel collector at the edges and prometheus at the hub
 
-## use case (1): prometheus at the edges and thanos at the hub 
-To manually start e2e containers, use  `make up-prom-thanos`
+## Use case (1): prometheus at the edges and thanos at the hub   
+To manually start e2e containers, use  `make up-prom-thanos`  
 To shut down the containers, use: `make down-prom-thanos`
 
 The setup automatically starts the following containers:  
@@ -35,8 +35,8 @@ from time stamp `1711895548` to timestamp `171189954` in steps of `560s` execute
 curl 'http://localhost:19090/api/v1/query_range?query=go_memstats_frees_total&start=1711895548&end=1711899548&step=560s' | jq
 ```
 
-## use case (2): oTel collector at the edges and prometheus at the hub 
-To manually start e2e containers, use  `make up-otel-prom`
+## Use case (2): oTel collector at the edges and prometheus at the hub   
+To manually start e2e containers, use  `make up-otel-prom`  
 To shut down the containers, use: `make down-otel-prom`
 
 The setup automatically starts the following containers:  
