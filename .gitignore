@@ -6,3 +6,4 @@
 **/__MACOSX/
 **/UCI*/
 **/.idea/
+*.log
