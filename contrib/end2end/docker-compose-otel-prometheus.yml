@@ -1,0 +1,53 @@
+version: '3.2'
+services:
+  otel_collector_one:
+    image: otel/opentelemetry-collector:0.98.0
+    restart: unless-stopped
+    container_name: otel_collector_one
+    command:
+      - '--config=/etc/config/otel_collector_one.yaml'
+    volumes:
+      - ./otel:/etc/config/
+      - ./data/otel/one:/data
+    expose:
+      - 18888
+    ports:
+      - "18888:18888"   # Prometheus metrics exposed by the collector
+
+  otel_collector_two:
+    image: otel/opentelemetry-collector:0.98.0
+    restart: unless-stopped
+    container_name: otel_collector_two
+    command:
+      - '--config=/etc/config/otel_collector_two.yaml'
+    volumes:
+      - ./otel:/etc/config/
+      - ./data/otel/one:/data
+    expose:
+      - 18889
+    ports:
+      - "18889:18889"   # Prometheus metrics exposed by the collector
+
+  prometheus_hub:
+    image: prom/prometheus:v2.21.0
+    restart: unless-stopped
+    container_name: prometheus_hub
+    user: root
+    volumes:
+      - ./prometheus:/etc/config/
+      - ./data/prometheus/one:/data
+    command:
+      - '--config.file=/etc/config/prometheus_hub.yml'
+      - '--storage.tsdb.path=/data'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=2h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.listen-address=:9001'
+      - '--storage.tsdb.min-block-duration=5m'
+      - '--storage.tsdb.max-block-duration=5m'
+    expose:
+      - 9001
+    ports:
+      - "9001:9001"

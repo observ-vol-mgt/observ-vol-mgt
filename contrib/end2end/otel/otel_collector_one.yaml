@@ -1,0 +1,30 @@
+receivers:
+  hostmetrics:
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      load:
+      memory:
+      network:
+      process:
+      processes:
+      paging:
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:18888"
+    const_labels:
+      label1: otel_collector_one
+
+  debug:
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [debug, prometheus]
