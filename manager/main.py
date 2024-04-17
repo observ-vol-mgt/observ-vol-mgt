@@ -19,10 +19,12 @@ logging.basicConfig(filename=f'{LOG_FILE}', filemode='w', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 os.makedirs(f"{PROCESSORS_FOLDER}", exist_ok=True)
+processor_ids = []
 
 for key, value in processor_urls.items():
     file_name = f"{key}".split('_URL')[0].split('PROCESSOR_')[1]
     file_path = f"{PROCESSORS_FOLDER}/{file_name}.yaml"
+    processor_ids.append(file_name)
     if not os.path.exists(file_path):
         with open(file_path, 'w') as file:
                 pass  # Do nothing, file created and closed immediately
@@ -49,13 +51,12 @@ def get_processor(processor_id):
 def get_all_processors():
     try:
         processor_list = []
-        # Iterate over all files in the processors folder
-        for file_name in os.listdir(PROCESSORS_FOLDER):
-            if file_name.endswith(".yaml"):
-                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
-                with open(file_path, 'r') as file:
-                    processor_data = yaml.safe_load(file)
-                    processor_list.append(processor_data)
+        for processor_id in processor_ids:
+            file_name = processor_id + ".yaml"
+            file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+            with open(file_path, 'r') as file:
+                processor_data = yaml.safe_load(file)
+                processor_list.append(processor_data)
 
         logger.info("GET request successful for all processors")
         return jsonify(processor_list), 200
@@ -107,12 +108,11 @@ def create_all_processors():
             logger.error("Invalid yaml data")
             return {"message":"Invalid YAML data"}, 400
 
-        # Iterate over all files in the processors folder
-        for file_name in os.listdir(PROCESSORS_FOLDER):
-            if file_name.endswith(".yaml"):
-                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
-                with open(file_path, 'w') as file:
-                    file.write(processor_data)
+        for processor_id in processor_ids:
+            file_name = processor_id + ".yaml"
+            file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+            with open(file_path, 'w') as file:
+                file.write(processor_data)
 
         logger.info("POST request successful for all processors")
         return jsonify({"message": "All processors created successfully"}), 201
@@ -148,11 +148,11 @@ def delete_all_processors():
     logger.debug("DELETE request received for all processors")
     try:
         # Iterate over all processor YAML files and replace their content with empty YAML content
-        for file_name in os.listdir(PROCESSORS_FOLDER):
-            if file_name.endswith(".yaml"):
-                file_path = os.path.join(PROCESSORS_FOLDER, file_name)
-                with open(file_path, 'w') as file:
-                    file.write("")
+        for processor_id in processor_ids:
+            file_name = processor_id + ".yaml"
+            file_path = os.path.join(PROCESSORS_FOLDER, file_name)
+            with open(file_path, 'w') as file:
+                file.write("")
 
         logger.info("DELETE request successful for all processors")
         return {"message": "All processors deleted successfully"}, 200
