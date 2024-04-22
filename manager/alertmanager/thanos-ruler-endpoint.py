@@ -57,6 +57,8 @@ def create_rule(rule_id):
                     exists = True
                     break
             if exists != True:    
+                if not cur_yaml["groups"][0]["rules"]:
+                    cur_yaml["groups"][0]["rules"] = []
                 cur_yaml["groups"][0]["rules"].append(new_yaml_data_dict)
         if cur_yaml:
             with open(file_path,'w') as yamlfile:
