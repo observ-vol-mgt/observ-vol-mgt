@@ -21,5 +21,4 @@
 - Get details of rule abc `curl  0.0.0.0:8090/abc`
 - Get details of all the rules `curl  0.0.0.0:8090/rules`
 
-TODO: Use swagger for the above documentation
 

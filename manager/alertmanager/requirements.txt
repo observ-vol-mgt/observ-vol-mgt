@@ -1,0 +1,4 @@
+Flask
+requests
+pyyaml
+flask_swagger_ui

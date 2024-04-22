@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort
+from flask_swagger_ui import get_swaggerui_blueprint
 from config import *
 import requests
 import logging
@@ -6,12 +7,23 @@ import yaml
 import os
 
 app = Flask(__name__)
+SWAGGER_URL="/swagger"
+API_URL="/static/swagger.json"
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': 'Thanos Ruler API'
+    }
+)
+app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 log_dir = os.path.dirname(f'{LOG_FILE}')
 logging.basicConfig(filename=f'{LOG_FILE}', filemode='w', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.route('/add/<rule_id>', methods=['POST'])
+@app.route('/<rule_id>', methods=['POST'])
 def create_rule(rule_id):
     logger.debug(f"ADD alert rule {rule_id}")
     try:
@@ -37,6 +49,7 @@ def create_rule(rule_id):
         }
         file_path = os.path.join(f"{RULES_FOLDER}", f"rules.yml")
         with open(file_path,'r') as yamlfile:
+            exists = False
             cur_yaml = yaml.safe_load(yamlfile)
             for index in range(len(cur_yaml["groups"][0]["rules"])):
                 if cur_yaml["groups"][0]["rules"][index]["alert"] == f'{rule_id}':
@@ -57,7 +70,7 @@ def create_rule(rule_id):
         logger.error(f"Error occurred while creating rule: {str(e)}")
         abort(500, "An error occurred while creating the rule")
 
-@app.route('/delete/<rule_id>', methods=['GET'])
+@app.route('/<rule_id>', methods=['DELETE'])
 def delete_rule(rule_id):
     logger.debug(f"DELETE alert rule {rule_id}")
     try:
