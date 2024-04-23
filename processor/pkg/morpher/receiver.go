@@ -27,15 +27,24 @@ processors:
 */
 type ReceiverRequest struct {
 	Processors []Processor `yaml:"processors"`
+	DAGNodes   []DAGNode   `yaml:"dag"`
 }
 
 type Processor struct {
-	Type   string `yaml:"type"`
-	Metric struct {
-		MetricName string            `yaml:"metrics:metric_name"`
-		Condition  string            `yaml:"condition"`
-		Parameters map[string]string `yaml:",flow"`
-	} `yaml:"metric"`
+	Type   string            `yaml:"type"`
+	ID     string            `yaml:"id"`
+	Metric map[string]string `yaml:"metrics"`
+	// Metric struct {
+	// Parameters map[string]string
+	// MetricName string            `yaml:"metric_name"`
+	// Condition  string            `yaml:"condition"`
+	// Parameters map[string]string `yaml:",flow"`
+	// } `yaml:"metrics"`
+}
+
+type DAGNode struct {
+	ID       string   `yaml:"node"`
+	Children []string `yaml:"children"`
 }
 
 func selectorsToString(selectors []Selector) string {
@@ -45,29 +54,29 @@ func selectorsToString(selectors []Selector) string {
 		filled_strings[i] = fmt.Sprintf(template_string, selector.Key, selector.Value)
 	}
 	query_string := `(` + strings.Join(filled_strings, " INTERSECT ") + ")" //multiple selectors
-	log.Info(query_string)
+	log.Debug(query_string)
 	return query_string
 }
 
 func (p Processor) ParseSelector() string {
-	if p.Metric.Condition != "" {
-		var selectors []Selector
-		conditions := strings.Split(p.Metric.Condition, "and")
+	selectors := []Selector{Selector{Key: "__name__", Value: p.Metric["metricName"]}}
+	if p.Metric["condition"] != "" {
+		conditions := strings.Split(p.Metric["condition"], "and")
 		for _, condition := range conditions {
 			condition = strings.TrimSpace(condition)
 			key_value := strings.Split(condition, "=")
 			selectors = append(selectors, Selector{key_value[0], key_value[1]})
 		}
-		return selectorsToString(selectors)
 	}
-	return ""
+	return selectorsToString(selectors)
 }
 
 func (p Processor) ParseParams() []float64 {
 	params := []float64{}
 	switch p.Type {
+	case "aggregate":
 	case "freq":
-		val, _ := strconv.ParseFloat(p.Metric.Parameters["frequency"], 32)
+		val, _ := strconv.ParseFloat(p.Metric["interval"], 32)
 		params = append(params, val)
 	}
 
@@ -76,6 +85,7 @@ func (p Processor) ParseParams() []float64 {
 }
 
 func (p Processor) ParseProcessor() MorphUnit {
+	// Validate that passed list of parameters matches against some fixed list (condition, metric_name, interval)
 	return MorphUnit{
 		Type:       p.Type,
 		Parameters: p.ParseParams(),
@@ -100,14 +110,38 @@ func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
 		log.Print(error)
 	}
 
-	log.Debugf("Received body: %+v\n", request)
+	log.Infof("Received body: %+v\n", request)
 
-	rootNode := m.NewRootNode()
-	parentNode := rootNode
+	// Do the processing
+	morphNodes := make(map[string]*MorphNode)
 	for _, processor := range request.Processors {
-		node := NewMorphNode(processor.ParseProcessor())
-		// For now assuming parallel processors
-		parentNode.AddNodeChild(node)
+		morphNode := NewMorphNode(processor.ParseProcessor(), processor.ID)
+		morphNodes[processor.ID] = morphNode
+	}
+
+	// Do the DAG formation
+	root := m.NewRootNode()
+	for _, DAGnode := range request.DAGNodes {
+		morphNode, ok := morphNodes[DAGnode.ID]
+		if !ok {
+			error := fmt.Errorf("No node by id %s in list of processors", DAGnode.ID)
+			http.Error(w, error.Error(), http.StatusBadRequest)
+			log.Error(error)
+			return
+		}
+
+		root.AddNodeChild(morphNode)
+		for _, childID := range DAGnode.Children {
+			child, ok := morphNodes[childID]
+			if !ok {
+				error := fmt.Errorf("No node by id %s in list of processors", childID)
+				http.Error(w, error.Error(), http.StatusBadRequest)
+				log.Error(error)
+				return
+			}
+			morphNode.AddNodeChild(child)
+		}
+
 	}
 
 	m.CompileMorph()

@@ -41,6 +41,10 @@ update frequency set last = (select case when count(*) > 0 then (select timestam
 
 var DefaultMorph string = strings.Replace(SelectorMorph, "phash in %[3]s", "phash not in (select distinct phash from labels where phash in %[3]s)", 1)
 
+var StringToMorphMap = map[string]string{
+	"frequency": ProbFreqMorph,
+}
+
 type MorphUnit struct {
 	Type        string
 	Selector    string
@@ -74,7 +78,7 @@ func (mu *MorphUnit) CompileQuery(parent string, id int, leaf bool) {
 	deleteQuery := DeleteTable
 	exportSearchTable := fmt.Sprintf("t%d", id)
 	switch mu.Type {
-	case "freq":
+	case "frequency":
 		baseString = ProbFreqMorph
 	case "unit":
 		baseString = UnitMorph
@@ -119,12 +123,19 @@ func (mu *MorphUnit) CompileQuery(parent string, id int, leaf bool) {
 }
 
 type MorphNode struct {
+	ID       string
 	Unit     MorphUnit
 	Children []*MorphNode
 }
 
-func NewMorphNode(unit MorphUnit) *MorphNode {
+func NewMorphNode(unit MorphUnit, ID ...string) *MorphNode {
+	id := ""
+	if len(ID) > 0 {
+		id = ID[0]
+	}
+
 	node := MorphNode{
+		ID:       id,
 		Unit:     unit,
 		Children: []*MorphNode{},
 	}
@@ -168,6 +179,7 @@ func (m *Morpher) getNewID() int {
 
 func (m *Morpher) CompileMorphsRecursively(node *MorphNode, parent string) {
 	id := m.getNewID()
+	log.Info(node.ID)
 	if len(node.Children) == 0 {
 		// Leaf node => set as export
 		node.Unit.CompileQuery(parent, id, true)
