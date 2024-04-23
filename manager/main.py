@@ -1,5 +1,5 @@
 from flask import Flask
-import processor
+import processors
 import rules
 import alerthandler
 import logging
@@ -16,9 +16,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-    app.register_blueprint(processor.processor_bp, url_prefix=APP_URL_PREFIX)
+    app.register_blueprint(processors.processor_bp, url_prefix=APP_URL_PREFIX)
     app.register_blueprint(rules.rules_bp, url_prefix=APP_URL_PREFIX)
     app.register_blueprint(alerthandler.alerthandler_bp)
     app.run(host=HOST, port=PORT, debug=True)
     logger.info('Manager started successfully.')
-

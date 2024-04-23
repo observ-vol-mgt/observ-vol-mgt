@@ -8,6 +8,8 @@ import json
 
 from utils.file_ops.processors import *
 from utils.communication.processors import *
+from models.ProcessorsConfig import ProcessorsConfig
+from pydantic import ValidationError
 
 processor_bp = Blueprint('processor', __name__)
 
@@ -18,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 os.makedirs(PROCESSORS_FOLDER, exist_ok=True)
 processor_ids = load_processors(processor_urls, PROCESSORS_FOLDER)
+
 
 @processor_bp.route('/processors/<processor_id>', methods=['GET'])
 def get_processor(processor_id):
@@ -49,6 +52,18 @@ def get_all_processors():
         logger.error(f"Error occurred while processing request: {str(e)}")
         return {"message" : "An error occurred while processing the request"}, 500
 
+
+def validate_yaml(processor_data_yaml):
+    if "processors" not in processor_data_yaml:
+        raise Exception("processors field must be specified")
+    processor_data_yaml_validated = ""
+    if "dag" in processor_data_yaml:
+        processor_data_yaml_validated = ProcessorsConfig(processors=processor_data_yaml["processors"], dag=processor_data_yaml["dag"])
+    else:
+        processor_data_yaml_validated = ProcessorsConfig(processors=processor_data_yaml["processors"])
+    return processor_data_yaml_validated
+
+
 @processor_bp.route('/processors/<processor_id>', methods=['POST'])
 def create_processor(processor_id):
     logger.debug(f"CREATE request received for processor with id {processor_id}")
@@ -58,9 +73,11 @@ def create_processor(processor_id):
         # Validate if the provided data is valid YAML
         try:
             processor_data_yaml = yaml.safe_load(processor_data)
+            processor_data_yaml_validated = validate_yaml(processor_data_yaml)
+        except ValidationError as e:
+            return jsonify({"message" : "Invalid YAML data", "error": e.errors()}), 400
         except Exception as e:
-            logger.error("Invalid yaml data")
-            return {"message":"Invalid YAML data"}, 400
+            return jsonify({"message" : "Error validating YAML data", "error": str(e)}), 500
 
         file_path = os.path.join(PROCESSORS_FOLDER, f"{processor_id}.yaml")
         if not os.path.exists(file_path):
@@ -94,9 +111,11 @@ def create_all_processors():
         # Validate if the provided data is valid YAML
         try:
             processor_data_yaml = yaml.safe_load(processor_data)
+            processor_data_yaml_validated = validate_yaml(processor_data_yaml)
+        except ValidationError as e:
+            return jsonify({"message" : "Invalid YAML data", "error": e.errors()}), 400
         except Exception as e:
-            logger.error("Invalid yaml data")
-            return {"message":"Invalid YAML data", "successfully_created": success_list}, 400
+            return jsonify({"message" : "Error validating YAML data", "error": str(e)}), 500
 
         for processor_id in processor_ids:
             file_name = processor_id + ".yaml"
