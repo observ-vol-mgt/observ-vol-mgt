@@ -29,7 +29,7 @@ def create_or_replace_processor_file(processors_folder, processor_id, processor_
     with open(file_path, 'w') as file:
         file.write(processor_data)
 
-def delete_processor_file(processors_folder, processors_id):
+def delete_processor_file(processors_folder, processor_id):
     file_path = os.path.join(f"{processors_folder}", f"{processor_id}.yaml")
     # Replace the content of the YAML file with an empty YAML content
     with open(file_path, 'w') as file:

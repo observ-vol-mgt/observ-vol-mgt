@@ -129,13 +129,13 @@ def create_all_processors():
             response = add_processor(processor_urls["PROCESSOR_"+processor_id+"_URL"], processor_data_yaml)
             status_code = response.status_code
             if status_code not in [200, 201]:
-                logger.error(f"Create DAG request for processor with id {processor_id} failed", response)
+                logger.error(f"Create DAG request for processor with id {processor_id} failed with the following response: {response}")
                 return {"message" : json.dumps(response.json()), "successfully_created": success_list}, status_code
             
             create_or_replace_processor_file(PROCESSORS_FOLDER, processor_id, processor_data)
             success_list.append(processor_id)
 
-        logger.info("POST request successful for processors : ", success_list)
+        logger.info(f"POST request successful for processors : {success_list}")
         return jsonify({"message": "Create All request completed", "successfully_created": success_list}), 201
 
     except Exception as e:
@@ -150,10 +150,10 @@ def delete_processor(processor_id):
         if processor_id not in processor_ids:
             return {"message":f"Processor with id {processor_id} not found"}, 404
         
-        response = delete_processor(processor_urls["PROCESSOR_"+processor_id+"_URL"])
+        response = remove_processor(processor_urls["PROCESSOR_"+processor_id+"_URL"])
         status_code = response.status_code
         if status_code not in [200, 202, 204]:
-            logger.error(f"Delete DAG request for processor with id {processor_id} failed", response)
+            logger.error(f"Delete DAG request for processor with id {processor_id} failed with the following response {response}")
             return response.json(), status_code
 
         delete_processor_file(PROCESSORS_FOLDER, processor_id)
@@ -178,7 +178,7 @@ def delete_all_processors():
             if status_code in [200, 202, 204]:
                 success_list.append(processor_id)
 
-        logger.info("DELETE request successful for processors : ", success_list)
+        logger.info(f"DELETE request successful for processors : {success_list}")
         return {"message": "All processors deleted successfully", "successfully_deleted" : success_list}, 200
 
     except Exception as e:
