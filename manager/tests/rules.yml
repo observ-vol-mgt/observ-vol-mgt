@@ -1,9 +1,9 @@
 rules:
     - rule_id: rule_1
       processors: [processor_id_1]
-      expr: (fake_metric_2) > 100
+      expr: (cluster_metric_2) > 100
       duration: 1s
-      description: rule to change frequency for bookkeeping metrics from 30 sec to 10 min during mild stress
+      description: cluster metric more than 100
       action:
             action_type: create
             create:

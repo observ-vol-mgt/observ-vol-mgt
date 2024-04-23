@@ -75,19 +75,22 @@ def change_all_metrics(isSet):
     logging.debug(value)
     for i in range(len(clusterMetrics)):
         g = clusterMetrics[i].labels(clusterName)
-        g.set(value)
+        #g.set(value)
+        g.set(200)
     for key,val in hardwareMetrics.items():
         if key in nodeNames:
             for j in range(len(val)):
                 g = hardwareMetrics[key][j].labels(clusterName,key)
-                g.set(value)
+                #g.set(value)
+                g.set(10)
         else:  
             return "Invalid node name", 400
     for key,val in appMetrics.items():
         if key in appNames:
             for j in range(len(val)):
                 g = appMetrics[key][j].labels(clusterName,key)
-                g.set(value)
+                #g.set(value)
+                g.set(10)
         else:
             return "Invalid application name", 400
     return "Metrics updated", 200
@@ -176,9 +179,9 @@ if __name__ == '__main__':
     
     create_all_metrics(args.conf, opt_config)
     start_http_server(8000)
-    while(1):
-        change_all_metrics(True)
-        time.sleep(2)
-        change_all_metrics(False)
-        time.sleep(2)
-    app.run()
+    #while(1):
+    #    change_all_metrics(True)
+    #    time.sleep(2)
+    #    change_all_metrics(False)
+    #    time.sleep(2)
+    app.run(host="0.0.0.0", port=5002, debug=False)

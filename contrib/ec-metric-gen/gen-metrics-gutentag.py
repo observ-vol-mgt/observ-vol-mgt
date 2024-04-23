@@ -84,7 +84,7 @@ def create_fake_metrics(total_metrics, nlabels, name="fake"):
     nmetrics = int(total_metrics/len(all_labels))
     fake_metrics = []
     fake_metrics += [create_fake_metric(name, i, all_labels) for i in range(nmetrics)]
-
+    fake_metrics += [create_new_gutentag_metric("fake", i, all_labels) for i in range(nmetrics)]
     global metrics
     metrics = fake_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
