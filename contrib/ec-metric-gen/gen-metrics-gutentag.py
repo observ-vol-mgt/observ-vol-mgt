@@ -28,8 +28,8 @@ def read_yaml(yamlfile):
 def create_random_gutentag_ts():
     # curves = ["sine", "cylinder_bell_funnel", "square", "random_mode_jump"]
     curves = ["sine"]
-    ampl = random.randint(100, 110) #0,50
-    offset = random.randint(60, 100) # 100,120
+    ampl = random.randint(40, 60)
+    offset = random.randint(60, 100)
     freq = random.random()/2 + 0.5
     curve = random.sample(curves, 1)[0]
     if curve == "sine":
@@ -60,7 +60,11 @@ def create_new_gutentag_metric(prefix, idx, labels):
     ts = [create_random_gutentag_ts() for _ in labels]
     return (g, ts, labels)
 
-def create_fake_metrics(total_metrics, nlabels):
+def create_fake_metric(prefix, idx, labels):
+    g = Gauge("{0}_metric_{1}".format(prefix, idx), prefix + " Metric", labels[0].keys())
+    return g, labels
+
+def create_fake_metrics(total_metrics, nlabels, name="fake"):
     values = ["A", "B"]
     labels = [("label_{0}".format(i)) for i in range(nlabels)]
     iterables_list = [values for _ in range(nlabels)]
@@ -79,7 +83,7 @@ def create_fake_metrics(total_metrics, nlabels):
     logging.debug(len(all_labels))
     nmetrics = int(total_metrics/len(all_labels))
     fake_metrics = []
-    fake_metrics += [create_new_gutentag_metric("fake", i, all_labels) for i in range(nmetrics)]
+    fake_metrics += [create_fake_metric(name, i, all_labels) for i in range(nmetrics)]
 
     global metrics
     metrics = fake_metrics
@@ -116,14 +120,22 @@ def create_all_gutentag_metrics(conf_file, opt_config=None):
     metrics = cluster_metrics + node_metrics + app_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
 
-def set_metrics_runner():
+def set_metrics_runner(fake=True):
     counter = 0
-    while(True):
-        counter = (counter+1)%LENGTH
-        time.sleep(1)
-        for (g, ts_array, label_array) in metrics:
-            for (ts, labels) in zip(ts_array, label_array):
-                g.labels(**labels).set(ts[counter])
+    if fake:
+        while(True):
+            time.sleep(5)
+            for (g, label_array) in metrics:
+                for labels in label_array:
+                    val = random.randint(1, 100)
+                    g.labels(**labels).set(val)
+    else:
+        while(True):
+            counter = (counter+1)%LENGTH
+            time.sleep(5)
+            for (g, ts_array, label_array) in metrics:
+                for (ts, labels) in zip(ts_array, label_array):
+                    g.labels(**labels).set(ts[counter])
             
 ## To handle the json using flask
 @app.route('/', methods=['POST'])
@@ -144,7 +156,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Metrics generator")
     parser.add_argument('--conf', dest='conf', help='Config yaml file', default='conf.yaml')
     # Additional config - overrides config.yaml
-    parser.add_argument('-n', '--name', dest='name', help='Name of the cluster', default='1')
+    parser.add_argument('-n', '--name', dest='name', help='Name of the cluster', default='c0')
+    parser.add_argument('-p', '--port', dest='port', help='Port to run http server', default=8000, type=int)
     # To create artificial metrics with as many labels as we want
     parser.add_argument('--fake', dest='fake', action='store_true')
     parser.add_argument('--nmetrics', dest='nmetrics', default=1000, type=int)
@@ -158,11 +171,11 @@ if __name__ == '__main__':
     if not args.fake:
         create_all_gutentag_metrics(args.conf, opt_config)
     else:
-        create_fake_metrics(args.nmetrics, args.nlabels)
-
+        create_fake_metrics(args.nmetrics, args.nlabels, args.name)
+                            
     # Start the gen-metrics interface
     #app.run(debug=False)
     
     # Start the prometheus server
-    start_http_server(8000)
+    start_http_server(args.port)
     set_metrics_runner()
