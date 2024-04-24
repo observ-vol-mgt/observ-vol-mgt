@@ -120,9 +120,10 @@ def create_all_gutentag_metrics(conf_file, opt_config=None):
     metrics = cluster_metrics + node_metrics + app_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
 
-def set_metrics_runner(fake=True):
+def set_metrics_runner(fake=False):
     counter = 0
     if fake:
+        logging.info("set runner {0}", metrics)
         while(True):
             time.sleep(5)
             for (g, label_array) in metrics:
