@@ -1,20 +1,19 @@
 from pydantic import BaseModel, validator
-from typing import List, Dict, Literal 
+from typing import List, Literal, Union
+from models.ProcessorsConfig import *
 
-class ActionCreate(BaseModel):
-    dag: str
+class ActionCreateDAG(BaseModel):
+    action_type: Literal["create_dag"]
+    processors: List[Processor]
+    dag: List[DAGNode] = None
 
-class ActionAppend(BaseModel):
-    dag: str
+class ActionDeleteDAG(BaseModel):
+    action_type: Literal["delete_dag"]
 
-class ActionDelete(BaseModel):
-    dag: str
-
-class Action(BaseModel):
-    action_type: Literal["create", "append", "delete"]
-    create: ActionCreate = None
-    append: ActionAppend = None
-    delete: ActionDelete = None
+#class Action(BaseModel):
+#    action_type: Literal["create_dag", "delete_dag", "insert_node", "append_node", "delete_node"]
+#    create_dag: ActionCreate = None
+#    delete_dag: ActionAppend = None
 
 class Rule(BaseModel):
     rule_id: str
@@ -22,7 +21,8 @@ class Rule(BaseModel):
     expr: str
     duration: str
     description: str = None
-    action: Action
+    firing_action: Union[ActionCreateDAG, ActionDeleteDAG]
+    resolved_action: Union[ActionDeleteDAG, ActionDeleteDAG]
 
 class Rules(BaseModel):
     rules: List[Rule]

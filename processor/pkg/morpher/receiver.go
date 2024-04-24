@@ -103,6 +103,10 @@ func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Decode Request
 	request := ReceiverRequest{}
+        w.WriteHeader(http.StatusOK)
+        w.Header().Set("Content-Type", "application/json")
+        resp := make(map[string]string)
+        resp["message"] = "Status OK"
 	err := yaml.Unmarshal(bodyBytes, &request)
 	if err != nil {
 		http.Error(w, "Error parsing YAML", http.StatusBadRequest)
