@@ -11,6 +11,7 @@ from flask import Flask, jsonify, request
 from prometheus_client import start_http_server, Gauge
 import uuid
 import itertools
+import threading
 
 app = Flask(__name__)
 
@@ -125,11 +126,11 @@ def create_all_gutentag_metrics(conf_file, opt_config=None):
     metrics = cluster_metrics + node_metrics + app_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
 
-def set_metrics_runner(fake=False):
+def set_metrics_runner(fake=True):
     counter = 0
     logging.info("set runner_Called")
     if fake:
-        logger.info("set runner {0}", metrics)
+        #logger.info("set runner {0}", metrics)
         while(True):
             time.sleep(5)
             for (g, label_array) in metrics:
@@ -138,25 +139,34 @@ def set_metrics_runner(fake=False):
                     g.labels(**labels).set(val)
     else:
         #logging.info("set runner metrics", metrics)
-        #while(True):
-        counter = (counter+1)%LENGTH
-        time.sleep(5)
-        for (g, ts_array, label_array) in metrics:
-            for (ts, labels) in zip(ts_array, label_array):
-                g.labels(**labels).set(ts[counter])
+        while(True):
+            counter = (counter+1)%LENGTH
+            time.sleep(5)
+            for (g, ts_array, label_array) in metrics:
+                for (ts, labels) in zip(ts_array, label_array):
+                    g.labels(**labels).set(ts[counter])
 
 # This function translates the json to determine the metrics which need to be changed and calls 
 # action() function defined above for the chosen metrics
 #currently not done for fake metrics
 def change_metrics(clusterlist,isSet):
     global change_metrics_list
+    global metrics
     for (g, ts_array, label_array) in metrics:
         if g._name == "app_A_network_metric_0":
             print("metric found")
             print(g)
             change_metrics_list += (g, ts_array, label_array)
-            for i in range(len(ts_array)):
-                ts_array[i] = 200
+            for i, (g, ts_array, label_array) in enumerate(metrics):
+                if isSet:
+                    new_ts_array = [x+200 for x in ts_array]
+                else:
+                    new_ts_array = [x-200 for x in ts_array]
+                metrics[i] = (g, new_ts_array, label_array)
+                    
+            #for (ts, labels) in zip(ts_array, label_array):
+            #    ts = [x+200 for x in ts]
+
     return "Metrics updated", 200
     
 ## To handle the json using flask
@@ -200,6 +210,7 @@ if __name__ == '__main__':
     
     # Start the prometheus server
     start_http_server(args.port)
-    set_metrics_runner()
-    app.run(host="0.0.0.0", port=5002, debug=False)
+    threading.Thread(target=lambda:app.run(host="0.0.0.0", port=5002, debug=False)).start()
+    set_metrics_runner(args.fake)
+    
 
