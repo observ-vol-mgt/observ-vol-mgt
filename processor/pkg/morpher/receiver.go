@@ -59,7 +59,7 @@ func selectorsToString(selectors []Selector) string {
 }
 
 func (p Processor) ParseSelector() string {
-	selectors := []Selector{Selector{Key: "__name__", Value: p.Metric["metricName"]}}
+	selectors := []Selector{Selector{Key: "__name__", Value: p.Metric["metric_name"]}}
 	if p.Metric["condition"] != "" {
 		conditions := strings.Split(p.Metric["condition"], "and")
 		for _, condition := range conditions {
@@ -75,7 +75,7 @@ func (p Processor) ParseParams() []float64 {
 	params := []float64{}
 	switch p.Type {
 	case "aggregate":
-	case "freq":
+	case "frequency":
 		val, _ := strconv.ParseFloat(p.Metric["interval"], 32)
 		params = append(params, val)
 	}

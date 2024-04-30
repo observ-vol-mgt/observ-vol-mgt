@@ -57,7 +57,7 @@ func InitDB(f io.Writer, timings benchmarker.Timings) DB {
 	}
 
 	log.Out = f
-	log.SetLevel(logrus.ErrorLevel)
+	log.SetLevel(logrus.InfoLevel)
 
 	DB := DB{
 		db: db,
