@@ -28,7 +28,7 @@ def index():
     return render_template('index.html', insights=insights, series_names=series_names)
 
 
-@flaskApp.route('/visualize', methods=['POST'])
+@flaskApp.route('/signal_visualization', methods=['POST'])
 def visualize():
     selected_series = request.form.getlist('timeSeries')
     plt.figure(figsize=(10, 6))
@@ -65,5 +65,5 @@ def visualize():
     plt.savefig(f"{current_path}/temp/plot.png", dpi=120, bbox_inches='tight')  # Save the plot as an image
     plt.close()
 
-    return render_template('visualize.html')
+    return render_template('signal_visualize.html')
 

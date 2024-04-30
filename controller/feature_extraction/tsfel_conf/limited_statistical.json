@@ -17,6 +17,21 @@
       "parameters": "",
       "n_features": 1,
       "use": "yes"
+    },
+    "Histogram": {
+      "function": "tsfel.hist",
+      "parameters": {
+        "nbins": 10,
+        "r": 1
+      },
+      "n_features": "nbins",
+      "use": "yes"
+    },
+    "Absolute energy": {
+      "function": "tsfel.abs_energy",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
     }
   }
 }
