@@ -1,7 +1,7 @@
 rules:
   - rule_id: rule_1
     processors: [processor_id_1]
-    expr: (cluster_metric_2) > 100
+    expr: (app_A_network_metric_0) > 200
     duration: 1s
     description: rule to change frequency for bookkeeping metrics from 30 sec to 10 min during mild stress
     firing_action:

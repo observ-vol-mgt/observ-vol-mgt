@@ -22,7 +22,7 @@ metrics = []
 cluster_metrics = []
 node_metrics = []
 app_metrics = []
-change_metrics_list = []
+
 def read_yaml(yamlfile):
     with open(yamlfile, "r") as f:
         data = yaml.load(f, Loader=yaml.FullLoader)
@@ -149,20 +149,27 @@ def set_metrics_runner(fake=True):
 # This function translates the json to determine the metrics which need to be changed and calls 
 # action() function defined above for the chosen metrics
 #currently not done for fake metrics
-def change_metrics(clusterlist,isSet):
-    global change_metrics_list
+def change_metrics(r_data,isSet):
+    change_metrics_list = []
     global metrics
+    nr_data = r_data.get('metrics')[1]
+    for nr_data in r_data.get('metrics'):
+        metric_name = nr_data.get('name') + "_" + "_".join(str(t) for t in nr_data.get('type')) + "_" + "metric_" + "_".join(str(i) for i in nr_data.get('index'))
+        change_metrics_list.append(metric_name)
+        print(change_metrics_list)
+    #TODO store metric_name as an array and change the inner if loop below
     for (g, ts_array, label_array) in metrics:
-        if g._name == "app_A_network_metric_0":
-            print("metric found")
-            print(g)
-            change_metrics_list += (g, ts_array, label_array)
-            for i, (g, ts_array, label_array) in enumerate(metrics):
-                if isSet:
-                    new_ts_array = [x+200 for x in ts_array]
-                else:
-                    new_ts_array = [x-200 for x in ts_array]
-                metrics[i] = (g, new_ts_array, label_array)
+        for metric_name in change_metrics_list:
+            if g._name == metric_name:
+                print("metric found")
+                print(g)
+                change_metrics_list += (g, ts_array, label_array)
+                for i, (g, ts_array, label_array) in enumerate(metrics):
+                    if isSet:
+                        new_ts_array = [x+200 for x in ts_array]
+                    else:
+                        new_ts_array = [x-200 for x in ts_array]
+                    metrics[i] = (g, new_ts_array, label_array)
                     
             #for (ts, labels) in zip(ts_array, label_array):
             #    ts = [x+200 for x in ts]
@@ -172,15 +179,20 @@ def change_metrics(clusterlist,isSet):
 ## To handle the json using flask
 @app.route('/', methods=['POST'])
 def update():
-    record = json.loads(request.data)
-    if record['type']=="SET":
-        return change_metrics(record['cluster'], True)
-    elif record['type']=="RESET":
-        return change_metrics(record['cluster'], False)
-    elif record['type']=="SET ALL":
-        return change_all_metrics(True)
-    elif record['type']=="RESET ALL":
-        return change_all_metrics(False)
+    rule_data = request.get_data()
+    try:
+        r_data = yaml.safe_load(rule_data)
+    except Exception as e:
+        logger.error("Invalid yaml data")
+        return {"message":"Invalid YAML data"}, 400
+    if r_data.get('action')=="SET":
+        return change_metrics(r_data, True)
+    elif r_data.get('action')=="RESET":
+        return change_metrics(r_data, False)
+    #elif record['type']=="SET ALL":
+    #    return change_all_metrics(True)
+    #elif record['type']=="RESET ALL":
+    #    return change_all_metrics(False)
     else:
         return "Incorrect request type", 400
 
