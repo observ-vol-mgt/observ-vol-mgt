@@ -23,7 +23,7 @@ def extract_signal(signal):
 
     # list of features to extract from configuration file
     # cfg_file = tsfel.get_features_by_domain('statistical') # ==> this will use all the statistical features
-    file_path = "feature_extraction/tsfel_conf/minimum_statistical.json"
+    file_path = "feature_extraction/tsfel_conf/limited_statistical.json"
     with open(file_path, 'r') as file:
         # Load the JSON data from the file
         cfg_file = json.load(file)
@@ -61,14 +61,6 @@ def extract(signals):
             pd.DataFrame(extracted_signal_features.transpose()).rename(columns={0: extracted_signal_name}))
         df_extracted_features = pd.concat([df_extracted_features, extracted_signal_features_as_column], axis=1)
 
-    threshold = 0.999
-    corr_matrix = df_extracted_features.corr(method='pearson')
-
-    extracted_signals.metadata["corr_matrix"] = corr_matrix
-
-    # label each of the signals with the correlation with all other signals
-    for index, extracted_signal in enumerate(extracted_signals):
-        extracted_signal_name = extracted_signal.metadata["__name__"]
-        extracted_signal.metadata["corr_features"] = corr_matrix[extracted_signal_name]
+    extracted_signals.metadata["features_matrix"] = df_extracted_features
 
     return extracted_signals
