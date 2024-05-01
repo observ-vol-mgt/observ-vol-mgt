@@ -17,6 +17,12 @@
       "parameters": "",
       "n_features": 1,
       "use": "yes"
+    },
+    "Median": {
+      "function": "tsfel.calc_median",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
     }
   }
 }

@@ -4,13 +4,124 @@ import pandas as pd
 import statsmodels.api as sm
 import statsmodels.stats.outliers_influence as oi
 
+from common.utils import remove_dictionary_keys
+
 logger = logging.getLogger(__name__)
 
 
 def generate_insights(signals):
-    causality_insights = analyze_composed_correlations(signals)
-    correlation_insights = analyze_correlations(signals)
-    return correlation_insights + causality_insights
+    # Get the pairwise correlation between signals
+    signals_to_keep, signals_to_reduce, correlation_insights = (
+        analyze_correlations(signals))
+
+    # Get the composed correlation for the remaining signals
+    signals_to_keep_post_correlation = signals.filter_by_names(signals_to_keep)
+    signals_to_keep, signals_to_reduce, composed_correlation_insights = (
+        analyze_composed_correlations(signals_to_keep_post_correlation))
+
+    summary_insights = f"\n ==> Summery: The signals to keep are: {signals_to_keep}:\n\n"
+    return correlation_insights + composed_correlation_insights + summary_insights
+
+
+def analyze_correlations(signals):
+    """
+    Find the pairwise correlation between signals
+    """
+
+    # Execute cross signal correlation
+    threshold = 0.95
+    features_matrix = signals.metadata["features_matrix"]
+    corr_matrix = features_matrix.corr(method='pearson')
+    signals.metadata["corr_matrix"] = corr_matrix
+
+    # label each of the signals with the correlation with all other signals
+    for index, extracted_signal in enumerate(signals):
+        extracted_signal_name = extracted_signal.metadata["__name__"]
+        extracted_signal.metadata["corr_features"] = corr_matrix[extracted_signal_name]
+
+    # Analyze the list of signals that can be reduces
+
+    # Select upper triangle of correlation matrix
+    upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
+
+    # Find index and column name of features with high correlation
+    signals_to_reduce = []
+    signals_to_keep = []
+    for column in upper.columns:
+        keep_metric = True
+        for index in upper.index:
+            if upper.loc[index, column] > threshold:
+                signals_to_reduce.append({"metric": column, "correlated_metric": index})
+                keep_metric = False
+                break
+        if keep_metric:
+            signals_to_keep.append(column)
+
+    # Generate the insights
+    insights = f"Based on pairwise correlation analysis we can reduce:\n"
+    insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
+    for signals_to_reduce in signals_to_reduce:
+        metric = signals_to_reduce["metric"]
+        correlated_metric = signals_to_reduce["correlated_metric"]
+        insights += f"{metric} - it is highly correlated with {correlated_metric}\n"
+    insights += f"-=-=--=\n\n"
+
+    logging.debug(f"\n\n{insights}\n")
+    return signals_to_keep, signals_to_reduce, insights
+
+
+def analyze_composed_correlations(signals):
+
+    # This method is using the original raw signals, this is not really working well,
+    # and it requires significant computational resources. We will use the features,
+    # version of the analysis and not use the function `analyze_composed_correlations_from_raw_signals`
+    # insights=analyze_composed_correlations_from_raw_signals(signals)
+    # return insights
+
+    # will hold the signals we need to keep based on the analysis
+    signals_to_keep =[]
+
+    # this is an opinionated list of selected features used to commute the linear correlation between
+    # multiple independent signals and the dependent signal
+    selected_features = ["0_Min", "0_Max", "0_Mean", "0_Var", "0_PeakToPeakDistance", "0_AbsoluteEnergy"]
+
+    signals_features_matrix = pd.DataFrame()
+    for signal in signals.signals:
+        signals_features_matrix[signal.metadata["__name__"]] = (
+            signal.metadata["extracted_features"][selected_features].transpose())
+
+    dependent_signals = {}
+    for the_signal in signals_features_matrix.columns:
+        features_matrix_to_test = signals_features_matrix.drop(columns=[the_signal])
+        features_matrix_to_test = sm.add_constant(features_matrix_to_test)
+        model = sm.OLS(signals_features_matrix[the_signal], features_matrix_to_test)
+        results = model.fit()
+        logger.info(results.summary())
+        significant_signal_predictors = results.pvalues[results.pvalues < 0.01].index.tolist()
+        if 'const' in significant_signal_predictors:
+            significant_signal_predictors.remove('const')
+        if significant_signal_predictors:
+            # Print significant predictors
+            logger.debug(f"The significant predictors for {the_signal} are: {significant_signal_predictors}")
+            dependent_signals[the_signal] = significant_signal_predictors
+        else:
+            signals_to_keep += [the_signal]
+            logger.debug(f"The significant predictors for {the_signal} are: None")
+
+    insights = f"Based on composed correlation relationship predictions we can also reduce:\n"
+    insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
+    signals_to_reduce = []
+    for the_signal in dependent_signals:
+        # skip signals that are used to predict other signals
+        if the_signal in signals_to_keep:
+            continue
+        insights += f"{the_signal} - it is constructed from {dependent_signals[the_signal]}\n"
+        signals_to_reduce += the_signal
+        signals_to_keep += dependent_signals[the_signal]
+    insights += f"-=-=--=\n\n"
+
+    logging.debug(f"\n\n{insights}\n")
+    return signals_to_keep, signals_to_reduce, insights
 
 
 def analyze_composed_correlations_from_raw_signals(signals):
@@ -53,71 +164,3 @@ def analyze_composed_correlations_from_raw_signals(signals):
 
     return insights
 
-
-def analyze_composed_correlations(signals):
-
-    # This method is using the original raw signals, this is not really working well,
-    # and it requires significant computational resources. We will try to use the features,
-    # version of the analysis and not use the function `analyze_composed_correlations_from_raw_signals`
-
-    # insights=analyze_composed_correlations_from_raw_signals(signals)
-    # return insights
-
-    insights = f"We observed the following composed correlation relationships:\n\n"
-    features_matrix = signals.metadata["features_matrix"]
-    for feature in features_matrix.columns:
-        features_matrix_test = features_matrix.drop(columns=[feature])
-        features_matrix_test = sm.add_constant(features_matrix_test)
-        model = sm.OLS(features_matrix[feature], features_matrix_test)
-        results = model.fit()
-        significant_predictors = results.pvalues[results.pvalues < 0.05].index.tolist()
-        if 'const' in significant_predictors:
-            significant_predictors.remove('const')
-
-        # Print significant predictors
-        insights += f"The significant predictors for {feature} are: {significant_predictors}\n"
-
-    insights += f"-=-=--=\n\n"
-    return insights
-
-
-def analyze_correlations(signals):
-    """
-    Find the correlation between signals
-    """
-
-    # Execute cross signal correlation
-    threshold = 0.95
-    features_matrix = signals.metadata["features_matrix"]
-    corr_matrix = features_matrix.corr(method='pearson')
-    signals.metadata["corr_matrix"] = corr_matrix
-
-    # label each of the signals with the correlation with all other signals
-    for index, extracted_signal in enumerate(signals):
-        extracted_signal_name = extracted_signal.metadata["__name__"]
-        extracted_signal.metadata["corr_features"] = corr_matrix[extracted_signal_name]
-
-    # Analyze the list of signals that can be reduces
-
-    # Select upper triangle of correlation matrix
-    upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
-
-    # Find index and column name of features with high correlation
-    metrics_to_reduce = []
-    for column in upper.columns:
-        for index in upper.index:
-            if upper.loc[index, column] > threshold:
-                metrics_to_reduce.append({"metric": column, "correlated_metric": index})
-                break
-
-    # Generate the insights
-    insights = f"Based on pairwise correlation analysis we can reduce:\n\n"
-    for metric_to_reduce in metrics_to_reduce:
-        metric = metric_to_reduce["metric"]
-        correlated_metric = metric_to_reduce["correlated_metric"]
-        insights += f"{metric} - it is highly correlated with {correlated_metric}\n"
-    insights += f"-=-=--=\n\n"
-
-    logging.debug(f"\n\n{insights}\n")
-
-    return insights
