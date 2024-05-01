@@ -18,6 +18,24 @@
       "n_features": 1,
       "use": "yes"
     },
+    "Median": {
+      "function": "tsfel.calc_median",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Var": {
+      "function": "tsfel.calc_var",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Std": {
+      "function": "tsfel.calc_std",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
     "Histogram": {
       "function": "tsfel.hist",
       "parameters": {
@@ -27,8 +45,14 @@
       "n_features": "nbins",
       "use": "yes"
     },
-    "Absolute energy": {
+    "AbsoluteEnergy": {
       "function": "tsfel.abs_energy",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "PeakToPeakDistance": {
+      "function": "tsfel.pk_pk_distance",
       "parameters": "",
       "n_features": 1,
       "use": "yes"
