@@ -47,7 +47,7 @@ func selectorsToString(selectors []Selector) string {
 	for i, selector := range selectors {
 		filled_strings[i] = fmt.Sprintf(template_string, selector.Key, selector.Value)
 	}
-	query_string := `(` + strings.Join(filled_strings, " INTERSECT ") + ")" //multiple selectors
+	query_string := `phash in (` + strings.Join(filled_strings, " INTERSECT ") + ")" //multiple selectors
 	log.Debug(query_string)
 	return query_string
 }

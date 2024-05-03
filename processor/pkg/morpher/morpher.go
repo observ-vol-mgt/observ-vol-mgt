@@ -27,12 +27,12 @@ const (
 	UnitMorph     string = Prefix + ` as select phash, timestamp, val from %[2]s;`
 	SelectorMorph string = Prefix + ` as select phash, timestamp, val from %[2]s where phash in %[3]s;`
 	FilterMorph   string = Prefix + ` as select phash, timestamp, val from %[2]s where phash in %[3]s;`
-	FreqMorph     string = `create view temp.freq_v%[1]d(phash, timestamp, val) as select phash, max(timestamp), val from %[2]s where phash in %[3]s group by phash;` + Prefix + ` as select temp.freq_v%[1]d.phash, timestamp, val from frequency join freq_v%[1]d on frequency.phash = temp.freq_v%[1]d.phash where timestamp >= frequency.last + %[4]f;drop view temp.freq_v%[1]d;
+	FreqMorph     string = `create view temp.freq_v%[1]d(phash, timestamp, val) as select phash, max(timestamp), val from %[2]s where %[3]s group by phash;` + Prefix + ` as select temp.freq_v%[1]d.phash, timestamp, val from frequency join freq_v%[1]d on frequency.phash = temp.freq_v%[1]d.phash where timestamp >= frequency.last + %[4]f;drop view temp.freq_v%[1]d;
 update frequency set last = (select case when count(*) > 0 then (select timestamp from t%[1]d where t%[1]d.phash = frequency.phash) else last end from t%[1]d);`
-	ProbFreqMorph string = Prefix + ` as select phash, timestamp, val from (select phash, timestamp, val from %[2]s where phash in %[3]s) where abs(CAST(random() AS REAL))/9223372036854775808 < 5000/%[4]f;`
-	//ProbFreqMorph       string = Prefix + ` as select phash, timestamp, val from (select phash, timestamp, val, max(timestamp) - min(timestamp) as diff, count(*) as c from %[2]s where phash in %[3]s group by phash) where abs(CAST(random() AS REAL))/9223372036854775808 < diff/((c-1)*%[4]f);`
-	SimpleAdaptiveMorph string = Prefix + ` as select phash, timestamp, val from %[2]s where phash in %[3]s and val >= %[4]f;`
-	AggregateMorph      string = Prefix + ` as select phash, avg(timestamp) as timestamp, avg(val) as val from %[2]s where phash in %[3]s group by phash; insert into metrics select phash, timestamp, val, 0 from t%[1]d;`
+	ProbFreqMorph string = Prefix + ` as select phash, timestamp, val from (select phash, timestamp, val from %[2]s where %[3]s) where abs(CAST(random() AS REAL))/9223372036854775808 < 5000/%[4]f;`
+	//ProbFreqMorph       string = Prefix + ` as select phash, timestamp, val from (select phash, timestamp, val, max(timestamp) - min(timestamp) as diff, count(*) as c from %[2]s where %[3]s group by phash) where abs(CAST(random() AS REAL))/9223372036854775808 < diff/((c-1)*%[4]f);`
+	SimpleAdaptiveMorph string = Prefix + ` as select phash, timestamp, val from %[2]s where %[3]s and val >= %[4]f;`
+	AggregateMorph      string = Prefix + ` as select phash, avg(timestamp) as timestamp, avg(val) as val from %[2]s where %[3]s group by phash; insert into metrics select phash, timestamp, val, 0 from t%[1]d;`
 	DropMorph           string = ``
 
 	LeafNode    string = `update metrics set export = 1 where (phash, timestamp, val) in (select phash, timestamp, val from %[1]s);`
@@ -40,7 +40,7 @@ update frequency set last = (select case when count(*) > 0 then (select timestam
 	DeleteView  string = `drop view if exists t%d;`
 )
 
-var DefaultMorph string = strings.Replace(ProbFreqMorph, "phash in %[3]s", "phash not in (select distinct phash from labels where phash in %[3]s)", 1)
+var DefaultMorph string = strings.Replace(ProbFreqMorph, "%[3]s", "phash not in (select distinct phash from labels where %[3]s)", 1)
 
 var StringToMorphMap = map[string]string{
 	"frequency": ProbFreqMorph,
