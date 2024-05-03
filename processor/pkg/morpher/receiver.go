@@ -34,12 +34,6 @@ type Processor struct {
 	Type   string            `yaml:"type"`
 	ID     string            `yaml:"id"`
 	Metric map[string]string `yaml:"metrics"`
-	// Metric struct {
-	// Parameters map[string]string
-	// MetricName string            `yaml:"metric_name"`
-	// Condition  string            `yaml:"condition"`
-	// Parameters map[string]string `yaml:",flow"`
-	// } `yaml:"metrics"`
 }
 
 type DAGNode struct {
@@ -103,10 +97,7 @@ func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Decode Request
 	request := ReceiverRequest{}
-        w.WriteHeader(http.StatusOK)
-        w.Header().Set("Content-Type", "application/json")
-        resp := make(map[string]string)
-        resp["message"] = "Status OK"
+	w.WriteHeader(http.StatusOK)
 	err := yaml.Unmarshal(bodyBytes, &request)
 	if err != nil {
 		http.Error(w, "Error parsing YAML", http.StatusBadRequest)
@@ -148,5 +139,13 @@ func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	m.CompileMorph()
+}
+
+func (m *Morpher) Delete(w http.ResponseWriter, r *http.Request) {
+	// Reset to default frequency of 30 sec for all
+	def := NewMorphUnitFromString("frequency", "1", []float64{30000})
+	root := m.NewRootNode()
+	root.AddUnitChild(def)
 	m.CompileMorph()
 }
