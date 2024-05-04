@@ -1,6 +1,6 @@
 global:
   http_config: 
-    proxy_url: 'http://127.0.0.1:5001'
+    proxy_url: 'http://127.0.0.1:5010'
 route:
   group_by: ['alertname']
   group_wait: 1s
@@ -10,7 +10,7 @@ route:
 receivers:
   - name: 'web.hook'
     webhook_configs:
-      - url: 'http://127.0.0.1:5001/'
+      - url: 'http://127.0.0.1:5010/alerthandler'
 inhibit_rules:
   - source_match:
       severity: 'critical'
