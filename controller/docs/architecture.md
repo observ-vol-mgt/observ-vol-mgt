@@ -1,19 +1,32 @@
 # Volume Manager Controller
+
 ## Architecture
 
-The Volume Manager Controller is responsible for receiving information from the Observability Collectors and Observability Processors. It then performs a set of operations to contextualize and analyze this information. Along with the user-provided policies, the Controller generates insights and conducts automation operations to control and optimize the volume of observability data.  
+The Volume Manager Controller is responsible for receiving information from the Observability Collectors and
+Observability Processors. It then performs a set of operations to contextualize and analyze this information. Along with
+the user-provided policies, the Controller generates insights and conducts automation operations to control and optimize
+the volume of observability data.
 
-The volume manager is built around pipelines of tasks that are executed asynchronously. Each task performs a different function and the pipelines are configurable to allow flexibility and support for various use cases.  
+The volume manager is built around pipelines of tasks that are executed asynchronously. Each task performs a different
+function, and the pipelines are configurable to allow flexibility and support for various use cases.
 
-Tasks can be optimized and parallelized to enhance scalability and efficiency. Each task is classified based on its type, which determines its specific functionality and characteristics. The input and output data structures of each task differ from one another. The controller manages and arranges the tasks in Directed Acyclic Graphs (DAGs), and performs operations on them periodically and on-demand. The data ingestion into the controller is batched and processed between the various task operations.  
+Tasks can be optimized and parallelized to enhance scalability and efficiency. Each task is classified based on its
+type, which determines its specific functionality and characteristics. The input and output data structures of each task
+differ from one another. The controller manages and arranges the tasks in Directed Acyclic Graphs (DAGs), and performs
+operations on them periodically and on-demand. The data ingestion into the controller is batched and processed between
+the various task operations.
 
-The controller requires data persistence to efficiently analyze observability data over time. Data persistence is decoupled from computing tasks, allowing flexibility for specific use cases.  
+The controller requires data persistence to efficiently analyze observability data over time. Data persistence is
+decoupled from computing tasks, allowing flexibility for specific use cases.
 
-The controller's behavior is governed by a collection of high-level semantic policies that are visible to the user. This enables the controller to be managed based on intentions. The policies are analyzed by the controller and compared with the observed data to provide insights and configurations for handling the volume of observability data.  
+The controller's behavior is governed by a collection of high-level semantic policies that are visible to the user. This
+enables the controller to be managed based on intentions. The policies are analyzed by the controller and compared with
+the observed data to provide insights and configurations for handling the volume of observability data.
 
-## Task flows 
+## Task flows
 
 ### Basic
+
 For basic use cases, the volume manager controller tasks can be configured as follows:
 
 <!---to edit mermaid flowcharts online use: https://mermaid.live/) 
@@ -51,11 +64,12 @@ flowchart LR
 classDef policyclass fill:lightblue    
 Ingress --> User --> Insights --> Automation --> Egress
 ```
->Note: In this MVP controller pipeline. The configuration of the controller uses a sub-set of the available tasks.
+
+> Note: In this MVP controller pipeline. The configuration of the controller uses a subset of the available tasks.
 
 ### Advanced
 
-In advanced use cases, the tasks pipeline can be extended to provide additional capabilities. For example:
+In advanced use cases, the task pipeline can be extended to provide additional capabilities. For example:
 
 ```mermaid
 flowchart LR
@@ -125,12 +139,11 @@ Following are basic explanations for each of the task types:
 | Signal-Insight                     | Insight tasks are responsible for the generation of volume management insights. Those insights are user-facing outputs of the pipelines and according to policies can be consumed by the users or pushed. The insights are tangible, environment-specific, and dynamic. They provide insights into volume management behaviors and action recommendations. |
 | Automation/configuration generator | Automation tasks are responsible for the generation of per-processor configuration based on the action recommendation of the insights tasks. The configurations are sent using a customer-provided control plane to the processors to enforce the volume management reductions automatically.                                                              |
 
-
 TBD:
 
-Configurations  the configuration tasks are 
+Configurations the configuration tasks are
 
-Feature extraction  feature 
+Feature extraction feature
 
 Persistence:
 

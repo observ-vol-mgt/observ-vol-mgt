@@ -1,9 +1,17 @@
-from tsfresh.feature_extraction import extract_features
-from tsfresh.feature_extraction import ComprehensiveFCParameters
-import numpy as np
-import pandas as pd
-import os
-import file_utils
+#  Copyright 2024 IBM, Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 from common.signal import Signals
 
 
@@ -19,7 +27,7 @@ exit()
 
 # ref: https://tsfresh.readthedocs.io/en/latest/text/quick_start.html
 
-# if the data set file doesn't exist load from the internet
+# if the data set file doesn't exist, load from the internet
 dataset_file = "UCI HAR Dataset.zip"
 if not file_utils.file_exists(dataset_file):
     # Load the dataset from online repository

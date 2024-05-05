@@ -1,10 +1,23 @@
+#  Copyright 2024 IBM, Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 import logging
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.stats.outliers_influence as oi
-
-from common.utils import remove_dictionary_keys
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +87,6 @@ def analyze_correlations(signals):
 
 
 def analyze_composed_correlations(signals):
-
     # This method is using the original raw signals, this is not really working well,
     # and it requires significant computational resources. We will use the features,
     # version of the analysis and not use the function `analyze_composed_correlations_from_raw_signals`
@@ -82,7 +94,7 @@ def analyze_composed_correlations(signals):
     # return insights
 
     # will hold the signals we need to keep based on the analysis
-    signals_to_keep =[]
+    signals_to_keep = []
 
     # this is an opinionated list of selected features used to commute the linear correlation between
     # multiple independent signals and the dependent signal
@@ -150,7 +162,8 @@ def analyze_composed_correlations_from_raw_signals(signals):
         # Calculate VIF for each independent variable
         vif = pd.DataFrame()
         vif["Features"] = signals_matrix_test.columns
-        vif["VIF"] = [oi.variance_inflation_factor(signals_matrix_test.values, i) for i in range(signals_matrix_test.shape[1])]
+        vif["VIF"] = [oi.variance_inflation_factor(signals_matrix_test.values, i) for i in
+                      range(signals_matrix_test.shape[1])]
         print("VIF for", signal)
         print(vif)
 
@@ -166,4 +179,3 @@ def analyze_composed_correlations_from_raw_signals(signals):
         insights += f"The significant predictors for {signal} are: {significant_predictors}\n"
 
     return insights
-
