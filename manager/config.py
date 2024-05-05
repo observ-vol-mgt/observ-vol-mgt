@@ -6,7 +6,7 @@ LOG_FILE = "./app/logs/manager.log"
 PROCESSORS_FOLDER = "./app/processors"
 RULES_FOLDER = "./app/rules"
 
-PROCESSOR_1_URL = "http://localhost:8100/morphchain/create"
-PROCESSOR_2_URL = "http://localhost:8100/morphchain/create"
+PROCESSOR_1_URL = "http://localhost:8100/morphchain"
+PROCESSOR_2_URL = "http://localhost:8100/morphchain"
 
 ALERTMANAGER_URL = "http://localhost:8090"
