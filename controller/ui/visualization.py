@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request
-import matplotlib.pyplot as plt
-import os
 import datetime
+import os
 from datetime import datetime
 
+import matplotlib.pyplot as plt
+from flask import Flask, render_template, request
+
 current_path = os.path.dirname(os.path.realpath(__file__))
-flaskApp = Flask(__name__, template_folder=current_path, static_folder=f"{current_path}/temp")
+flaskApp = Flask(__name__, template_folder=current_path, static_folder=f"{current_path}/static")
 
 time_series = {}
 insights = ""
@@ -25,7 +26,22 @@ def fill_insights(the_insights):
 @flaskApp.route('/')
 def index():
     series_names = list(time_series.keys())
-    return render_template('index.html', insights=insights, series_names=series_names)
+    return render_template('index.html', series_names=series_names)
+
+
+@flaskApp.route('/insights')
+def insights():
+    return render_template('insights.html', insights=insights)
+
+
+@flaskApp.route('/about')
+def about():
+    return render_template('about.html')
+
+
+@flaskApp.route('/styles.css')
+def serve_css():
+    return flaskApp.send_static_file('styles.css')
 
 
 @flaskApp.route('/signal_visualization', methods=['POST'])
@@ -62,8 +78,7 @@ def visualize():
                    selected_timestamps]  # Format tick labels
     plt.xticks([datetime.fromtimestamp(ts) for ts in selected_timestamps], tick_labels, rotation=45, fontsize=6)
 
-    plt.savefig(f"{current_path}/temp/plot.png", dpi=120, bbox_inches='tight')  # Save the plot as an image
+    plt.savefig(f"{current_path}/static/plot.png", dpi=120, bbox_inches='tight')  # Save the plot as an image
     plt.close()
 
     return render_template('signal_visualize.html')
-

@@ -10,7 +10,7 @@ def feature_extraction(signals):
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
         extracted_signals = extract(signals)
-    elif get_configuration().ingest_type == "tsfresh":
+    elif get_configuration().feature_extraction_type == "tsfresh":
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals)

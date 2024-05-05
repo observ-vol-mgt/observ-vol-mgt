@@ -14,10 +14,9 @@
 
     <div class="main_container">
         <h1>Signals Analysis and Visualization</h1>
-        <img src="{{ url_for('static', filename='plot.png') }}" alt="Time Series Plot">
-        <a href="/">Go Home</a>
+        <h2>The current insights are:</h2>
+        <p>{{ insights }}</p>
     </div>
-
 
     <!-- Include footer -->
     {% include 'footer.html' %}
