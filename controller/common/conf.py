@@ -24,6 +24,10 @@ def parse_configuration():
           env_var='INGEST_WINDOW')
     p.add('--feature_extraction_type', help='feature_extraction type (tsfel or tsfresh)',
           env_var='FEATURE_EXTRACTION_TYPE')
+    p.add('--config_generator_type', help='configuration generation type (none, otel or processor)',
+          default='none', env_var='CONFIG_GENERATOR_TYPE')
+    p.add('--config_generator_directory', help='configuration generation output directory',
+          env_var='CONFIG_GENERATOR_DIR')
 
     global configuration
     configuration = p.parse_args()

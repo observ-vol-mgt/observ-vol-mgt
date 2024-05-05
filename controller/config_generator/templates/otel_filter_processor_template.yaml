@@ -1,0 +1,8 @@
+processors:
+  filter:
+    error_mode: ignore
+    metrics:
+      {% for metric in metrics -%}
+      - name: "{{ metric.name }}"
+        action: "{{ metric.action }}"
+      {% endfor %}

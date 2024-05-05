@@ -11,16 +11,19 @@ logger = logging.getLogger(__name__)
 
 def generate_insights(signals):
     # Get the pairwise correlation between signals
-    signals_to_keep, signals_to_reduce, correlation_insights = (
+    pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = (
         analyze_correlations(signals))
 
     # Get the composed correlation for the remaining signals
-    signals_to_keep_post_correlation = signals.filter_by_names(signals_to_keep)
-    signals_to_keep, signals_to_reduce, composed_correlation_insights = (
-        analyze_composed_correlations(signals_to_keep_post_correlation))
+    signals_to_keep_post_pairwise_correlation = signals.filter_by_names(pairwise_signals_to_keep)
+    composed_signals_to_keep, composed_signals_to_reduce, composed_correlation_insights = (
+        analyze_composed_correlations(signals_to_keep_post_pairwise_correlation))
 
-    summary_insights = f"\n ==> Summery: The signals to keep are: {signals_to_keep}:\n\n"
-    return correlation_insights + composed_correlation_insights + summary_insights
+    summary_insights = f"\n ==> Summery: The signals to keep are: {composed_signals_to_keep}:\n\n"
+    return (composed_signals_to_keep,
+            [signal["signal"] for signal in pairwise_signals_to_reduce] +
+            [signal["signal"] for signal in composed_signals_to_reduce],
+            pairwise_correlation_insights + composed_correlation_insights + summary_insights)
 
 
 def analyze_correlations(signals):
@@ -51,7 +54,7 @@ def analyze_correlations(signals):
         keep_metric = True
         for index in upper.index:
             if upper.loc[index, column] > threshold:
-                signals_to_reduce.append({"metric": column, "correlated_metric": index})
+                signals_to_reduce.append({"signal": column, "correlated_signals": index})
                 keep_metric = False
                 break
         if keep_metric:
@@ -60,10 +63,10 @@ def analyze_correlations(signals):
     # Generate the insights
     insights = f"Based on pairwise correlation analysis we can reduce:\n"
     insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
-    for signals_to_reduce in signals_to_reduce:
-        metric = signals_to_reduce["metric"]
-        correlated_metric = signals_to_reduce["correlated_metric"]
-        insights += f"{metric} - it is highly correlated with {correlated_metric}\n"
+    for signal_to_reduce in signals_to_reduce:
+        signal = signal_to_reduce["signal"]
+        correlated_signals = signal_to_reduce["correlated_signals"]
+        insights += f"{signal} - it is highly correlated with {correlated_signals}\n"
     insights += f"-=-=--=\n\n"
 
     logging.debug(f"\n\n{insights}\n")
@@ -116,7 +119,7 @@ def analyze_composed_correlations(signals):
         if the_signal in signals_to_keep:
             continue
         insights += f"{the_signal} - it is constructed from {dependent_signals[the_signal]}\n"
-        signals_to_reduce += the_signal
+        signals_to_reduce.append({"signal": the_signal, "constructed_from": dependent_signals[the_signal]})
         signals_to_keep += dependent_signals[the_signal]
     insights += f"-=-=--=\n\n"
 
