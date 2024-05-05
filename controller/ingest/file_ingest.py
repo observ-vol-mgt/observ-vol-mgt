@@ -10,6 +10,10 @@ def ingest():
     signals = Signals()
     conf = get_configuration()
     ingest_file = conf.ingest_file
+
+    signals.metadata["ingest_type"] = "file"
+    signals.metadata["ingest_source"] = ingest_file
+
     logger.info(f"Reading signals from {ingest_file}")
     try:
         with open(ingest_file, 'r') as file:

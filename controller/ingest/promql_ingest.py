@@ -3,13 +3,18 @@ from common.conf import get_configuration
 from prometheus_api_client import PrometheusConnect
 from prometheus_api_client.utils import parse_datetime
 
-signals = Signals()
-signal_type = "metric"
-
 
 def ingest():
+    signals = Signals()
+    signal_type = "metric"
+
     ingest_url = get_configuration()["ingest_url"]
     ingest_window = get_configuration()["ingest_window"]
+
+    signals.metadata["ingest_type"] = "promql"
+    signals.metadata["ingest_source"] = ingest_url
+    signals.metadata["ingest_window"] = ingest_window
+
     try:
         prom = PrometheusConnect(url=ingest_url, disable_ssl=True)
         metrics = prom.all_metrics()

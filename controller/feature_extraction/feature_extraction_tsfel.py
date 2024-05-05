@@ -42,7 +42,7 @@ def extract_signal(signal):
 
 
 def extract(signals):
-    extracted_signals = Signals()
+    extracted_signals = Signals(metadata=signals.metadata)
 
     # features extraction
     for index, signal in enumerate(signals):
@@ -62,5 +62,4 @@ def extract(signals):
         df_extracted_features = pd.concat([df_extracted_features, extracted_signal_features_as_column], axis=1)
 
     extracted_signals.metadata["features_matrix"] = df_extracted_features
-
     return extracted_signals
