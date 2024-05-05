@@ -30,7 +30,7 @@ def main():
     logger.info(f"the feature_extracted signals are: {extracted_signals}")
     signals_to_keep, signals_to_reduce, text_insights = generate_insights(extracted_signals)
     logger.info(f"the insights are: {text_insights}")
-    r_value = config_generator(signals_to_keep, signals_to_reduce)
+    r_value = config_generator(extracted_signals, signals_to_keep, signals_to_reduce)
     logger.info(f"Config Generator returned: {r_value}")
 
     # Show the UI
