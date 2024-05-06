@@ -1,5 +1,23 @@
 version: '3.2'
 services:
+
+  metricgen:
+    image: metricgen
+    container_name: metricgen
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+    expose:
+     - 5002
+     - 8000
+    ports:
+     - "5002:5002"
+     - "8000:8000"
+
   manager:
     image: manager
     container_name: manager
@@ -11,17 +29,22 @@ services:
   pmf_processor:
     image: pmf_processor
     container_name: pmf_processor
+    #command:
+    # - './processor --target="http://thanos_receive:19291/api/v1/receive"'
     expose:
      - 8100
+     - 8081
     ports:
      - "8100:8100"
+     - "8081:8081"
+
   prometheus:
     image: prom/prometheus:v2.21.0
     container_name: prometheus
     user: root
     volumes:
       - ./prometheus:/etc/config/
-      - ./data:/data
+      - ./prometheus_data:/data
     command:
       - '--config.file=/etc/config/prometheus.yml'
       - '--storage.tsdb.path=/data'
@@ -42,6 +65,8 @@ services:
   thanos_receive:
     image: thanosio/thanos:v0.29.0
     container_name: thanos_receive
+    volumes:
+      - ./thanos_data:/data
     command:
       - receive
       - --grpc-address=0.0.0.0:10901
@@ -49,7 +74,7 @@ services:
       - --remote-write.address=0.0.0.0:19291
       - --receive.replication-factor=1
       - --label=receive="true"
-      - --tsdb.path=/tmp/receive
+      - --tsdb.path=/data/receive
       - --tsdb.retention=15d
       - --receive.local-endpoint=thanos-receive:10901
     healthcheck:
@@ -57,6 +82,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    expose:
+      - 19291
+    ports:
+      - "19291:19291"
 
   thanos_query:
     image: thanosio/thanos:v0.29.0

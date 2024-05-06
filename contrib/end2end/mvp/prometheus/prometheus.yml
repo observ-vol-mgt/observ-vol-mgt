@@ -28,7 +28,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["0.0.0.0:8000"]
+      - targets: ["metricgen:8000"]
       #- targets: ["localhost:9090"]
 remote_write:
   - url: "http://pmf_processor:8081/api/v1/receive"
