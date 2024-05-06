@@ -1,1 +1,6 @@
-flask
+Flask
+requests
+pyyaml
+timeeval-gutenTAG
+prometheus_client
+flask_swagger_ui
