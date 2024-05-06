@@ -3,11 +3,13 @@ import processors
 import rules
 import alerthandler
 import logging
-from config import *
+from config import config
+#from instance import *
 import os
 
 
 app = Flask(__name__)
+#app.config.from_pyfile('instance/config.yml')
 
 # Set up logging
 log_dir = os.path.dirname(LOG_FILE)

@@ -1,5 +1,20 @@
 version: '3.2'
 services:
+  manager:
+    image: manager
+    container_name: manager
+    expose:
+     - 5010
+    ports:
+     - "5010:5010"
+
+  pmf_processor:
+    image: pmf_processor
+    container_name: pmf_processor
+    expose:
+     - 8100
+    ports:
+     - "8100:8100"
   prometheus:
     image: prom/prometheus:v2.21.0
     container_name: prometheus
@@ -37,9 +52,6 @@ services:
       - --tsdb.path=/tmp/receive
       - --tsdb.retention=15d
       - --receive.local-endpoint=thanos-receive:10901
-      - --receive.hashrings-file=/var/lib/thanos/thanos-receive/hashrings.json
-    volumes:
-      - ${PWD}/thanos-receive-hashrings.json:/var/lib/thanos/thanos-receive/hashrings.json
     healthcheck:
       test: wget -q -O- localhost:10902/-/ready
       interval: 10s
@@ -70,6 +82,19 @@ services:
     ports:
       - "19192:19192"
   
+  alertmanager:
+    image: "quay.io/prometheus/alertmanager:v0.25.0"
+    container_name: alertmanager
+    volumes:
+      - ${PWD}/alertmanager:/etc/alertmanager
+    ports:
+      - 9093:9093
+    healthcheck:
+      test: wget -q -O- localhost:9093/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   thanos_ruler:
     image: thanosio/thanos:v0.29.0
     container_name: thanos_ruler
@@ -79,8 +104,9 @@ services:
       - "--log.format=logfmt"
       - "--grpc-address=:30901"
       - "--http-address=:10903"
+      - "--query=thanos_query:19192"
       - "--rule-file=/shared/rules.yml"
-      - "--alertmanagers.url=alertmanager:9093"
+      - "--alertmanagers.url=http://alertmanager:9093"
     volumes:
       - shared-data:/shared
     expose:
@@ -96,28 +122,19 @@ services:
 
   ruler_config:
     image: ruler_config 
-    container_name: thanos_ruler
+    container_name: ruler_config
     environment:
       - HOST=0.0.0.0
-      - PORT = 8090
-      - RULES_FOLDER = "/shared/rules.yml"
-      - THANOS_RULE_URL = thanos_ruler:10903
-      - LOG_FILE = "ruleTranslator.log" 
+      - PORT=8090
+      - RULES_FOLDER=/shared/rules.yml
+      - THANOS_RULE_URL=thanos_ruler:10903
+      - LOG_FILE=ruleTranslator.log
     volumes:
       - shared-data:/shared
+    expose:
+      - 8090
     ports:
-      - 8090:8090
+      - "8090:8090"
 
-  alertmanager:
-    image: "quay.io/prometheus/alertmanager:v0.25.0"
-    container_name: alertmanager
-    volumes:
-      - ${PWD}/alertmanager:/etc/alertmanager
-    ports:
-      - 9093:9093
-    environment:
-    healthcheck:
-      test: wget -q -O- localhost:9093/-/ready
-      interval: 10s
-      timeout: 5s
-      retries: 3
+volumes:
+  shared-data:
