@@ -1,5 +1,3 @@
-#from config import *
-from instance import *
 from flask import Flask, jsonify, request, Blueprint
 import logging
 import os
@@ -12,6 +10,19 @@ from utils.file_ops.rules import *
 
 alerthandler_bp = Blueprint('alerthandler', __name__)
 logger = logging.getLogger(__name__)
+
+alerthandler_bp.config = {}
+
+def load_config(config_file):
+    with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
+
+config_file = os.environ.get('CONFIG_FILE')
+if config_file:
+    alerthandler_bp.config.update(load_config(config_file))
+
+RULES_FOLDER = alerthandler_bp.config['RULES_FOLDER']
 
 
 @alerthandler_bp.route('/alerthandler', methods=['POST'])

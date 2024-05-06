@@ -1,5 +1,4 @@
-#from config import *
-from instance import *
+from config import *
 from flask import Flask, jsonify, request, Blueprint
 import logging
 import os
@@ -14,6 +13,20 @@ from pydantic import ValidationError
 
 rules_bp = Blueprint('rules', __name__)
 logger = logging.getLogger(__name__)
+
+rules_bp.config = {}
+
+def load_config(config_file):
+    with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
+
+config_file = os.environ.get('CONFIG_FILE')
+if config_file:
+    rules_bp.config.update(load_config(config_file))
+
+RULES_FOLDER = rules_bp.config['RULES_FOLDER']
+ALERTMANAGER_URL = rules_bp.config['ALERTMANAGER_URL']
 
 os.makedirs(RULES_FOLDER, exist_ok=True)
 rule_ids = load_rules(RULES_FOLDER)
