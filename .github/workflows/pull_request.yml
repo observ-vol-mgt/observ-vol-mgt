@@ -19,5 +19,7 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
-    - name: run tests
-      run: make tests
+    - name: run controller tests
+      run: |
+          cd controller
+          make tests
