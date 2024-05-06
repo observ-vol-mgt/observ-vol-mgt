@@ -15,16 +15,14 @@
 import json
 import logging
 
-from common.conf import get_configuration
 from common.signal import Signal, Signals
 
 logger = logging.getLogger(__name__)
 
 
-def ingest():
+def ingest(ingest_config):
     signals = Signals()
-    conf = get_configuration()
-    ingest_file = conf.ingest_file
+    ingest_file = ingest_config['file_name']
 
     signals.metadata["ingest_type"] = "file"
     signals.metadata["ingest_source"] = ingest_file
