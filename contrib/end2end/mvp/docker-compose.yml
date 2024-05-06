@@ -94,6 +94,22 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  ruler_config:
+    image: ruler_config 
+    container_name: ruler_config
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8090
+      - RULES_FOLDER=/shared
+      - THANOS_RULE_URL=http://thanos_ruler:10903
+      - LOG_FILE=ruleTranslator.log
+    volumes:
+      - shared-data:/shared
+    expose:
+      - 8090
+    ports:
+      - "8090:8090"
 
   thanos_ruler:
     image: thanosio/thanos:v0.29.0
@@ -120,21 +136,6 @@ services:
     ports:
       - "10903:10903"  
 
-  ruler_config:
-    image: ruler_config 
-    container_name: ruler_config
-    environment:
-      - HOST=0.0.0.0
-      - PORT=8090
-      - RULES_FOLDER=/shared/rules.yml
-      - THANOS_RULE_URL=thanos_ruler:10903
-      - LOG_FILE=ruleTranslator.log
-    volumes:
-      - shared-data:/shared
-    expose:
-      - 8090
-    ports:
-      - "8090:8090"
 
 volumes:
   shared-data:
