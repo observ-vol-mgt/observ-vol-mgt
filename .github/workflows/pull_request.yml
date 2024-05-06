@@ -19,7 +19,5 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
-    - name: run build
-      run: make build
     - name: run tests
       run: make tests
