@@ -25,6 +25,11 @@ services:
      - 5010
     ports:
      - "5010:5010"
+    environment:
+     - CONFIG_FILE=/etc/config/config.yaml
+    volumes:
+     - '$PWD/manager/config:/etc/config'
+     - 'manager_volume:/manager/app'
 
   pmf_processor:
     image: pmf_processor
@@ -164,7 +169,18 @@ services:
       retries: 3
     ports:
       - "10903:10903"  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    user: '0'
+    ports:
+     - '3000:3000'
+    volumes:
+      - '$PWD/grafana/provisioning:/etc/grafana/provisioning'
 
 
 volumes:
   shared-data:
+  manager_volume:
+
