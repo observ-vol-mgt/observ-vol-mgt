@@ -1,0 +1,25 @@
+name: pull request - build and tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-tests:
+    name: build-and-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"    
+    - name: install make
+      run: sudo apt-get install make
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: run build
+      run: make build
+    - name: run tests
+      run: make tests
