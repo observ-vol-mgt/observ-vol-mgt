@@ -19,18 +19,24 @@ from common.conf import get_configuration
 logger = logging.getLogger(__name__)
 
 
-def ingest():
+def ingest(ingest_stage):
+    print("stage = ", ingest_stage.name)
+    attrs = vars(ingest_stage)
+    print(', '.join("%s: %s" % item for item in attrs.items()))
+
+    if ingest_stage.type != 'ingest':
+        raise "didn't find ingest stage"
     # switch based on the configuration ingest type
-    if get_configuration().ingest_type == "dummy":
+    if ingest_stage.subtype == "dummy":
         logger.debug("using dummy ingest logger")
         from ingest.dummy_ingest import ingest
-        signals = ingest()
-    elif get_configuration().ingest_type == "file":
+        signals = ingest(ingest_stage['config'])
+    elif ingest_stage.subtype == "file":
         from ingest.file_ingest import ingest
-        signals = ingest()
-    elif get_configuration().ingest_type == "promql":
+        signals = ingest(ingest_stage.config)
+    elif ingest_stage.subtype == "promql":
         from ingest.promql_ingest import ingest
-        signals = ingest()
+        signals = ingest(ingest_stage['config'])
     else:
         raise "unsupported ingest configuration"
     return signals

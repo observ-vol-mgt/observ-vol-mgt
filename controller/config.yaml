@@ -1,0 +1,26 @@
+pipeline:
+- name: ingest_file
+- name: feature_extraction
+  follows: ingest_file
+- name: generate_insights
+  follows: feature_extraction
+parameters:
+- name: ingest_file
+  type: ingest
+  subtype: file
+  input_data_types: []
+  output_data_types: [Signals]
+  config:
+    file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
+- name: feature_extraction
+  type: extract
+  subtype: tsfel
+  input_data_types: [Signals]
+  output_data_types: [Signals]
+  config:
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data_types: [Signals]
+  output_data_types: [Signals, Signals, Text]
+  config:

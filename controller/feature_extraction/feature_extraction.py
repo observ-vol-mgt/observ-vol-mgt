@@ -14,18 +14,15 @@
 
 import logging
 
-from common.conf import get_configuration
-
 logger = logging.getLogger(__name__)
-
-
-def feature_extraction(signals):
+def feature_extraction(extract_stage, signals_list):
+    signals = signals_list[0]
     # switch based on the configuration feature_extraction type
-    if get_configuration().feature_extraction_type == "tsfel":
+    if extract_stage.subtype == "tsfel":
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
         extracted_signals = extract(signals)
-    elif get_configuration().feature_extraction_type == "tsfresh":
+    elif extract_stage.subtype == "tsfresh":
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals)
