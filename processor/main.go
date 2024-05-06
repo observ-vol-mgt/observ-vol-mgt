@@ -115,7 +115,7 @@ func readAndStoreConfig() {
 }
 
 func main() {
-	var target = flag.String("target", "http://localhost:19291", "Cortex/Thanos metrics endpoint")
+	var target = flag.String("target", "http://thanos_receive:19291", "Cortex/Thanos metrics endpoint")
 	var listen = flag.String("listen", "0.0.0.0:8081", "Prometheus remote write listener endpoint")
 	flag.Parse()
 	//readAndStoreConfig()
