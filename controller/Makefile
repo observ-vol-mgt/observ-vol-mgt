@@ -13,7 +13,7 @@ tests: install_requirements ## Execute tests
 	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
 
 run_dev: install_requirements ## Execute the pipeline synchronously on synthetic data
-	python main.py --ingest_type=file --ingest_file=../contrib/examples/generate-synthetic-metrics/time_series_data.json --feature_extraction_type=tsfel --config_generator_type=otel --config_generator_directory=/tmp
+	python main.py --config_generator_type=otel --config_generator_directory=/tmp
 
 feature_extraction_tsfel: install_requirements ## Execute the feature extraction using tsfel
 	python feature_extraction/feature_extraction_tsfel.py
