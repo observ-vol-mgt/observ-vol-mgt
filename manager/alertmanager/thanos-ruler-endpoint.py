@@ -9,6 +9,11 @@ import os
 app = Flask(__name__)
 SWAGGER_URL="/swagger"
 API_URL="/static/swagger.json"
+HOST=os.environ.get('HOST')
+PORT=os.environ.get('PORT')
+RULES_FOLDER=os.environ.get('RULES_FOLDER')
+THANOS_RULE_URL=os.environ.get('THANOS_RULE_URL')
+LOG_FILE=os.environ.get('LOG_FILE')
 
 swagger_ui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,

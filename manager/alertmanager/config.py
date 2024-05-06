@@ -1,4 +1,4 @@
-HOST = '0.0.0.0'
+HOST = "0.0.0.0"
 PORT = 8090
 
 RULES_FOLDER = "/Users/priyanka/Downloads/thanos-0.29.0.darwin-amd64"

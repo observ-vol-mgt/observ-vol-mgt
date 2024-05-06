@@ -1,4 +1,5 @@
 from config import *
+from instance import *
 from flask import Flask, jsonify, request, Blueprint
 import requests
 import logging
@@ -12,6 +13,7 @@ from models.ProcessorsConfig import ProcessorsConfig
 from pydantic import ValidationError
 
 processor_bp = Blueprint('processor', __name__)
+processor_bp.config.from_pyfile('instance/config.yml')
 
 # Filter variables from config.py that match the pattern 'PROCESSOR_*_URL' to get the URLs for the edge processors
 processor_urls = {key: value for key, value in globals().items() if key.endswith('_URL') and key.startswith('PROCESSOR_')}

@@ -1,4 +1,5 @@
-from config import *
+#from config import *
+from instance import *
 from flask import Flask, jsonify, request, Blueprint
 import logging
 import os
