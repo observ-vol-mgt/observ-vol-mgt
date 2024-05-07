@@ -40,6 +40,11 @@ def handler():
 
             #fetch the rule file to get the action that needs to be performed
             rule_json = read_rule_file(RULES_FOLDER, rule_id)
+
+            #check if the processor_id for which the alert is raised is actually in the list of processor for which this rule has been configured by the use
+            if processor_id not in rule_json['processors']:
+                continue
+
             action = status + "_action"
             if action in rule_json:
                 if rule_json[action]['action_type'] == "delete_dag":
