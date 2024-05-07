@@ -9,8 +9,8 @@ services:
      - 'python3'
      - 'demo-metrics-gutentag.py'
      - '--conf=conf.yaml'
-     - '--port 8000'
-     - '--clientport 5002'
+     - '-p=8000'
+     - '-cp=5002'
      - '--nmetrics=100'
      - '--nlabels=10'
     expose:
@@ -28,8 +28,8 @@ services:
      - 'python3'
      - 'demo-metrics-gutentag.py'
      - '--conf=conf.yaml'
-     - '--port 8001'
-     - '--clientport 5003'
+     - '--port=8001'
+     - '--clientport=5003'
      - '--nmetrics=100'
      - '--nlabels=10'
     expose:
@@ -56,11 +56,11 @@ services:
     image: pmf_processor
     container_name: pmf_processor1
     command:
-     - 'go run'
-     - 'processor'
-     - '--target "http://thanos_receive:19291/api/v1/receive"'
-     - '--listen 0.0.0.0:8081'
-     - '--morpher 0.0.0.0:8100'
+     # - 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=:8081'
+     - '--morpher=:8100'
     expose:
      - 8100
      - 8081
@@ -72,11 +72,11 @@ services:
     image: pmf_processor
     container_name: pmf_processor2
     command:
-     - 'go run'
-     - 'processor'
-     - '--target "http://thanos_receive:19291/api/v1/receive"'
-     - '--listen 0.0.0.0:8082'
-     - '--morpher 0.0.0.0:8101'
+     #- 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=0.0.0.0:8082'
+     - '--morpher=0.0.0.0:8101'
     expose:
      - 8101
      - 8082
@@ -89,7 +89,7 @@ services:
     container_name: prometheus1
     user: root
     volumes:
-      - ./prometheus/prometehus1:/etc/config/
+      - ./prometheus/prometheus1:/etc/config/
       - ./prometheus_data1:/data
     command:
       - '--config.file=/etc/config/prometheus.yml'
