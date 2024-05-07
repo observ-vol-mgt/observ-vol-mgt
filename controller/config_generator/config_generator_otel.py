@@ -18,7 +18,7 @@ import re
 
 from jinja2 import Environment, FileSystemLoader
 
-from common.conf import get_configuration
+from common.conf import get_args
 from common.utils import add_slash_to_dir
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def generate(extracted_signals, signals_to_keep, signals_to_reduce):
 
     source = re.sub('-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
     output = template.render(context)
-    output_dir = add_slash_to_dir(get_configuration().config_generator_directory)
+    output_dir = add_slash_to_dir(get_args().config_generator_directory)
     path = re.sub('/+', '/', f"{output_dir}/{source}")
 
     if not os.path.exists(path):
