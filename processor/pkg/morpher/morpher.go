@@ -206,6 +206,11 @@ func (m *Morpher) CompileMorphsRecursively(node *MorphNode, parent string) {
 			return
 		}
 
+		// No default if child is filter
+		if len(node.Children) > 0 && node.Children[0].Unit.Type == "filter" {
+			return
+		}
+
 		// Creating and adding a new child with the Default Type and reverse query
 		defaultUnit := NewMorphUnitFromString("default", createDefaultQuery(selectors), []float64{30000})
 		defaultUnit.CompileQuery(cur_table, m.getNewID(), true)
