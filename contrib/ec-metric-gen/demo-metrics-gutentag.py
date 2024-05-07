@@ -158,18 +158,18 @@ def change_metrics(r_data,isSet):
         change_metrics_list.append(metric_name)
         print(change_metrics_list)
     #TODO store metric_name as an array and change the inner if loop below
-    for (g, ts_array, label_array) in metrics:
-        for metric_name in change_metrics_list:
+    #for (g, ts_array, label_array) in metrics: 
+    for metric_name in change_metrics_list:
+       for i, (g, ts_array, label_array) in enumerate(metrics):
             if g._name == metric_name:
                 print("metric found")
                 print(g)
-                change_metrics_list += (g, ts_array, label_array)
-                for i, (g, ts_array, label_array) in enumerate(metrics):
-                    if isSet:
-                        new_ts_array = [x+200 for x in ts_array]
-                    else:
-                        new_ts_array = [x-200 for x in ts_array]
-                    metrics[i] = (g, new_ts_array, label_array)
+                #change_metrics_list += (g, ts_array, label_array)
+                if isSet:
+                    new_ts_array = [x+200 for x in ts_array]
+                else:
+                    new_ts_array = [x-200 for x in ts_array]
+                metrics[i] = (g, new_ts_array, label_array)
                     
             #for (ts, labels) in zip(ts_array, label_array):
             #    ts = [x+200 for x in ts]
