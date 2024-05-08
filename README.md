@@ -49,7 +49,7 @@ In upcoming versions, we plan to introduce a **brain** (controller) that will ai
 
 The diagram above illustrates our setup for the proof of concept. 
 
-We have two edge locations each equiped with a metric genrator, metric collector and the Processor. The metric generator produces app and cluster metrics, which are periodically scrapped by the metric collector and then transformed by the processor. The central cloud location runs the metric aggregator and the Manager. At the beginning of the proof of concept, the user specifies the two rules:
+We have two edge locations each equipped with a metric genrator, metric collector and the Processor. The metric generator produces app and cluster metrics, which are periodically scrapped by the metric collector and then transformed by the processor. The central cloud location runs the metric aggregator and the Manager. At the beginning of the proof of concept, the user specifies the two rules:
 
 - **Rule 1:** Applies to Processor 1 and requests to filter (whitelist) only the app metrics when edge location 1 experiences network stress.
 - **Rule 2:** Applies to Processor 2 and requests to increase the frequency of cluster metrics when edge location 2 encounters erroneous conditions.
