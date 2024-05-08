@@ -14,50 +14,19 @@
 
 import logging
 
-from common.conf import get_configuration
-from common.conf import get_first_stage
 from common.conf import parse_args
 from common.conf import get_args
-from config_generator.config_generator import config_generator
-from feature_extraction.feature_extraction import feature_extraction
-from ingest.ingest import ingest
-from insights.insights import generate_insights
+from common.pipeline import build_pipeline
+from common.pipeline import run_iteration
 from ui.visualization import flaskApp, fill_time_series, fill_insights
 
 
 logger = logging.getLogger(__name__)
 
-signals = None
-extracted_signals = None
-signals_to_keep = None
-signals_to_reduce = None
-text_insights = None
-
-def run_stage(stage, input_data):
-    print("stage = ", stage.name)
-    attrs = vars(stage)
-    print(', '.join("%s: %s" % item for item in attrs.items()))
-    if stage.type == 'ingest':
-        global signals
-        signals = ingest(stage)
-        output_data = [signals]
-    elif stage.type == 'extract':
-        global extracted_signals
-        extracted_signals = feature_extraction(stage, input_data)
-        output_data = [extracted_signals]
-    elif stage.type == 'insights':
-        global signals_to_keep, signals_to_reduce, text_insights
-        signals_to_keep, signals_to_reduce,  text_insights = generate_insights(stage, input_data)
-        output_data = [signals_to_keep, signals_to_reduce,  text_insights]
-    else:
-        str = "stage type not implemented: " + stage.type
-        raise str
-    for s in stage.followers:
-        run_stage(s, output_data)
-
 def main():
     # getting the configuration
     parse_args()
+    build_pipeline()
 
     # set log level
     level = logging.getLevelName(get_args().loglevel.upper())
@@ -68,19 +37,23 @@ def main():
     # starting the pipeline
     logger.info("Starting the Controller Pipeline")
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
-    run_stage(get_first_stage(), [])
+    run_iteration()
 
-    logger.info(f"the ingested signals are: {signals}")
-    logger.info(f"the feature_extracted signals are: {extracted_signals}")
+    from common.pipeline import signals_global, extracted_signals_global
+    from common.pipeline import text_insights_global, r_value_global
+    from common.pipeline import signals_to_keep_global, signals_to_reduce_global
 
-    logger.info(f"the insights are: {text_insights}")
-    r_value = config_generator(extracted_signals, signals_to_keep, signals_to_reduce)
-    logger.info(f"Config Generator returned: {r_value}")
+    logger.info(f"the ingested signals are: {signals_global}")
+    logger.info(f"the feature_extracted signals are: {extracted_signals_global}")
+
+    logger.info(f"the insights are: {text_insights_global}")
+    logger.info(f"Config Generator returned: {r_value_global}")
 
     # Show the UI
     logger.info(f"To Visualize the signals use the provided URL:")
-    fill_time_series(extracted_signals)
-    fill_insights(text_insights)
+    fill_time_series(extracted_signals_global)
+    fill_insights(text_insights_global)
+
 
     flaskApp.run(debug=False)
 

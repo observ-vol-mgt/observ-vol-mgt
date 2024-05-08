@@ -17,29 +17,37 @@ A sample config file might look like this:
 ```
 pipeline:
 - name: ingest_file
-- name: feature_extraction
-  follows: ingest_file
+- name: feature_extraction_tsfel
+  follows: [ingest_file]
 - name: generate_insights
-  follows: feature_extraction
+  follows: [feature_extraction_tsfel]
+- name: config_generator_otel
+  follows: [feature_extraction_tsfel, generate_insights]
 parameters:
 - name: ingest_file
   type: ingest
   subtype: file
-  input_data_types: []
-  output_data_types: [Signals]
+  input_data: []
+  output_data: [signals]
   config:
     file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
-- name: feature_extraction
+- name: feature_extraction_tsfel
   type: extract
   subtype: tsfel
-  input_data_types: [Signals]
-  output_data_types: [Signals]
+  input_data: [signals]
+  output_data: [extracted_signals]
   config:
 - name: generate_insights
   type: insights
   subtype:
-  input_data_types: [Signals]
-  output_data_types: [Signals, Signals, Text]
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+- name: config_generator_otel
+  type: config_generator
+  subtype: otel
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
   config:
 ```
 
