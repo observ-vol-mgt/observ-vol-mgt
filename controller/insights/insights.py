@@ -23,13 +23,12 @@ logger = logging.getLogger(__name__)
 
 
 def generate_insights(stage, signals_list):
-    signals = signals_list[0]
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = (
-        analyze_correlations(signals))
+        analyze_correlations(signals_list))
 
     # Get the composed correlation for the remaining signals
-    signals_to_keep_post_pairwise_correlation = signals.filter_by_names(pairwise_signals_to_keep)
+    signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
     composed_signals_to_keep, composed_signals_to_reduce, composed_correlation_insights = (
         analyze_composed_correlations(signals_to_keep_post_pairwise_correlation))
 

@@ -14,21 +14,15 @@
 
 import configargparse
 import yaml
-from common.stage import stage
 
 args = None
 configuration = None
-stages_dict = None
-first_stage = None
 
 def get_args():
     return args
 
 def get_configuration():
     return configuration
-
-def get_first_stage():
-    return first_stage
 
 def parse_args():
     p = configargparse.ArgParser()
@@ -56,39 +50,3 @@ def parse_args():
         print("Configuration")
         print(configuration)
 
-    build_pipeline()
-
-def build_pipeline():
-    pipeline = configuration['pipeline']
-    parameters = configuration['parameters']
-    stages = {}
-    # create stage structs for each of the stages
-    for pa in parameters:
-        s = stage(pa)
-        stages[s.name] = s
-
-    global stages_dict
-    stages_dict = stages
-    print("stages = ", stages)
-
-    # parse pipeline section
-    # find first stage and connect between stages
-    for pi in pipeline:
-        print("pi = ", pi)
-        name = pi['name']
-        s = stages[name]
-        if 'follows' in pi:
-            f_stage = stages[pi['follows']]
-            s.set_follows(f_stage)
-            f_stage.add_follower(s)
-            n = min(len(s.input_data_types), len(f_stage.output_data_types))
-            for i in range(n):
-                if s.input_data_types[i] != f_stage.output_data_types[i]:
-                    str = "mismatch of data types between stages {s.name} and {f_stage.name}; {f_stage.input_data_types[i]}, {s.output_data_types[i]}"
-                    raise str
-        else:
-            global first_stage
-            if first_stage != None:
-                raise "only one initial stage is allowed"
-            first_stage = s
-            print("first stage = ", first_stage.name)
