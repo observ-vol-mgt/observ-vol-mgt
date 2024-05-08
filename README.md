@@ -50,8 +50,9 @@ In upcoming versions, we plan to introduce a **brain** (controller) that will ai
 The diagram above illustrates our setup for the proof of concept. 
 
 We have two edge locations each equiped with a metric genrator, metric collector and the Processor. The metric generator produces app and cluster metrics, which are periodically scrapped by the metric collector and then transformed by the processor. The central cloud location runs the metric aggregator and the Manager. At the beginning of the proof of concept, the user specifies the two rules:
-**Rule 1:** Applies to Processor 1 and requests to filter (whitelist) only the app metrics when edge location 1 experiences network stress.
-**Rule 2:** Applies to Processor 2 and requests to increase the frequency of cluster metrics when edge location 2 encounters erroneous conditions.
+
+- **Rule 1:** Applies to Processor 1 and requests to filter (whitelist) only the app metrics when edge location 1 experiences network stress.
+- **Rule 2:** Applies to Processor 2 and requests to increase the frequency of cluster metrics when edge location 2 encounters erroneous conditions.
 
 The proof of concept is built to showcase two main capabilities of the Observability Volume Manager. 
 1. Automation: Users only define rules for managing observability data under different conditions and the Observability Volume Manager autonomously and dynamically monitors and enforces these transformations without requiring user intervention each time conditions are met. This eliminates the need for user intervention each time conditions are met, alleviating the burden of configuring individual processors at edge locations everytime.
