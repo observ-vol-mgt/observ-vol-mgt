@@ -34,7 +34,8 @@ def create_random_gutentag_ts():
     curves = ["sine"]
     ampl = random.randint(40, 60)
     offset = random.randint(60, 100)
-    freq = random.random()/2 + 0.5
+    #freq = random.random()/2 + 0.5
+    freq = 3.0
     curve = random.sample(curves, 1)[0]
     if curve == "sine":
         return gt.sine(length=LENGTH, frequency=freq, amplitude=ampl) + offset
