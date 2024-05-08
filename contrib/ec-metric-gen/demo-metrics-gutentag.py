@@ -35,7 +35,7 @@ def create_random_gutentag_ts():
     ampl = random.randint(40, 60)
     offset = random.randint(60, 100)
     #freq = random.random()/2 + 0.5
-    freq = 3.0
+    freq = 5.0
     curve = random.sample(curves, 1)[0]
     if curve == "sine":
         return gt.sine(length=LENGTH, frequency=freq, amplitude=ampl) + offset
@@ -153,7 +153,6 @@ def set_metrics_runner(fake=True):
 def change_metrics(r_data,isSet):
     change_metrics_list = []
     global metrics
-    nr_data = r_data.get('metrics')[1]
     for nr_data in r_data.get('metrics'):
         metric_name = nr_data.get('name') + "_" + "_".join(str(t) for t in nr_data.get('type')) + "_" + "metric_" + "_".join(str(i) for i in nr_data.get('index'))
         change_metrics_list.append(metric_name)
