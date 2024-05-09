@@ -34,7 +34,8 @@ def create_random_gutentag_ts():
     curves = ["sine"]
     ampl = random.randint(40, 60)
     offset = random.randint(60, 100)
-    freq = random.random()/2 + 0.5
+    #freq = random.random()/2 + 0.5
+    freq = 5.0
     curve = random.sample(curves, 1)[0]
     if curve == "sine":
         return gt.sine(length=LENGTH, frequency=freq, amplitude=ampl) + offset
@@ -152,24 +153,23 @@ def set_metrics_runner(fake=True):
 def change_metrics(r_data,isSet):
     change_metrics_list = []
     global metrics
-    nr_data = r_data.get('metrics')[1]
     for nr_data in r_data.get('metrics'):
         metric_name = nr_data.get('name') + "_" + "_".join(str(t) for t in nr_data.get('type')) + "_" + "metric_" + "_".join(str(i) for i in nr_data.get('index'))
         change_metrics_list.append(metric_name)
         print(change_metrics_list)
     #TODO store metric_name as an array and change the inner if loop below
-    for (g, ts_array, label_array) in metrics:
-        for metric_name in change_metrics_list:
+    #for (g, ts_array, label_array) in metrics: 
+    for metric_name in change_metrics_list:
+       for i, (g, ts_array, label_array) in enumerate(metrics):
             if g._name == metric_name:
                 print("metric found")
                 print(g)
-                change_metrics_list += (g, ts_array, label_array)
-                for i, (g, ts_array, label_array) in enumerate(metrics):
-                    if isSet:
-                        new_ts_array = [x+200 for x in ts_array]
-                    else:
-                        new_ts_array = [x-200 for x in ts_array]
-                    metrics[i] = (g, new_ts_array, label_array)
+                #change_metrics_list += (g, ts_array, label_array)
+                if isSet:
+                    new_ts_array = [x+200 for x in ts_array]
+                else:
+                    new_ts_array = [x-200 for x in ts_array]
+                metrics[i] = (g, new_ts_array, label_array)
                     
             #for (ts, labels) in zip(ts_array, label_array):
             #    ts = [x+200 for x in ts]
@@ -201,7 +201,8 @@ if __name__ == '__main__':
     parser.add_argument('--conf', dest='conf', help='Config yaml file', default='conf.yaml')
     # Additional config - overrides config.yaml
     parser.add_argument('-n', '--name', dest='name', help='Name of the cluster', default='c0')
-    parser.add_argument('-p', '--port', dest='port', help='Port to run http server', default=8000, type=int)
+    parser.add_argument('-p', '--port', dest='port', help='Port to run http server for metrics', default=8000, type=int)
+    parser.add_argument('-cp', '--clientport', dest='clientport', help='Port to run http server for reconfiguration', default=5002, type=int)
     # To create artificial metrics with as many labels as we want
     parser.add_argument('--fake', dest='fake', action='store_true')
     parser.add_argument('--nmetrics', dest='nmetrics', default=1000, type=int)
@@ -222,7 +223,7 @@ if __name__ == '__main__':
     
     # Start the prometheus server
     start_http_server(args.port)
-    threading.Thread(target=lambda:app.run(host="0.0.0.0", port=5002, debug=False)).start()
+    threading.Thread(target=lambda:app.run(host="0.0.0.0", port=args.clientport, debug=False)).start()
     set_metrics_runner(args.fake)
     
 

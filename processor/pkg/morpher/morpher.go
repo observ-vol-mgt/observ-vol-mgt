@@ -26,7 +26,7 @@ const (
 
 	UnitMorph     string = Prefix + ` as select phash, timestamp, val from %[2]s;`
 	SelectorMorph string = Prefix + ` as select phash, timestamp, val from %[2]s where phash in %[3]s;`
-	FilterMorph   string = Prefix + ` as select phash, timestamp, val from %[2]s where phash in %[3]s;`
+	FilterMorph   string = Prefix + ` as select phash, timestamp, val from %[2]s where %[3]s;`
 	FreqMorph     string = `create view temp.freq_v%[1]d(phash, timestamp, val) as select phash, max(timestamp), val from %[2]s where %[3]s group by phash;` + Prefix + ` as select temp.freq_v%[1]d.phash, timestamp, val from frequency join freq_v%[1]d on frequency.phash = temp.freq_v%[1]d.phash where timestamp >= frequency.last + %[4]f;drop view temp.freq_v%[1]d;
 update frequency set last = (select case when count(*) > 0 then (select timestamp from t%[1]d where t%[1]d.phash = frequency.phash) else last end from t%[1]d);`
 	ProbFreqMorph string = Prefix + ` as select phash, timestamp, val from (select phash, timestamp, val from %[2]s where %[3]s) where abs(CAST(random() AS REAL))/9223372036854775808 < 5000/%[4]f;`
@@ -203,6 +203,11 @@ func (m *Morpher) CompileMorphsRecursively(node *MorphNode, parent string) {
 
 		// No default if child's selector is 1 (select all)
 		if len(node.Children) > 0 && node.Children[0].Unit.Selector == "1" {
+			return
+		}
+
+		// No default if child is filter
+		if len(node.Children) > 0 && node.Children[0].Unit.Type == "filter" {
 			return
 		}
 
