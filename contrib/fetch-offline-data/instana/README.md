@@ -24,21 +24,32 @@ python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-
 
 > [!NOTE]  
 > Replace YOUR_INSTANA_URL and YOUR_API_TOKEN with the base URL of your Instana instance and your API token, respectively.
-
-> [!NOTE]     
+ 
 > You can also specify the START_TIME and END_TIME in the format YYYY-MM-DDTHH:MM:SS to fetch data for a specific time window.  
 > If you omit the --start and --end parameters, the script will fetch data for the last 24 hours by default.
-
-> [!NOTE]  
+ 
 > You can also specify the OUTPUT_DIR to save the data into a specific directory.  
 > If you omit the --output_dir parameter, the script will save the data into the current directory.  
-
-> [!NOTE]  
+ 
 > You can also specify the LIMIT to limit data fetching.  
 > If you omit the --limit parameter, the script will limit to 1000 metrics.
-
-> [!NOTE]  
+ 
 > By default, the script fetches metrics only, specify --fetch-events to include also events (Not implemented yet)  
 
 5. **Output**: The script will save the fetched metrics and events data to JSON files named instana_metrics.json and instana_events.json, respectively.
 
+> [!NOTE]  
+> It is possible to execute the script `convert-dump-metrics-file-to-promql-format.py` 
+> as a post-processing stage, and convert the output file into
+> promQL format dump file. This file can be used with the 
+> as input to the volume manager controller.  
+> 
+> The default input file for the script is `instana_metrics.json` and the default
+> output file is `promql_metrics.json`  
+> 
+> To load into the controller, execute from the controller directory:
+```bash
+python main.py --ingest_type=file --ingest_file=../contrib/fetch-offline-data/instana/promql_metrics.json --feature_extraction_type=tsfel --config_generator_type=otel --config_generator_directory=/tmp
+```
+
+ 
