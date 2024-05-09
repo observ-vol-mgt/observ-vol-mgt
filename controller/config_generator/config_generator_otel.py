@@ -24,7 +24,7 @@ from common.utils import add_slash_to_dir
 logger = logging.getLogger(__name__)
 
 
-def generate(extracted_signals, signals_to_keep, signals_to_reduce):
+def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
     logger.debug(f"generating otel configuration using: {signals_to_keep} {signals_to_reduce}")
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template('config_generator/templates/otel_filter_processor_template.yaml')
@@ -36,7 +36,8 @@ def generate(extracted_signals, signals_to_keep, signals_to_reduce):
 
     source = re.sub('-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
     output = template.render(context)
-    output_dir = add_slash_to_dir(get_args().config_generator_directory)
+    directory = config.get('directory', '/tmp')
+    output_dir = add_slash_to_dir(directory)
     path = re.sub('/+', '/', f"{output_dir}/{source}")
 
     if not os.path.exists(path):
