@@ -3,6 +3,8 @@ In today's dynamic computing landscape spanning centralized clouds, multi-cloud,
 
 ## Overview
 Observability Volume Manager provides a mechanism to perform various transformations on the observability data to manage the volume and support various edge deployment use cases. The current version of **Observability Volume Manager** presents a lightweight, automated, SQL-based metric processing system. It supports transformation of metrics defined in Prometheus format, where each metric comprises of metrics name and a set of labels in the form of key:value. We support multiple transformations of metrics which can be represented as a DAG.
+> [!NOTE]
+> We support both Prometheus and OTel as the Metric collector at the edge locations. 
 
 ### Architecture: A Bird's Eye View
 
