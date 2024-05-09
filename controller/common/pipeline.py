@@ -110,7 +110,7 @@ def run_stage(stage, input_data):
         output_data = [signals_to_keep_global, signals_to_reduce_global,  text_insights_global]
     elif stage.type == 'config_generator':
         global r_value_global
-        r_value_global = config_generator(input_data[0], input_data[1], input_data[2])
+        r_value_global = config_generator(stage, input_data[0], input_data[1], input_data[2])
         output_data = [r_value_global]
     else:
         str = "stage type not implemented: " + stage.type

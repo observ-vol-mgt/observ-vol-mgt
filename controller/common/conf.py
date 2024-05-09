@@ -30,10 +30,6 @@ def parse_args():
           default='config.yaml', env_var='CONFIGFILE')
     p.add('-v', '--loglevel', help='logging level',
           default='info', env_var='LOGLEVEL')
-    p.add('--config_generator_type', help='configuration generation type (none, otel or processor)',
-          default = 'none', env_var = 'CONFIG_GENERATOR_TYPE')
-    p.add('--config_generator_directory', help='configuration generation output directory',
-          default='/tmp', env_var = 'CONFIG_GENERATOR_DIR')
 
     global args
     args = p.parse_args()
