@@ -24,6 +24,10 @@ def get_args():
 def get_configuration():
     return configuration
 
+def set_configuration(config):
+    global configuration
+    configuration = config
+
 def parse_args():
     p = configargparse.ArgParser()
     p.add('-c', '--config-file', help='config file path',
@@ -40,8 +44,8 @@ def parse_args():
     print(p.format_values())
 
     with open(args.config_file, 'r') as file:
-        global configuration
         configuration = yaml.safe_load(file)
+        set_configuration(configuration)
         print("----------")
         print("Configuration")
         print(configuration)
