@@ -6,13 +6,7 @@ import json
 import argparse
 from datetime import datetime, timedelta
 
-
-def check_value_in_list_of_dicts(value, list_of_dicts):
-    for d in list_of_dicts:
-        for v in d.values():
-            if value == v:
-                return True
-    return False
+logger = logging.getLogger(__name__)
 
 
 def fetch_instana_plugins_catalog(url, token):
@@ -32,7 +26,7 @@ def fetch_instana_plugins_catalog(url, token):
     if response.status_code == 200:
         return response.json()
     else:
-        print("Error fetching plugins:", response.text)
+        logging.error("Error fetching plugins:", response.text)
         return None
 
 
@@ -62,7 +56,7 @@ def fetch_instana_snapshots(url, token, plugin, start_time, end_time):
     if response.status_code == 200:
         return list(map(lambda item: item['snapshotId'], response.json()['items']))
     else:
-        print("Error fetching plugins:", response.text)
+        logging.error("Error fetching plugins:", response.text)
         return None
 
 
@@ -83,13 +77,13 @@ def fetch_instana_metrics_catalog(url, token, plugin):
     if response.status_code == 200:
         return response.json()
     else:
-        print("Error fetching plugins:", response.text)
+        logging.error("Error fetching plugins:", response.text)
         return None
 
 
 # fetch metrics from Instana API
-def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids, start_time,  end_time, granularity=1):
-
+def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids, start_time, end_time,
+                                         granularity=1):
     # Instana API endpoint for fetching metrics
     instana_api_url = f"{url}/api/infrastructure-monitoring/metrics"
 
@@ -123,35 +117,63 @@ def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_i
     if response.status_code == 200:
         return response.json()
     else:
-        print("Error fetching metrics:", response.text)
+        logging.error("Error fetching metrics:", response.text)
         return None
 
 
-def fetch_instana_metrics(url, token, start_time, end_time, granularity=1):
-    plugins = fetch_instana_plugins_catalog(url, token)
-    if plugins is None:
-        return None
-    if not check_value_in_list_of_dicts("prometheus", plugins):
-        return None
-    plugin = "prometheus"  # <<<--- for now only prometheus
-
-    snapshots = fetch_instana_snapshots(url, token, plugin, start_time, end_time)
-    if snapshots is None:
-        return None
-    snapshots = snapshots[:30]  # <<<--- for now only first 30 (limitation of the API)
-
-    metrics_catalog = fetch_instana_metrics_catalog(url, token, plugin)
-    if metrics_catalog is None:
-        return None
-    metric_ids = list(map(lambda item: item['metricId'], metrics_catalog))
-
-    metric_ids = metric_ids[:5]  # <<<--- for now only first 5 (limitation of the API)
-
-    time_series_metrics = fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids,
-                                                               start_time, end_time, granularity)
-    if time_series_metrics is None:
+def fetch_instana_metrics(url, token, start_time, end_time, granularity=1, limit=1000):
+    time_series_metrics = []
+    metrics_count = 0
+    plugins_catalog = fetch_instana_plugins_catalog(url, token)
+    if plugins_catalog is None:
         return None
 
+    plugins = list(map(lambda item: item['plugin'], plugins_catalog))
+    if "prometheus" not in plugins:
+        return None
+
+    # for each plugin, fetch snapshots and metrics
+    for p in range(0, len(plugins)):
+        plugin = plugins[p]
+        logging.info(f"fetching metrics for plugin: {plugin} [{p}/{len(plugins)}]")
+
+        # fetch the snapshots
+        snapshots = fetch_instana_snapshots(url, token, plugin, start_time, end_time)
+        if not snapshots:
+            continue
+
+        # fetch the metric ids
+        metrics_catalog = fetch_instana_metrics_catalog(url, token, plugin)
+        if metrics_catalog is None:
+            continue
+        metric_ids = list(map(lambda item: item['metricId'], metrics_catalog))
+
+        # fetch the time_series metrics
+        metrics_api_limit = 5  # <<<--- limitation of the API to max 5 metrics per call
+        snapshots_api_limit = 30  # <<<--- limitation of the API to max 30 snapshots per call
+        for i in range(0, len(snapshots), snapshots_api_limit):
+            snapshots_subset = snapshots[i:i + snapshots_api_limit]
+            for j in range(0, len(metric_ids), metrics_api_limit):
+                metric_ids_subset = metric_ids[j:j + metrics_api_limit]
+                logging.info(f"=> fetching time series for plugin: {plugin}, "
+                             f"snapshots: [{i}.. /{len(snapshots)}] "
+                             f"metrics: [{j}.. /{len(metric_ids)}]")
+                time_series_metrics_subset = fetch_instana_infrastructure_metrics(url, token, plugin,
+                                                                                  snapshots_subset, metric_ids_subset,
+                                                                                  start_time, end_time,
+                                                                                  granularity)
+                if time_series_metrics_subset is None:
+                    continue
+                if not snapshots:
+                    continue
+                time_series_metrics = time_series_metrics + list(time_series_metrics_subset["items"])
+                metrics_count += len(time_series_metrics_subset["items"])
+                if metrics_count >= limit:
+                    logging.info(f"===> Reached Metrics Limit {limit}. "
+                                 f"{metrics_count} metrics fetched.")
+                    return time_series_metrics
+
+    logging.info(f"===> Done. {metrics_count} metrics fetched.")
     return time_series_metrics
 
 
@@ -163,6 +185,8 @@ def persist_data_to_file(data, filename):
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch Instana metrics and events for a specified time window")
+    parser.add_argument("--log-level", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+                        default="INFO", help="Logging level (default: INFO)")
     parser.add_argument("--start", type=str, default=(datetime.now() - timedelta(minutes=10))
                         .strftime("%Y-%m-%dT%H:%M:%S"),
                         help="Start time in YYYY-MM-DDTHH:MM:SS format (default: last 10 minutes)")
@@ -172,13 +196,19 @@ def main():
     parser.add_argument("--token", type=str, required=True, help="Instana API token")
     parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for metrics and events")
     parser.add_argument("--fetch-events", action="store_true", help="Fetch events data")
+    parser.add_argument("--limit", type=int, default=1000, help="Limit the number of metrics to fetch")
     args = parser.parse_args()
+
+    logging.getLogger()
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=args.log_level)
 
     try:
         start_time = datetime.fromisoformat(args.start)
         end_time = datetime.fromisoformat(args.end)
     except ValueError:
-        print("Invalid time format. Please use YYYY-MM-DDTHH:MM:SS format.")
+        logging.error("Invalid time format. Please use YYYY-MM-DDTHH:MM:SS format.")
+        logging.error("Invalid time format. Please use YYYY-MM-DDTHH:MM:SS format.")
         return
 
     # Fetch metrics from Instana API
@@ -187,11 +217,11 @@ def main():
         # Persist metrics to a file
         file_name = f"{args.output_dir}/instana_metrics.json"
         persist_data_to_file(instana_metrics, file_name)
-        print(f"Metrics saved to {file_name}")
+        logging.info(f"Metrics saved to {file_name}")
 
     if args.fetch_events:
         # Fetch events from Instana API
-        print("Not yet implemented")
+        logging.info("Not yet implemented")
 
 
 if __name__ == "__main__":
