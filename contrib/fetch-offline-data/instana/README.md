@@ -19,19 +19,26 @@ Instana is a popular monitoring tool used by many organizations to monitor their
 3. **Configuration**: You need to obtain an Instana API token and know the base URL of your Instana instance. Set these values in the script or provide them as command-line arguments (see below).
 4. **Run the Script**: Use the following command to run the script:
 ```bash
-python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-events --start START_TIME --end END_TIME --output_dir OUTPUT_DIR
+python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-events --start START_TIME --end END_TIME --output_dir OUTPUT_DIR --limit LIMIT
 ```
 
+> [!NOTE]  
 > Replace YOUR_INSTANA_URL and YOUR_API_TOKEN with the base URL of your Instana instance and your API token, respectively.
-   
+
+> [!NOTE]     
 > You can also specify the START_TIME and END_TIME in the format YYYY-MM-DDTHH:MM:SS to fetch data for a specific time window.  
 > If you omit the --start and --end parameters, the script will fetch data for the last 24 hours by default.
 
-> You can also specify the output_dir to save the data into a specific directory.  
+> [!NOTE]  
+> You can also specify the OUTPUT_DIR to save the data into a specific directory.  
 > If you omit the --output_dir parameter, the script will save the data into the current directory.  
 
-> By default, the script fetches metrics only, specify --fetch-events to include also events  
+> [!NOTE]  
+> You can also specify the LIMIT to limit data fetching.  
+> If you omit the --limit parameter, the script will limit to 1000 metrics.
 
+> [!NOTE]  
+> By default, the script fetches metrics only, specify --fetch-events to include also events (Not implemented yet)  
 
 5. **Output**: The script will save the fetched metrics and events data to JSON files named instana_metrics.json and instana_events.json, respectively.
 
