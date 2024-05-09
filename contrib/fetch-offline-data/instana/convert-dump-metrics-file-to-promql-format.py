@@ -36,6 +36,7 @@ def convert_to_promql_format(src_json_file, dst_promql_file):
             # Write the PromQL metrics to the output file
             for snapshot_metrics in data:
                 for metric, time_series in snapshot_metrics['metrics'].items():
+                    time_series_milisec_timetamps = [[point[0]/1000, point[1]] for point in time_series]
                     dst_file.write(f'''
                 {{
                     "metric": {{
@@ -46,7 +47,7 @@ def convert_to_promql_format(src_json_file, dst_promql_file):
                         "job": "prometheus"
                         }},
                     "values":
-                        {time_series}
+                        {time_series_milisec_timetamps}
                 }},''')
             # Write the Footer
             file_size = os.path.getsize(dst_promql_file)
