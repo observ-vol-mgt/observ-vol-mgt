@@ -117,6 +117,7 @@ func readAndStoreConfig() {
 func main() {
 	var target = flag.String("target", "http://thanos_receive:19291", "Cortex/Thanos metrics endpoint")
 	var listen = flag.String("listen", "0.0.0.0:8081", "Prometheus remote write listener endpoint")
+	var morphport = flag.String("morpher", "0.0.0.0:8100", "DAG reader")
 	flag.Parse()
 	//readAndStoreConfig()
 
@@ -124,7 +125,8 @@ func main() {
 
 	timings := benchmarker.NewTimings()
 	mercury := NewMercury(cfg, timings)
-	go mercury.Morpher.StartServerAndRegister(":8100")
+	//go mercury.Morpher.StartServerAndRegister(":8100")
+	go mercury.Morpher.StartServerAndRegister(*morphport)
 
 	// Create a context that is cancelled when an interrupt signal is received
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGHUP, syscall.SIGTERM)

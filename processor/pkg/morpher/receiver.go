@@ -136,7 +136,6 @@ func (m *Morpher) Create(w http.ResponseWriter, r *http.Request) {
 			}
 			morphNode.AddNodeChild(child)
 		}
-
 	}
 
 	m.CompileMorph()
