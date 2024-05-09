@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from unittest.mock import patch
+from common.stage import Stage
 
 import pytest
 
@@ -58,15 +59,11 @@ def input_file(tmpdir):
 
 
 def test_ingest(input_file):
-    with patch("common.conf.get_configuration") as mocked_get_configuration:
-        config = (lambda Config, ingest_file: Config(ingest_file))(
-            type('Config', (), {'__init__': lambda self, ingest_file: setattr(self, 'ingest_file', ingest_file)}),
-            input_file
-        )
-        mocked_get_configuration.return_value = config
-
-        from ingest.file_ingest import ingest
-        signals = ingest()
+    ingest_config = {
+            "file_name": input_file
+        }
+    from ingest.file_ingest import ingest
+    signals = ingest(ingest_config)
 
     assert signals[0].type == "metric"
     assert signals[0].time_series == time_series_type1

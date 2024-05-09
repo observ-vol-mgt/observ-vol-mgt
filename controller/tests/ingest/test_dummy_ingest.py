@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from common.stage import Stage
+
 def test_ingest():
     from ingest.dummy_ingest import ingest
     signals = ingest()
