@@ -1,0 +1,8 @@
+action: RESET
+metrics:
+   - name: 'cluster'
+     type: 
+       - 'hardware'
+     index:
+       - '0'
+  
