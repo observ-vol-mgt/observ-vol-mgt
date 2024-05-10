@@ -103,7 +103,6 @@ def delete_all_rules():
             response = alertmanager.delete_rule(rule_id, ALERTMANAGER_URL)
             status_code = response.status_code
             if status_code in [200, 202, 204]:
-                logger.error(f"Delete Rule request for rule with id {rule_id} failed: {response}")
                 delete_rule_file(RULES_FOLDER, rule_id)
                 success_list.append(rule_id)
 
