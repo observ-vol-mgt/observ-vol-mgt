@@ -24,40 +24,40 @@ def build_config(yaml_string):
 
 config1 = """\
 pipeline:
-- name: ingest_file
-- name: feature_extraction_tsfel
-  follows: [ingest_file]
-- name: generate_insights
-  follows: [feature_extraction_tsfel]
-- name: config_generator_otel
-  follows: [feature_extraction_tsfel, generate_insights]
+- name: stage3
+  follows: [stage2]
+- name: stage2
+  follows: [stage1]
+- name: stage4
+  follows: [stage2, stage3]
+- name: stage1
 parameters:
-- name: ingest_file
+- name: stage4
+  type: config_generator
+  subtype: otel
+  input_data: [data2, data3, data4]
+  output_data: [data6]
+  config:
+    directory: /tmp
+- name: stage2
+  type: extract
+  subtype: tsfel
+  input_data: [data1]
+  output_data: [data2]
+  config:
+- name: stage3
+  type: insights
+  subtype:
+  input_data: [data2]
+  output_data: [data3, data4, data5]
+  config:
+- name: stage1
   type: ingest
   subtype: file
   input_data: []
-  output_data: [signals]
+  output_data: [data1]
   config:
-    file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
-- name: feature_extraction_tsfel
-  type: extract
-  subtype: tsfel
-  input_data: [signals]
-  output_data: [extracted_signals]
-  config:
-- name: generate_insights
-  type: insights
-  subtype:
-  input_data: [extracted_signals]
-  output_data: [signals_to_keep, signals_to_reduce, text_insights]
-  config:
-- name: config_generator_otel
-  type: config_generator
-  subtype: otel
-  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
-  output_data: [r_value]
-  config:
-    directory: /tmp
+    file_name: dummy_file.txt
 """
 
 def test_build_pipeline():
@@ -67,5 +67,100 @@ def test_build_pipeline():
 
     from common.pipeline import stage_execution_order
 
-    assert stage_execution_order[0].name == "ingest_file"
-    assert stage_execution_order[2].name == "generate_insights"
+    assert stage_execution_order[0].name == "stage1"
+    assert stage_execution_order[2].name == "stage3"
+
+config_multiple_initial = """\
+pipeline:
+- name: stage1
+- name: stage2
+  follows: [stage1]
+- name: stage3
+parameters:
+- name: stage2
+  type: extract
+  subtype: tsfel
+  input_data: [data1]
+  output_data: [data2]
+  config:
+- name: stage3
+  type: ingest
+  subtype: none
+  input_data: []
+  output_data: [data3, data4, data5]
+  config:
+- name: stage1
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [data1]
+  config:
+    file_name: dummy_file.txt
+"""
+
+def test_multiple_initial():
+    build_config(config_multiple_initial)
+
+    try:
+        build_pipeline()
+        assert False
+    except:
+        assert True
+
+config_follows_missing = """\
+pipeline:
+- name: stage1
+- name: stage2
+  follows: [stage3]
+parameters:
+- name: stage2
+  type: extract
+  subtype: tsfel
+  input_data: [data1]
+  output_data: [data2]
+  config:
+- name: stage3
+  type: ingest
+  subtype: none
+  input_data: []
+  output_data: [data3, data4, data5]
+  config:
+- name: stage1
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [data1]
+  config:
+    file_name: dummy_file.txt
+"""
+
+def test_follows_missing():
+    build_config(config_follows_missing)
+    try:
+        build_pipeline()
+        assert False
+    except:
+        assert True
+
+config_missing_params = """\
+pipeline:
+- name: stage1
+- name: stage2
+  follows: [stage1]
+parameters:
+- name: stage1
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [data1]
+  config:
+    file_name: dummy_file.txt
+"""
+
+def test_missing_params():
+    build_config(config_missing_params)
+    try:
+        build_pipeline()
+        assert False
+    except:
+        assert True
