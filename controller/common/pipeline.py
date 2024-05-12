@@ -21,11 +21,10 @@ from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
 
-stages_dict = {}
-first_stages = []
 output_data_dict = {}
 stage_execution_order = []
 
+# variables used for GUI of POC
 signals_global = None
 extracted_signals_global = None
 signals_to_keep_global = None
@@ -33,53 +32,78 @@ signals_to_reduce_global = None
 text_insights_global = None
 r_value_global = None
 
+def reset_globals():
+    global output_data_dict
+    global stage_execution_order
+    output_data_dict = {}
+    stage_execution_order = []
+
+
 def build_pipeline():
-    global stages_dict
-    global first_stages
+    reset_globals() # so that tests work on a clean state of variables
+    stages_params_dict = {}
+    stages_pipeline_dict = {}
     configuration = get_configuration()
     pipeline = configuration['pipeline']
     parameters = configuration['parameters']
+    print("pipeline = ", pipeline)
+    print("parameters = ", parameters)
 
     # create stage structs for each of the stages
     for pa in parameters:
         s = Stage(pa)
-        if s.name in stages_dict:
-            raise f"duplicate stage parameters defined: {s.name}"
-        stages_dict[s.name] = s
+        print("s.name = ", s.name)
+        if s.name in stages_params_dict:
+            raise Exception(f"duplicate stage parameters defined: {s.name}")
+        stages_params_dict[s.name] = s
 
-    print("stages = ", stages_dict)
+    print("stages = ", stages_params_dict)
 
     # parse pipeline section
     # connect between stages
-    # TBD - check that same stage name does not appear twice in pipeline section
+    # check that same stage name does not appear twice in pipeline section
     for pi in pipeline:
         print("pi = ", pi)
         name = pi['name']
-        s = stages_dict[name]
+        if name in stages_pipeline_dict:
+            raise Exception(f"stage {name} specified more than once in pipeline section")
+        stages_pipeline_dict[name] = pi
+        if name not in stages_params_dict:
+            raise Exception(f"stage {name} not defined in parametes section")
+        s = stages_params_dict[name]
         if 'follows' in pi:
             for f in pi['follows']:
-                t = stages_dict[f]
+                if f not in stages_params_dict:
+                    raise Exception(f"stage {f} used but not defined")
+                t = stages_params_dict[f]
                 s.set_follows(f)
                 t.add_follower(s)
         else:
-            first_stages.append(s)
-            print("first stage item = ", s.name)
             if s.input_data_fields != None and len(s.input_data_fields) > 0:
-                raise f"stage {s.name} is a first stage so it should not have input data"
+                raise Exception(f"stage {s.name} is a first stage so it should not have input data")
 
         # collect all the output data items in a dictionary
         global output_data_dict
         for od in s.output_data_fields:
             if od in output_data_dict:
-                str = f"output_data field must be unique to a single stage: {od}"
-                raise str
+                raise Exception(f"output_data field must be unique to a single stage: {od}")
             output_data_dict[od] = s
+
+    # check that each follows stage actually exists
+    for pi in pipeline:
+        print("pi = ", pi)
+        name = pi['name']
+        if 'follows' in pi:
+            for f in pi['follows']:
+                if f not in stages_pipeline_dict:
+                    raise Exception(f"stage {f} used but not declared in pipeline section")
 
     # decide the order in which to run the stages
     # TBD - eventually support parallel execution of tasks of DAG
     # for now, run the tasks serially. determine a legal order.
-    for stage in stages_dict.values():
+    for stage in stages_params_dict.values():
         add_stage_to_schedule(stage)
+
 
 def add_stage_to_schedule(s):
     global stage_execution_order
@@ -114,7 +138,7 @@ def run_stage(stage, input_data):
         output_data = [r_value_global]
     else:
         str = "stage type not implemented: " + stage.type
-        raise str
+        raise Exception(f"stage type not implemented: {stage.type}")
     stage.set_latest_output_data(output_data)
 
 
