@@ -1,4 +1,4 @@
-tsfel~=0.1.4
+tsfel~=0.1.7
 tsfresh~=0.20.2
 requests~=2.31.0
 configargparse~=1.7

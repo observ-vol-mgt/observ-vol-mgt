@@ -16,8 +16,8 @@ import logging
 
 from common.conf import parse_args
 from common.conf import get_args
-from common.pipeline import build_pipeline
-from common.pipeline import run_iteration
+from workflow_orchestration.pipeline import build_pipeline
+from workflow_orchestration.pipeline import run_iteration
 from ui.visualization import flaskApp, fill_time_series, fill_insights
 
 
@@ -39,9 +39,9 @@ def main():
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
     run_iteration()
 
-    from common.pipeline import signals_global, extracted_signals_global
-    from common.pipeline import text_insights_global, r_value_global
-    from common.pipeline import signals_to_keep_global, signals_to_reduce_global
+    from workflow_orchestration.pipeline import signals_global, extracted_signals_global
+    from workflow_orchestration.pipeline import text_insights_global, r_value_global
+    from workflow_orchestration.pipeline import signals_to_keep_global, signals_to_reduce_global
 
     logger.info(f"the ingested signals are: {signals_global}")
     logger.info(f"the feature_extracted signals are: {extracted_signals_global}")

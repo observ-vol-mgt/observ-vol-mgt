@@ -13,15 +13,17 @@
 #  limitations under the License.
 
 import logging
+from workflow_orchestration.configuration_api import TYPE_EXTRACT, SUBTYPE_EXTRACT_TSFEL, SUBTYPE_EXTRACT_TSFRESH
+
 
 logger = logging.getLogger(__name__)
-def feature_extraction(extract_stage, signals_list):
+def feature_extraction(subtype, config, signals_list):
     # switch based on the configuration feature_extraction type
-    if extract_stage.subtype == "tsfel":
+    if subtype == SUBTYPE_EXTRACT_TSFEL:
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
         extracted_signals = extract(signals_list)
-    elif extract_stage.subtype == "tsfresh":
+    elif subtype == SUBTYPE_EXTRACT_TSFRESH:
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals_list)

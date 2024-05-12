@@ -38,10 +38,6 @@ def parse_args():
     global args
     args = p.parse_args()
     print(args)
-    print("----------")
-    print(p.format_help())
-    print("----------")
-    print(p.format_values())
 
     with open(args.config_file, 'r') as file:
         configuration = yaml.safe_load(file)

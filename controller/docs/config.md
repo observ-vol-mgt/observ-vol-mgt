@@ -1,8 +1,9 @@
 # Config
 
 Configuration of the pipeline stages is implemented via a yaml file.
-One section of the yaml file specifies the order in which to run the stages.
-Another section of the yaml file specifies the particular parameters for each of the stages.
+The 'pipeline' section of the yaml file specifies the order in which to run the stages.
+The 'parameters' section of the yaml file specifies the particular parameters for each of the stages.
+Each stage has a name, and the names must match between the 'pipeline' and 'parameters' sections.
 
 Standard field names for each stage are:
 - name

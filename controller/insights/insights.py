@@ -22,7 +22,7 @@ import statsmodels.stats.outliers_influence as oi
 logger = logging.getLogger(__name__)
 
 
-def generate_insights(stage, signals_list):
+def generate_insights(subtype, config, signals_list):
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = (
         analyze_correlations(signals_list))
@@ -98,6 +98,7 @@ def analyze_composed_correlations(signals):
 
     # this is an opinionated list of selected features used to commute the linear correlation between
     # multiple independent signals and the dependent signal
+    #selected_features = ["0_Min", "0_Max", "0_Mean", "0_Var", "0_PeakToPeakDistance", "0_AbsoluteEnergy"]
     selected_features = ["value_Min", "value_Max", "value_Mean", "value_Var", "value_PeakToPeakDistance", "value_AbsoluteEnergy"]
 
     signals_features_matrix = pd.DataFrame()
