@@ -14,7 +14,7 @@
 
 import logging
 
-from workflow_orchestration.configuration_api import TYPE_INGEST, SUBTYPE_INGEST_FILE, SUBTYPE_INGEST_DUMMY, SUBTYPE_INGEST_PROMQL
+from common.configuration_api import TYPE_INGEST, SUBTYPE_INGEST_FILE, SUBTYPE_INGEST_DUMMY, SUBTYPE_INGEST_PROMQL
 
 logger = logging.getLogger(__name__)
 

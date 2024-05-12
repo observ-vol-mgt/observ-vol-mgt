@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 import logging
-from workflow_orchestration.configuration_api import TYPE_EXTRACT, SUBTYPE_EXTRACT_TSFEL, SUBTYPE_EXTRACT_TSFRESH
+from common.configuration_api import TYPE_EXTRACT, SUBTYPE_EXTRACT_TSFEL, SUBTYPE_EXTRACT_TSFRESH
 
 
 logger = logging.getLogger(__name__)

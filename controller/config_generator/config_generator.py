@@ -25,7 +25,7 @@
 #  limitations under the License.
 
 import logging
-from workflow_orchestration.configuration_api import SUBTYPE_CONFIG_GENERATOR_NONE, SUBTYPE_CONFIG_GENERATOR_OTEL, SUBTYPE_CONFIG_GENERATOR_PROCESSOR
+from common.configuration_api import SUBTYPE_CONFIG_GENERATOR_NONE, SUBTYPE_CONFIG_GENERATOR_OTEL, SUBTYPE_CONFIG_GENERATOR_PROCESSOR
 
 
 logger = logging.getLogger(__name__)
