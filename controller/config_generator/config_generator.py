@@ -25,23 +25,25 @@
 #  limitations under the License.
 
 import logging
+from workflow_orchestration.configuration_api import SUBTYPE_CONFIG_GENERATOR_NONE, SUBTYPE_CONFIG_GENERATOR_OTEL, SUBTYPE_CONFIG_GENERATOR_PROCESSOR
+
 
 logger = logging.getLogger(__name__)
 
 
-def config_generator(stage, extracted_signals, signals_to_keep, signals_to_reduce):
+def config_generator(subtype, config, extracted_signals, signals_to_keep, signals_to_reduce):
     # switch based on the configuration config_generator type
-    if stage.subtype == "none":
+    if subtype == SUBTYPE_CONFIG_GENERATOR_NONE:
         logger.info("not generating configuration")
         r_value = "not generating configuration"
-    elif stage.subtype == "otel":
+    elif subtype == SUBTYPE_CONFIG_GENERATOR_OTEL:
         logger.info("using otel config_generator")
         from config_generator.config_generator_otel import generate
-        r_value = generate(stage.config, extracted_signals, signals_to_keep, signals_to_reduce)
-    elif stage.subtype == "processor":
+        r_value = generate(config, extracted_signals, signals_to_keep, signals_to_reduce)
+    elif subtype == SUBTYPE_CONFIG_GENERATOR_PROCESSOR:
         logger.info("using processor config_generator")
         from config_generator.config_generator_processor import generate
-        r_value = generate(stage.config, extracted_signals, signals_to_keep, signals_to_reduce)
+        r_value = generate(config, extracted_signals, signals_to_keep, signals_to_reduce)
     else:
         raise "unsupported feature_extraction configuration"
     return r_value

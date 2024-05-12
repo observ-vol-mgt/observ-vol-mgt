@@ -14,29 +14,23 @@
 
 import logging
 
-from common.conf import get_configuration
+from workflow_orchestration.configuration_api import TYPE_INGEST, SUBTYPE_INGEST_FILE, SUBTYPE_INGEST_DUMMY, SUBTYPE_INGEST_PROMQL
 
 logger = logging.getLogger(__name__)
 
 
-def ingest(ingest_stage):
-    print("stage = ", ingest_stage.name)
-    attrs = vars(ingest_stage)
-    print(', '.join("%s: %s" % item for item in attrs.items()))
-
-    if ingest_stage.type != 'ingest':
-        raise "didn't find ingest stage"
+def ingest(subtype, config):
     # switch based on the configuration ingest type
-    if ingest_stage.subtype == "dummy":
+    if subtype == SUBTYPE_INGEST_DUMMY:
         logger.debug("using dummy ingest logger")
         from ingest.dummy_ingest import ingest
-        signals = ingest(ingest_stage['config'])
-    elif ingest_stage.subtype == "file":
+        signals = ingest(config)
+    elif subtype == SUBTYPE_INGEST_FILE:
         from ingest.file_ingest import ingest
-        signals = ingest(ingest_stage.config)
-    elif ingest_stage.subtype == "promql":
+        signals = ingest(config)
+    elif subtype == SUBTYPE_INGEST_PROMQL:
         from ingest.promql_ingest import ingest
-        signals = ingest(ingest_stage['config'])
+        signals = ingest(config)
     else:
         raise "unsupported ingest configuration"
     return signals

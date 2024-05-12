@@ -16,7 +16,7 @@
 import pytest
 import yaml
 from common.conf import set_configuration, set_configuration
-from common.pipeline import build_pipeline
+from workflow_orchestration.pipeline import build_pipeline
 
 def build_config(yaml_string):
     configuration = yaml.load(yaml_string)
@@ -65,7 +65,7 @@ def test_build_pipeline():
 
     build_pipeline()
 
-    from common.pipeline import stage_execution_order
+    from workflow_orchestration.pipeline import stage_execution_order
 
     assert stage_execution_order[0].name == "stage1"
     assert stage_execution_order[2].name == "stage3"

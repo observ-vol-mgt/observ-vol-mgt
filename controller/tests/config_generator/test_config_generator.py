@@ -28,7 +28,7 @@ def test_returns_not_generating_configuration_when_config_generator_type_is_none
 
     config_gen_stage = Stage(stage_info)
     # Call the config_generator function
-    result = config_generator(config_gen_stage, [], [], [])
+    result = config_generator("none", {}, [], [], [])
 
     # Assert that the result is "not generating configuration"
     assert result == "not generating configuration"

@@ -20,6 +20,10 @@ from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
+from workflow_orchestration.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_CONFIG_GENERATOR
+
+import logging
+logger = logging.getLogger(__name__)
 
 output_data_dict = {}
 stage_execution_order = []
@@ -45,56 +49,49 @@ def build_pipeline():
     stages_pipeline_dict = {}
     configuration = get_configuration()
     pipeline = configuration['pipeline']
-    parameters = configuration['parameters']
-    print("pipeline = ", pipeline)
-    print("parameters = ", parameters)
+    stages_parameters = configuration['parameters']
 
     # create stage structs for each of the stages
-    for pa in parameters:
-        s = Stage(pa)
-        print("s.name = ", s.name)
-        if s.name in stages_params_dict:
-            raise Exception(f"duplicate stage parameters defined: {s.name}")
-        stages_params_dict[s.name] = s
-
-    print("stages = ", stages_params_dict)
+    for stage_params in stages_parameters:
+        stg = Stage(stage_params)
+        if stg.name in stages_params_dict:
+            raise Exception(f"duplicate stage parameters defined: {stg.name}")
+        stages_params_dict[stg.name] = stg
+    logger.info(f"stages = {stages_params_dict}")
 
     # parse pipeline section
     # connect between stages
     # check that same stage name does not appear twice in pipeline section
-    for pi in pipeline:
-        print("pi = ", pi)
-        name = pi['name']
+    for pip_stage in pipeline:
+        name = pip_stage['name']
         if name in stages_pipeline_dict:
             raise Exception(f"stage {name} specified more than once in pipeline section")
-        stages_pipeline_dict[name] = pi
+        stages_pipeline_dict[name] = pip_stage
         if name not in stages_params_dict:
             raise Exception(f"stage {name} not defined in parametes section")
-        s = stages_params_dict[name]
-        if 'follows' in pi:
-            for f in pi['follows']:
+        stg = stages_params_dict[name]
+        if 'follows' in pip_stage:
+            for f in pip_stage['follows']:
                 if f not in stages_params_dict:
                     raise Exception(f"stage {f} used but not defined")
                 t = stages_params_dict[f]
-                s.set_follows(f)
-                t.add_follower(s)
+                stg.set_follows(f)
+                t.add_follower(stg)
         else:
-            if s.input_data_fields != None and len(s.input_data_fields) > 0:
-                raise Exception(f"stage {s.name} is a first stage so it should not have input data")
+            if stg.input_data_fields != None and len(stg.input_data_fields) > 0:
+                raise Exception(f"stage {stg.name} is a first stage so it should not have input data")
 
         # collect all the output data items in a dictionary
         global output_data_dict
-        for od in s.output_data_fields:
+        for od in stg.output_data_fields:
             if od in output_data_dict:
                 raise Exception(f"output_data field must be unique to a single stage: {od}")
-            output_data_dict[od] = s
+            output_data_dict[od] = stg
 
     # check that each follows stage actually exists
-    for pi in pipeline:
-        print("pi = ", pi)
-        name = pi['name']
-        if 'follows' in pi:
-            for f in pi['follows']:
+    for pip_stage in pipeline:
+        if 'follows' in pip_stage:
+            for f in pip_stage['follows']:
                 if f not in stages_pipeline_dict:
                     raise Exception(f"stage {f} used but not declared in pipeline section")
 
@@ -117,27 +114,23 @@ def add_stage_to_schedule(s):
     s.set_scheduled()
 
 def run_stage(stage, input_data):
-    print("stage = ", stage.name)
-    attrs = vars(stage)
-    print(', '.join("%s: %s" % item for item in attrs.items()))
-    if stage.type == 'ingest':
+    if stage.type == TYPE_INGEST:
         global signals_global
-        signals_global = ingest(stage)
+        signals_global = ingest(stage.subtype, stage.config)
         output_data = [signals_global]
-    elif stage.type == 'extract':
+    elif stage.type == TYPE_EXTRACT:
         global extracted_signals_global
-        extracted_signals_global = feature_extraction(stage, input_data[0])
+        extracted_signals_global = feature_extraction(stage.subtype, stage.config, input_data[0])
         output_data = [extracted_signals_global]
-    elif stage.type == 'insights':
+    elif stage.type == TYPE_INSIGHTS:
         global signals_to_keep_global, signals_to_reduce_global, text_insights_global
-        signals_to_keep_global, signals_to_reduce_global,  text_insights_global = generate_insights(stage, input_data[0])
+        signals_to_keep_global, signals_to_reduce_global,  text_insights_global = generate_insights(stage.subtype, stage.config, input_data[0])
         output_data = [signals_to_keep_global, signals_to_reduce_global,  text_insights_global]
-    elif stage.type == 'config_generator':
+    elif stage.type == TYPE_CONFIG_GENERATOR:
         global r_value_global
-        r_value_global = config_generator(stage, input_data[0], input_data[1], input_data[2])
+        r_value_global = config_generator(stage.subtype, stage.config, input_data[0], input_data[1], input_data[2])
         output_data = [r_value_global]
     else:
-        str = "stage type not implemented: " + stage.type
         raise Exception(f"stage type not implemented: {stage.type}")
     stage.set_latest_output_data(output_data)
 
@@ -146,14 +139,9 @@ def run_iteration():
     for s in stage_execution_order:
         # gather the input data
         input_data = []
-        print("fields = ", s.input_data_fields)
         for i_field in s.input_data_fields:
-            print("i = ", i_field)
             # find the stage where that input field is generated
             s_prev = output_data_dict[i_field]
-            print("s_prev = ", s_prev)
-            attrs = vars(s_prev)
-            print(', '.join("%s: %s" % item for item in attrs.items()))
             #  latest_output_data contains a list of outputs; select the right one
             for o_field in s_prev.output_data_fields:
                 if o_field == i_field:
