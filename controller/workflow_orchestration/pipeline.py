@@ -14,13 +14,13 @@
 
 from common.conf import get_configuration
 
-from common.stage import Stage
+from workflow_orchestration.stage import StageParameters
 
 from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
-from workflow_orchestration.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_CONFIG_GENERATOR
+from common.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_CONFIG_GENERATOR
 
 import logging
 logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ def build_pipeline():
 
     # create stage structs for each of the stages
     for stage_params in stages_parameters:
-        stg = Stage(stage_params)
+        stg = StageParameters(stage_params)
         if stg.name in stages_params_dict:
             raise Exception(f"duplicate stage parameters defined: {stg.name}")
         stages_params_dict[stg.name] = stg

@@ -14,8 +14,6 @@
 
 import re
 from unittest.mock import patch
-from common.stage import Stage
-
 
 import requests_mock
 

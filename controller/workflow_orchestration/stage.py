@@ -1,5 +1,5 @@
 
-class Stage:
+class StageParameters:
     def __init__(self, stage_info):
         self.name = stage_info['name']
         self.type = stage_info['type']

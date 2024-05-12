@@ -12,9 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from unittest.mock import patch
-from common.stage import Stage
-
 import pytest
 
 time_series_type1 = [[10, '1'], [20, '2'], [30, '3']]
