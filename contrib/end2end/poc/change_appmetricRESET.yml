@@ -1,0 +1,9 @@
+action: RESET
+metrics:
+   - name: 'app'
+     type: 
+       - 'A'
+       - 'network'
+     index:
+       - '0'
+  

@@ -43,9 +43,9 @@ In upcoming versions, we plan to introduce a **brain** (controller) that will ai
 
 ## Proof of Concept Walkthrough
 
-**We have created a video demonstrating the Proof of Concept in action. It can be accessed [here](docs/poc/video.mp4).**
+**We have created a video demonstrating the Proof of Concept in action. It can be accessed [here](docs/videos/poc_video.mp4).**
 
-**Also, [here](docs/poc/README.md) is the documentation to replicate the Proof of Concept locally.**
+**Also, [here](contrib/end2end/poc//README.md) is the documentation to replicate the Proof of Concept locally.**
 
 ![](docs/images/poc.svg) 
 
@@ -60,7 +60,7 @@ The proof of concept is built to showcase two main capabilities of the Observabi
 1. Automation: Users only define rules for managing observability data under different conditions and the Observability Volume Manager autonomously and dynamically monitors and enforces these transformations without requiring user intervention each time conditions are met. This eliminates the need for user intervention each time conditions are met, alleviating the burden of configuring individual processors at edge locations everytime.
 2. Specificity: The Observability Volume Manager can enforce a transformation DAG on a subset of Edge locations. Additionally, within these edge locations, specific transformations can be applied to designated metrics only. This fine-granied control provides a level of specificity lacking in current observability systems.
 
-More details on the proof of concept are explained [here](docs/poc/README.md).
+More details on the proof of concept are explained [here](contrib/end2end/poc/README.md).
 
   
 
