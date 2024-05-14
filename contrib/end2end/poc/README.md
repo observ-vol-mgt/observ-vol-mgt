@@ -34,44 +34,48 @@ Note that the actions (firing and resolved) are stored by the manager and applie
 
 ## Running the PoC story
 
-- Bring up the PoC environment
+1. Bring up the PoC environment
 ``` 
 docker-compose -f docker-compose-quay.yml up -d
 ```
-- Add the rules and actions (in the form of transformation) corresponding to the rule
+2. Add the rules and actions (in the form of transformation) corresponding to the rule
 ```
 curl -X POST --data-binary @demo_2rules.yaml -H "Content-type: text/x-yaml" http://0.0.0.0:5010/api/v1/rules
 ```
-- Confirm the two rules are added correctly in the `thanos ruler` UI:
+3. Confirm the two rules are added correctly in the `thanos ruler` UI:
 `http://0.0.0.0:10903/rules`
-- Confirm the metrics are flowing correctly in the `thanos query` UI:
+4. Confirm the metrics are flowing correctly in the `thanos query` UI:
 `http://0.0.0.0:19192/`\
 Search for `cluster_hardware_metric_0` and `app_A_network_metric_0`. You should see 6 metrics (3 for each edge) for each of these. The edge can be identified by the `processor` label in the metric.
-- Next, we instrument the issue scenario with metric value change. We apply the value change to metricgen for each edges (`metricgen1` and `metricgen2`)
-  - For issue at edge 1: `curl -X POST --data-binary @change_appmetric.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5002`
-  - For issue at edge 2: `curl -X POST --data-binary @change_hwmetric.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5003`
-- You can visualize the change in the metrics value in the `thanos query` UI (in the graph mode)
-- The alert should also be firing and can be seen in the `thanos ruler` UI (`http://0.0.0.0:10903/alerts`)
-- The manager triggers adding of the corresponding transforms. To confirm the same exec into the manager container
-  ```
-  docker exec -it manager /bin/bash
-  cat app/logs/manager.log
-  ``` 
-  You should see `INFO - POST request successful for processor with id 1` `INFO - POST request successful for processor with id 2`\
-  P.S. This step is just for extra confirmation and is optional
-- To visualize the transformation thanos query UI (in the graph mode). 
-  - If you search `app_A_network_metric_0{processor="1"}` you will see the metric with label `IP:192.168.1.3` has changing value but the other metrics with label `IP:192.168.1.1` and `IP:192.168.1.2` with no change (straight line; showcasing no value change or should stop completely).\ This is because we have filtered and allowed `app_A_network_metric_0` only for app with `IP:192.168.1.3`.
-  - If you search `cluster_hardware_metric_0{processor="2"}` you will see the metric with label `node:'0'` having a nice sinusoidal wave. This is because its value is changing every 5 sec. The other metrics with label `node:'1'` and `node:'2'` will be blocky showing their frequency is still 30 sec. 
+5. Next, we instrument the issue scenario with metric value change. We apply the value change to metricgen for each edges (`metricgen1` and `metricgen2`)
+    - For issue at edge 1: `curl -X POST --data-binary @change_appmetric.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5002`
+    - For issue at edge 2: `curl -X POST --data-binary @change_hwmetric.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5003`
+6. You can visualize the change in the metrics value in the `thanos query` UI (in the graph mode)
+7. The alert should also be firing and can be seen in the `thanos ruler` UI (`http://0.0.0.0:10903/alerts`)
+   P.S. Wait for 30sec-1min before checking this step. 
+8. The manager triggers adding of the corresponding transforms. To confirm the same exec into the manager container
+   ```
+   docker exec -it manager /bin/bash
+   cat app/logs/manager.log
+   ``` 
+   You should see `INFO - POST request successful for processor with id 1` `INFO - POST request successful for processor with id 2`\
+   P.S. This step is just for extra confirmation and is optional. 
+9. To visualize the transformation thanos query UI (in the graph mode).
+    - If you search `app_A_network_metric_0{processor="1"}` you will see the metric with label `IP:192.168.1.3` has changing value but the other metrics with label `IP:192.168.1.1` and `IP:192.168.1.2` with no change (straight line; showcasing no value change or should stop completely).\ This is because we have filtered and allowed `app_A_network_metric_0` only for app with `IP:192.168.1.3`.
+    - If you search `cluster_hardware_metric_0{processor="2"}` you will see the metric with label `node:'0'` having a nice sinusoidal wave. This is because its value is changing every 5 sec. The other metrics with label `node:'1'` and `node:'2'` will be blocky showing their frequency is still 30 sec. 
 This showcases the transformation happening in an automated fashion.
-- We will just revert issue in edge cloud 1 and showcase that we work on specific cloud as well.
-  ```
-  curl -X POST --data-binary @change_appmetricRESET.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5002
-  ```
-  In sometime, you should see the alert rule 1 resolved (in thanos ruler UI (`http://0.0.0.0:10903/alerts`)) and should see the metric `app_A_network_metric_0{processor="1"}` again coming in for labels `IP:192.168.1.1` and `IP:192.168.1.2` as well demontrating the removal of `filter` transform from edge cloud 1. 
+10. We will just revert issue in edge cloud 1 and showcase that we work on specific cloud as well.
+    ```
+    curl -X POST --data-binary @change_appmetricRESET.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5002
+    ```
+    In sometime, you should see the alert rule 1 resolved (in thanos ruler UI (`http://0.0.0.0:10903/alerts`)) and should see the metric `app_A_network_metric_0{processor="1"}` again coming in for labels `IP:192.168.1.1` and `IP:192.168.1.2` as well demontrating the removal of `filter` transform from edge cloud 1. 
 
-- P.S. One can revert the transformation applied to edge 2 as well using the below command.
-  ```
-  curl -X POST --data-binary @change_hwmetricRESET.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5003
-  ```
-
+11. P.S. One can revert the transformation applied to edge 2 as well using the below command.
+    ```
+    curl -X POST --data-binary @change_hwmetricRESET.yml -H "Content-type: text/x-yaml" http://0.0.0.0:5003
+    ```
+-   Note: The PoC can also be tested with using OTel Collector instead of prometheus. For this the only step that will change is - <em> 1. Bring up the PoC environment</em> to below
+    ``` 
+    docker-compose -f docker-compose-otel.yml up -d
+    ```
 
