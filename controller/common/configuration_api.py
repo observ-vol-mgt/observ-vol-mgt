@@ -12,11 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import logging
+TYPE_INGEST = 'ingest'
+TYPE_EXTRACT = 'extract'
+TYPE_INSIGHTS = 'insights'
+TYPE_CONFIG_GENERATOR = 'config_generator'
 
-logger = logging.getLogger(__name__)
+SUBTYPE_INGEST_FILE = 'file'
+SUBTYPE_INGEST_DUMMY = 'dummy'
+SUBTYPE_INGEST_PROMQL = 'promql'
 
+SUBTYPE_EXTRACT_TSFEL = 'tsfel'
+SUBTYPE_EXTRACT_TSFRESH = 'tsfresh'
 
-def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
-    logger.debug(f"{extracted_signals} {signals_to_keep} {signals_to_reduce}")
-    return "Not implemented"
+SUBTYPE_CONFIG_GENERATOR_NONE = 'none'
+SUBTYPE_CONFIG_GENERATOR_OTEL = 'otel'
+SUBTYPE_CONFIG_GENERATOR_PROCESSOR = 'processor'
+

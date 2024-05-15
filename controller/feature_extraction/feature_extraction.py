@@ -13,22 +13,20 @@
 #  limitations under the License.
 
 import logging
+from common.configuration_api import TYPE_EXTRACT, SUBTYPE_EXTRACT_TSFEL, SUBTYPE_EXTRACT_TSFRESH
 
-from common.conf import get_configuration
 
 logger = logging.getLogger(__name__)
-
-
-def feature_extraction(signals):
+def feature_extraction(subtype, config, signals_list):
     # switch based on the configuration feature_extraction type
-    if get_configuration().feature_extraction_type == "tsfel":
+    if subtype == SUBTYPE_EXTRACT_TSFEL:
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
-        extracted_signals = extract(signals)
-    elif get_configuration().feature_extraction_type == "tsfresh":
+        extracted_signals = extract(signals_list)
+    elif subtype == SUBTYPE_EXTRACT_TSFRESH:
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
-        extracted_signals = extract(signals)
+        extracted_signals = extract(signals_list)
     else:
         raise "unsupported feature_extraction configuration"
     return extracted_signals

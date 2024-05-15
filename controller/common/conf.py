@@ -13,40 +13,36 @@
 #  limitations under the License.
 
 import configargparse
+import yaml
 
+args = None
 configuration = None
 
+def get_args():
+    return args
 
 def get_configuration():
     return configuration
 
+def set_configuration(config):
+    global configuration
+    configuration = config
 
-def parse_configuration():
-    p = configargparse.ArgParser(
-        default_config_files=['~/controller.config.yaml', 'config.yaml'])
-    p.add('-c', '--config-file', required=False,
-          is_config_file=True, help='config file path')
+def parse_args():
+    p = configargparse.ArgParser()
+    p.add('-c', '--config-file', help='config file path',
+          default='config.yaml', env_var='CONFIGFILE')
     p.add('-v', '--loglevel', help='logging level',
           default='info', env_var='LOGLEVEL')
-    p.add('--ingest_type', help='ingest type (dummy, file or promql)',
-          default='dummy', env_var='INGEST_TYPE')
-    p.add('--ingest_file', help='ingest file ( for file type )',
-          env_var='INGEST_FILE')
-    p.add('--ingest_url', help='ingest url ( for promql type )',
-          env_var='INGEST_URL')
-    p.add('--ingest_window', help='ingest window ( for promql type )',
-          env_var='INGEST_WINDOW')
-    p.add('--feature_extraction_type', help='feature_extraction type (tsfel or tsfresh)',
-          env_var='FEATURE_EXTRACTION_TYPE')
-    p.add('--config_generator_type', help='configuration generation type (none, otel or processor)',
-          default='none', env_var='CONFIG_GENERATOR_TYPE')
-    p.add('--config_generator_directory', help='configuration generation output directory',
-          env_var='CONFIG_GENERATOR_DIR')
 
-    global configuration
-    configuration = p.parse_args()
-    print(configuration)
-    print("----------")
-    print(p.format_help())
-    print("----------")
-    print(p.format_values())
+    global args
+    args = p.parse_args()
+    print(args)
+
+    with open(args.config_file, 'r') as file:
+        configuration = yaml.safe_load(file)
+        set_configuration(configuration)
+        print("----------")
+        print("Configuration")
+        print(configuration)
+

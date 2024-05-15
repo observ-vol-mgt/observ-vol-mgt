@@ -9,6 +9,10 @@ and automatically updates configurations to manage and reduce the volume of obse
 
 The controller architecture is described at [docs/architecture.md](docs/architecture.md)
 
+## config
+The controller can be configured to run with different stages and parameters.
+See [docs/config.md](docs/config.md).
+
 ## How to run
 
 To run the code, use the provided Makefile.

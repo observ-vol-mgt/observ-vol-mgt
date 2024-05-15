@@ -22,17 +22,17 @@ import statsmodels.stats.outliers_influence as oi
 logger = logging.getLogger(__name__)
 
 
-def generate_insights(signals):
+def generate_insights(subtype, config, signals_list):
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = (
-        analyze_correlations(signals))
+        analyze_correlations(signals_list))
 
     # Get the composed correlation for the remaining signals
-    signals_to_keep_post_pairwise_correlation = signals.filter_by_names(pairwise_signals_to_keep)
+    signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
     composed_signals_to_keep, composed_signals_to_reduce, composed_correlation_insights = (
         analyze_composed_correlations(signals_to_keep_post_pairwise_correlation))
 
-    summary_insights = f"\n ==> Summery: The signals to keep are: {composed_signals_to_keep}:\n\n"
+    summary_insights = f"\n ==> Summary: The signals to keep are: {composed_signals_to_keep}:\n\n"
     return (composed_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
             [signal["signal"] for signal in composed_signals_to_reduce],
@@ -98,7 +98,8 @@ def analyze_composed_correlations(signals):
 
     # this is an opinionated list of selected features used to commute the linear correlation between
     # multiple independent signals and the dependent signal
-    selected_features = ["0_Min", "0_Max", "0_Mean", "0_Var", "0_PeakToPeakDistance", "0_AbsoluteEnergy"]
+    #selected_features = ["0_Min", "0_Max", "0_Mean", "0_Var", "0_PeakToPeakDistance", "0_AbsoluteEnergy"]
+    selected_features = ["value_Min", "value_Max", "value_Mean", "value_Var", "value_PeakToPeakDistance", "value_AbsoluteEnergy"]
 
     signals_features_matrix = pd.DataFrame()
     for signal in signals.signals:
