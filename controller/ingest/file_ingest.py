@@ -14,6 +14,7 @@
 
 import json
 import logging
+import re
 
 from common.signal import Signal, Signals
 
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 def ingest(ingest_config):
     signals = Signals()
     ingest_file = ingest_config['file_name']
+    ingest_filter_metadata = ingest_config['filter_metadata'] if 'filter_metadata' in ingest_config else None
 
     signals.metadata["ingest_type"] = "file"
     signals.metadata["ingest_source"] = ingest_file
@@ -37,6 +39,9 @@ def ingest(ingest_config):
     json_signals = data["data"]["result"]
     for json_signal in json_signals:
         if 'metric' in json_signal.keys():
+            if ingest_filter_metadata:
+                if not re.findall(ingest_filter_metadata, str(json_signal["metric"])):
+                    continue
             signal_type = "metric"
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
