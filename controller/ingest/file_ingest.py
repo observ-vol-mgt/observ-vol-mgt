@@ -15,6 +15,7 @@
 import json
 import logging
 import re
+from string import Template
 
 from common.signal import Signal, Signals
 
@@ -24,6 +25,7 @@ logger = logging.getLogger(__name__)
 def ingest(ingest_config):
     signals = Signals()
     ingest_file = ingest_config['file_name']
+    ingest_name_template = ingest_config['ingest_name_template'] if 'ingest_name_template' in ingest_config else None
     ingest_filter_metadata = ingest_config['filter_metadata'] if 'filter_metadata' in ingest_config else None
 
     signals.metadata["ingest_type"] = "file"
@@ -43,6 +45,8 @@ def ingest(ingest_config):
                 if not re.findall(ingest_filter_metadata, str(json_signal["metric"])):
                     continue
             signal_type = "metric"
+            if ingest_name_template:
+                json_signal["metric"]["__name__"] = Template(ingest_name_template).substitute(json_signal["metric"])
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
         else:
