@@ -19,10 +19,10 @@ from common.conf import set_configuration, set_configuration
 from workflow_orchestration.pipeline import Pipeline
 
 def build_config(yaml_string):
-    configuration = yaml.load(yaml_string)
+    configuration = yaml.load(yaml_string, Loader=yaml.FullLoader)
     set_configuration(configuration)
 
-config1 = """\
+config1 = """
 pipeline:
 - name: stage3
   follows: [stage2]
@@ -69,7 +69,7 @@ def test_build_pipeline():
     assert p.stage_execution_order[0].name == "stage1"
     assert p.stage_execution_order[2].name == "stage3"
 
-config_multiple_initial = """\
+config_multiple_initial = """
 pipeline:
 - name: stage1
 - name: stage2
@@ -107,7 +107,7 @@ def test_multiple_initial():
     except:
         assert True
 
-config_follows_missing = """\
+config_follows_missing = """
 pipeline:
 - name: stage1
 - name: stage2
@@ -143,7 +143,7 @@ def test_follows_missing():
     except:
         assert True
 
-config_missing_params = """\
+config_missing_params = """
 pipeline:
 - name: stage1
 - name: stage2
