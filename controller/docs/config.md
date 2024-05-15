@@ -17,38 +17,32 @@ A sample config file might look like this:
 
 ```
 pipeline:
-- name: ingest_file
-- name: feature_extraction_tsfel
-  follows: [ingest_file]
-- name: generate_insights
-  follows: [feature_extraction_tsfel]
-- name: config_generator_otel
-  follows: [feature_extraction_tsfel, generate_insights]
+- name: ingest_stage
+- name: extract_stage
+  follows: [ingest_stage]
+- name: insights_stage
+  follows: [extract_stage]
 parameters:
-- name: ingest_file
+- name: ingest_stage
   type: ingest
   subtype: file
   input_data: []
   output_data: [signals]
   config:
-    file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
-- name: feature_extraction_tsfel
+    file_name: <../some_file.json>
+- name: extract_stage
   type: extract
-  subtype: tsfel
+  subtype: <some extract subtype>
   input_data: [signals]
   output_data: [extracted_signals]
   config:
-- name: generate_insights
+- name: insights_stage
   type: insights
-  subtype:
+  subtype: <some insights subtype>
   input_data: [extracted_signals]
-  output_data: [signals_to_keep, signals_to_reduce, text_insights]
-  config:
-- name: config_generator_otel
-  type: config_generator
-  subtype: otel
-  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
-  output_data: [r_value]
+  output_data: [text_insights]
   config:
 ```
+
+A stage may follow multiple other stages, and may beceive input from multiple earlier stages.
 
