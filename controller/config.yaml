@@ -13,6 +13,7 @@ parameters:
   input_data: []
   output_data: [signals]
   config:
+    filter_metadata: ""
     file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
 - name: feature_extraction_tsfel
   type: extract
