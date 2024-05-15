@@ -39,16 +39,16 @@ def main():
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
     pipeline.run_iteration()
 
-    logger.info(f"the ingested signals are: {pipeline.signals_global}")
-    logger.info(f"the feature_extracted signals are: {pipeline.extracted_signals_global}")
+    logger.info(f"the ingested signals are: {pipeline.signals}")
+    logger.info(f"the feature_extracted signals are: {pipeline.extracted_signals}")
 
-    logger.info(f"the insights are: {pipeline.text_insights_global}")
-    logger.info(f"Config Generator returned: {pipeline.r_value_global}")
+    logger.info(f"the insights are: {pipeline.text_insights}")
+    logger.info(f"Config Generator returned: {pipeline.r_value}")
 
     # Show the UI
     logger.info(f"To Visualize the signals use the provided URL:")
-    fill_time_series(pipeline.extracted_signals_global)
-    fill_insights(pipeline.text_insights_global)
+    fill_time_series(pipeline.extracted_signals)
+    fill_insights(pipeline.text_insights)
 
 
     flaskApp.run(debug=False)

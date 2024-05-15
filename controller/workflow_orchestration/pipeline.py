@@ -32,20 +32,14 @@ class Pipeline:
 
 
         # variables used for GUI of POC
-        self.signals_global = None
-        self.extracted_signals_global = None
-        self.signals_to_keep_global = None
-        self.signals_to_reduce_global = None
-        self.text_insights_global = None
-        self.r_value_global = None
-
-    def reset_globals(self):
-        self.output_data_dict = {}
-        self.stage_execution_order = []
-
+        self.signals = None
+        self.extracted_signals = None
+        self.signals_to_keep = None
+        self.signals_to_reduce = None
+        self.text_insights = None
+        self.r_value = None
 
     def build_pipeline(self):
-        self.reset_globals() # so that tests work on a clean state of variables
         stages_params_dict = {}
         stages_pipeline_dict = {}
         configuration = get_configuration()
@@ -114,17 +108,17 @@ class Pipeline:
 
     def run_stage(self, stage, input_data):
         if stage.type == TYPE_INGEST:
-            self.signals_global = ingest(stage.subtype, stage.config)
-            output_data = [self.signals_global]
+            self.signals = ingest(stage.subtype, stage.config)
+            output_data = [self.signals]
         elif stage.type == TYPE_EXTRACT:
-            self.extracted_signals_global = feature_extraction(stage.subtype, stage.config, input_data[0])
-            output_data = [self.extracted_signals_global]
+            self.extracted_signals = feature_extraction(stage.subtype, stage.config, input_data[0])
+            output_data = [self.extracted_signals]
         elif stage.type == TYPE_INSIGHTS:
-            self.signals_to_keep_global, self.signals_to_reduce_global,  self.text_insights_global = generate_insights(stage.subtype, stage.config, input_data[0])
-            output_data = [self.signals_to_keep_global, self.signals_to_reduce_global,  self.text_insights_global]
+            self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.subtype, stage.config, input_data[0])
+            output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
         elif stage.type == TYPE_CONFIG_GENERATOR:
-            self.r_value_global = config_generator(stage.subtype, stage.config, input_data[0], input_data[1], input_data[2])
-            output_data = [self.r_value_global]
+            self.r_value = config_generator(stage.subtype, stage.config, input_data[0], input_data[1], input_data[2])
+            output_data = [self.r_value]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
