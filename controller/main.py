@@ -14,23 +14,22 @@
 
 import logging
 
-from common.conf import get_configuration
-from common.conf import parse_configuration
-from config_generator.config_generator import config_generator
-from feature_extraction.feature_extraction import feature_extraction
-from ingest.ingest import ingest
-from insights.insights import generate_insights
+from common.conf import parse_args
+from common.conf import get_args
+from workflow_orchestration.pipeline import Pipeline
 from ui.visualization import flaskApp, fill_time_series, fill_insights
+
 
 logger = logging.getLogger(__name__)
 
-
 def main():
     # getting the configuration
-    parse_configuration()
+    parse_args()
+    pipeline = Pipeline()
+    pipeline.build_pipeline()
 
     # set log level
-    level = logging.getLevelName(get_configuration().loglevel.upper())
+    level = logging.getLevelName(get_args().loglevel.upper())
     logging.getLogger()
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=level)
@@ -38,19 +37,19 @@ def main():
     # starting the pipeline
     logger.info("Starting the Controller Pipeline")
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
-    signals = ingest()
-    logger.info(f"the ingested signals are: {signals}")
-    extracted_signals = feature_extraction(signals)
-    logger.info(f"the feature_extracted signals are: {extracted_signals}")
-    signals_to_keep, signals_to_reduce, text_insights = generate_insights(extracted_signals)
-    logger.info(f"the insights are: {text_insights}")
-    r_value = config_generator(extracted_signals, signals_to_keep, signals_to_reduce)
-    logger.info(f"Config Generator returned: {r_value}")
+    pipeline.run_iteration()
+
+    logger.info(f"the ingested signals are: {pipeline.signals}")
+    logger.info(f"the feature_extracted signals are: {pipeline.extracted_signals}")
+
+    logger.info(f"the insights are: {pipeline.text_insights}")
+    logger.info(f"Config Generator returned: {pipeline.r_value}")
 
     # Show the UI
     logger.info(f"To Visualize the signals use the provided URL:")
-    fill_time_series(extracted_signals)
-    fill_insights(text_insights)
+    fill_time_series(pipeline.extracted_signals)
+    fill_insights(pipeline.text_insights)
+
 
     flaskApp.run(debug=False)
 

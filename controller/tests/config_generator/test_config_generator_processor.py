@@ -19,4 +19,4 @@ class TestGenerate:
 
     #  The function returns a string "Not implemented" when called.
     def test_returns_not_implemented(self):
-        assert generate(None, None, None) == "Not implemented"
+        assert generate({}, None, None, None) == "Not implemented"

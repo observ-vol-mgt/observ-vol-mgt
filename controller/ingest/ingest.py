@@ -14,23 +14,23 @@
 
 import logging
 
-from common.conf import get_configuration
+from common.configuration_api import TYPE_INGEST, SUBTYPE_INGEST_FILE, SUBTYPE_INGEST_DUMMY, SUBTYPE_INGEST_PROMQL
 
 logger = logging.getLogger(__name__)
 
 
-def ingest():
+def ingest(subtype, config):
     # switch based on the configuration ingest type
-    if get_configuration().ingest_type == "dummy":
+    if subtype == SUBTYPE_INGEST_DUMMY:
         logger.debug("using dummy ingest logger")
         from ingest.dummy_ingest import ingest
-        signals = ingest()
-    elif get_configuration().ingest_type == "file":
+        signals = ingest(config)
+    elif subtype == SUBTYPE_INGEST_FILE:
         from ingest.file_ingest import ingest
-        signals = ingest()
-    elif get_configuration().ingest_type == "promql":
+        signals = ingest(config)
+    elif subtype == SUBTYPE_INGEST_PROMQL:
         from ingest.promql_ingest import ingest
-        signals = ingest()
+        signals = ingest(config)
     else:
         raise "unsupported ingest configuration"
     return signals
