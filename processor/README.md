@@ -1,5 +1,4 @@
 # Description of Architecture
-TODO: Add diagram here
 
 There are 3 main components which make up the processor.
 1. [`transformer`](./pkg/transformer)
