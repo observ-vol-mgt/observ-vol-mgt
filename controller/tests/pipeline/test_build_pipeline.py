@@ -16,7 +16,7 @@
 import pytest
 import yaml
 from common.conf import set_configuration, set_configuration
-from workflow_orchestration.pipeline import build_pipeline
+from workflow_orchestration.pipeline import Pipeline
 
 def build_config(yaml_string):
     configuration = yaml.load(yaml_string)
@@ -62,13 +62,12 @@ parameters:
 
 def test_build_pipeline():
     build_config(config1)
+    p = Pipeline()
+    p.build_pipeline()
 
-    build_pipeline()
 
-    from workflow_orchestration.pipeline import stage_execution_order
-
-    assert stage_execution_order[0].name == "stage1"
-    assert stage_execution_order[2].name == "stage3"
+    assert p.stage_execution_order[0].name == "stage1"
+    assert p.stage_execution_order[2].name == "stage3"
 
 config_multiple_initial = """\
 pipeline:
@@ -102,7 +101,8 @@ def test_multiple_initial():
     build_config(config_multiple_initial)
 
     try:
-        build_pipeline()
+        p = Pipeline()
+        p.build_pipeline()
         assert False
     except:
         assert True
@@ -137,7 +137,8 @@ parameters:
 def test_follows_missing():
     build_config(config_follows_missing)
     try:
-        build_pipeline()
+        p = Pipeline()
+        p.build_pipeline()
         assert False
     except:
         assert True
@@ -160,7 +161,8 @@ parameters:
 def test_missing_params():
     build_config(config_missing_params)
     try:
-        build_pipeline()
+        p = Pipeline()
+        p.build_pipeline()
         assert False
     except:
         assert True

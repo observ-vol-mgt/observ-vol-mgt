@@ -16,8 +16,7 @@ import logging
 
 from common.conf import parse_args
 from common.conf import get_args
-from workflow_orchestration.pipeline import build_pipeline
-from workflow_orchestration.pipeline import run_iteration
+from workflow_orchestration.pipeline import Pipeline
 from ui.visualization import flaskApp, fill_time_series, fill_insights
 
 
@@ -26,7 +25,8 @@ logger = logging.getLogger(__name__)
 def main():
     # getting the configuration
     parse_args()
-    build_pipeline()
+    pipeline = Pipeline()
+    pipeline.build_pipeline()
 
     # set log level
     level = logging.getLevelName(get_args().loglevel.upper())
@@ -37,22 +37,18 @@ def main():
     # starting the pipeline
     logger.info("Starting the Controller Pipeline")
     logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
-    run_iteration()
+    pipeline.run_iteration()
 
-    from workflow_orchestration.pipeline import signals_global, extracted_signals_global
-    from workflow_orchestration.pipeline import text_insights_global, r_value_global
-    from workflow_orchestration.pipeline import signals_to_keep_global, signals_to_reduce_global
+    logger.info(f"the ingested signals are: {pipeline.signals_global}")
+    logger.info(f"the feature_extracted signals are: {pipeline.extracted_signals_global}")
 
-    logger.info(f"the ingested signals are: {signals_global}")
-    logger.info(f"the feature_extracted signals are: {extracted_signals_global}")
-
-    logger.info(f"the insights are: {text_insights_global}")
-    logger.info(f"Config Generator returned: {r_value_global}")
+    logger.info(f"the insights are: {pipeline.text_insights_global}")
+    logger.info(f"Config Generator returned: {pipeline.r_value_global}")
 
     # Show the UI
     logger.info(f"To Visualize the signals use the provided URL:")
-    fill_time_series(extracted_signals_global)
-    fill_insights(text_insights_global)
+    fill_time_series(pipeline.extracted_signals_global)
+    fill_insights(pipeline.text_insights_global)
 
 
     flaskApp.run(debug=False)
