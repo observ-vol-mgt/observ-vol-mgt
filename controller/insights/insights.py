@@ -23,29 +23,33 @@ logger = logging.getLogger(__name__)
 
 
 def generate_insights(subtype, config, signals_list):
+    pairwise_similarity_threshold = config["pairwise_similarity_threshold"] \
+        if 'pairwise_similarity_threshold' in config else 0.95
+    compound_similarity_threshold = config["compound_similarity_threshold"] \
+        if 'compound_similarity_threshold' in config else 0.99
+
     # Get the pairwise correlation between signals
-    pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = (
-        analyze_correlations(signals_list))
+    pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = \
+        analyze_correlations(signals_list, pairwise_similarity_threshold)
 
-    # Get the composed correlation for the remaining signals
+    # Get the compound correlation for the remaining signals
     signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
-    composed_signals_to_keep, composed_signals_to_reduce, composed_correlation_insights = (
-        analyze_composed_correlations(signals_to_keep_post_pairwise_correlation))
+    compound_signals_to_keep, compound_signals_to_reduce, compound_correlation_insights =\
+        analyze_compound_correlations(signals_to_keep_post_pairwise_correlation, compound_similarity_threshold)
 
-    summary_insights = f"\n ==> Summary: The signals to keep are: {composed_signals_to_keep}:\n\n"
-    return (composed_signals_to_keep,
+    summary_insights = f"\n ==> Summary: The signals to keep are: {compound_signals_to_keep}:\n\n"
+    return (compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
-            [signal["signal"] for signal in composed_signals_to_reduce],
-            pairwise_correlation_insights + composed_correlation_insights + summary_insights)
+            [signal["signal"] for signal in compound_signals_to_reduce],
+            pairwise_correlation_insights + compound_correlation_insights + summary_insights)
 
 
-def analyze_correlations(signals):
+def analyze_correlations(signals, pairwise_similarity_threshold):
     """
     Find the pairwise correlation between signals
     """
 
     # Execute cross signal correlation
-    threshold = 0.95
     features_matrix = signals.metadata["features_matrix"]
     corr_matrix = features_matrix.corr(method='pearson')
     signals.metadata["corr_matrix"] = corr_matrix
@@ -66,7 +70,7 @@ def analyze_correlations(signals):
     for column in upper.columns:
         keep_metric = True
         for index in upper.index:
-            if upper.loc[index, column] > threshold:
+            if upper.loc[index, column] > pairwise_similarity_threshold:
                 signals_to_reduce.append({"signal": column, "correlated_signals": index})
                 keep_metric = False
                 break
@@ -86,11 +90,11 @@ def analyze_correlations(signals):
     return signals_to_keep, signals_to_reduce, insights
 
 
-def analyze_composed_correlations(signals):
+def analyze_compound_correlations(signals, compound_similarity_threshold):
     # This method is using the original raw signals, this is not really working well,
     # and it requires significant computational resources. We will use the features,
-    # version of the analysis and not use the function `analyze_composed_correlations_from_raw_signals`
-    # insights=analyze_composed_correlations_from_raw_signals(signals)
+    # version of the analysis and not use the function `analyze_compound_correlations_from_raw_signals`
+    # insights=analyze_compound_correlations_from_raw_signals(signals)
     # return insights
 
     # will hold the signals we need to keep based on the analysis
@@ -98,14 +102,15 @@ def analyze_composed_correlations(signals):
 
     # this is an opinionated list of selected features used to commute the linear correlation between
     # multiple independent signals and the dependent signal
-    #selected_features = ["0_Min", "0_Max", "0_Mean", "0_Var", "0_PeakToPeakDistance", "0_AbsoluteEnergy"]
-    selected_features = ["value_Min", "value_Max", "value_Mean", "value_Var", "value_PeakToPeakDistance", "value_AbsoluteEnergy"]
+    selected_features = ["value_Min", "value_Max", "value_Mean", "value_Var", "value_PeakToPeakDistance",
+                         "value_AbsoluteEnergy"]
 
     signals_features_matrix = pd.DataFrame()
     for signal in signals.signals:
         signals_features_matrix[signal.metadata["__name__"]] = (
             signal.metadata["extracted_features"][selected_features].transpose())
 
+    threshold = 1.0 - compound_similarity_threshold
     dependent_signals = {}
     for the_signal in signals_features_matrix.columns:
         features_matrix_to_test = signals_features_matrix.drop(columns=[the_signal])
@@ -113,7 +118,7 @@ def analyze_composed_correlations(signals):
         model = sm.OLS(signals_features_matrix[the_signal], features_matrix_to_test)
         results = model.fit()
         logger.info(results.summary())
-        significant_signal_predictors = results.pvalues[results.pvalues < 0.01].index.tolist()
+        significant_signal_predictors = results.pvalues[results.pvalues < threshold].index.tolist()
         if 'const' in significant_signal_predictors:
             significant_signal_predictors.remove('const')
         if significant_signal_predictors:
@@ -124,7 +129,7 @@ def analyze_composed_correlations(signals):
             signals_to_keep += [the_signal]
             logger.debug(f"The significant predictors for {the_signal} are: None")
 
-    insights = f"Based on composed correlation relationship predictions we can also reduce:\n"
+    insights = f"Based on compound correlation relationship predictions we can also reduce:\n"
     insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
     signals_to_reduce = []
     for the_signal in dependent_signals:
@@ -140,7 +145,7 @@ def analyze_composed_correlations(signals):
     return signals_to_keep, signals_to_reduce, insights
 
 
-def analyze_composed_correlations_from_raw_signals(signals):
+def analyze_compound_correlations_from_raw_signals(signals):
     # todo need to optimize the creation of the data frame !!!
     # building a dataframe to represent all the signals, each as a column
     signals_dataframe = pd.DataFrame()
@@ -155,7 +160,7 @@ def analyze_composed_correlations_from_raw_signals(signals):
     # debug  --> limit the signals -> signals_dataframe = signals_dataframe[["Sin", "Square", "Sin + Square",
     # "Noise-Zero - 1"]]
 
-    insights = f"We observed the following composed correlation relationships:\n\n"
+    insights = f"We observed the following compound correlation relationships:\n\n"
     for signal in signals_dataframe.columns:
         signals_matrix_test = signals_dataframe.drop(columns=[signal])
         signals_matrix_test = sm.add_constant(signals_matrix_test)
