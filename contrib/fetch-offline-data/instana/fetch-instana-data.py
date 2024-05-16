@@ -226,7 +226,7 @@ def main():
         return
 
     # Fetch metrics from Instana API
-    instana_metrics = fetch_instana_metrics(args.url, args.token, start_time, end_time)
+    instana_metrics = fetch_instana_metrics(args.url, args.token, start_time, end_time, limit=args.limit)
     if instana_metrics:
         # Persist metrics to a file
         file_name = f"{args.output_dir}/instana_metrics.json"

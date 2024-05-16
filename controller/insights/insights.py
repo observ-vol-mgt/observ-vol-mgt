@@ -28,20 +28,77 @@ def generate_insights(subtype, config, signals_list):
     compound_similarity_threshold = config["compound_similarity_threshold"] \
         if 'compound_similarity_threshold' in config else 0.99
 
+    # finding zero signals
+    zero_value_signals, zero_value_insights = analyze_zero_value(signals_list)
+    signals_to_keep_post_zero_value = signals_list.filter_by_names(zero_value_signals,
+                                                                   filter_in=False)
+
+    # finding fixed values signals
+    fixed_value_signals, fixed_value_insights = analyze_fixed_value(signals_to_keep_post_zero_value)
+    signals_to_keep_post_fixed_value = signals_to_keep_post_zero_value.filter_by_names(fixed_value_signals,
+                                                                                       filter_in=False)
+
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = \
-        analyze_correlations(signals_list, pairwise_similarity_threshold)
+        analyze_correlations(signals_to_keep_post_fixed_value, pairwise_similarity_threshold)
 
     # Get the compound correlation for the remaining signals
     signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
-    compound_signals_to_keep, compound_signals_to_reduce, compound_correlation_insights =\
+    compound_signals_to_keep, compound_signals_to_reduce, compound_correlation_insights = \
         analyze_compound_correlations(signals_to_keep_post_pairwise_correlation, compound_similarity_threshold)
 
     summary_insights = f"\n ==> Summary: The signals to keep are: {compound_signals_to_keep}:\n\n"
     return (compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
             [signal["signal"] for signal in compound_signals_to_reduce],
-            pairwise_correlation_insights + compound_correlation_insights + summary_insights)
+            zero_value_insights + fixed_value_insights +
+            pairwise_correlation_insights + compound_correlation_insights +
+            summary_insights)
+
+
+def analyze_fixed_value(signals):
+    """
+    Find signals with fixed values
+    """
+
+    fixed_value_signals = []
+    fixed_value_insights = f"Based on analysis, the following signals have fixed values:\n"
+    fixed_value_insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
+    for signal in signals:
+        if signal.metadata["__name__"] in fixed_value_signals:
+            continue
+        if ((signal.metadata["extracted_features"]["value_Min"][0] ==
+                signal.metadata["extracted_features"]["value_Max"][0]) and
+                signal.metadata["extracted_features"]["value_Var"][0] == 0):
+            signal_name = signal.metadata["__name__"]
+            fixed_value_signals.append(signal_name)
+            fixed_value_insights += \
+                (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal_name}&apos;);">'
+                 f'{signal_name}</a> - Signal has fixed value\n')
+    fixed_value_insights += f"-=-=--=\n\n"
+    return fixed_value_signals, fixed_value_insights
+
+
+def analyze_zero_value(signals):
+    """
+    Find the zero value signals
+    """
+
+    zero_value_signals = []
+    zero_value_insights = f"Based on analysis, the following signals have zero value:\n"
+    zero_value_insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
+    for signal in signals:
+        if signal.metadata["__name__"] in zero_value_signals:
+            continue
+        if signal.metadata["extracted_features"]["value_Min"][0] == 0 and \
+                signal.metadata["extracted_features"]["value_Max"][0] == 0:
+            signal_name = signal.metadata["__name__"]
+            zero_value_signals.append(signal_name)
+            zero_value_insights += \
+                (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal_name}&apos;);">'
+                 f'{signal_name}</a> - Signal is zero value\n')
+    zero_value_insights += f"-=-=--=\n\n"
+    return zero_value_signals, zero_value_insights
 
 
 def analyze_correlations(signals, pairwise_similarity_threshold):
@@ -49,15 +106,24 @@ def analyze_correlations(signals, pairwise_similarity_threshold):
     Find the pairwise correlation between signals
     """
 
+    # cross-signals features extraction
+    df_features_matrix = pd.DataFrame()
+    for index, signal in enumerate(signals):
+        signal_name = signal.metadata["__name__"]
+        signal_features = signal.metadata["extracted_features"]
+
+        extracted_signal_features_as_column = (
+            pd.DataFrame(signal_features.transpose()).rename(columns={0: signal_name}))
+        df_features_matrix = pd.concat([df_features_matrix, extracted_signal_features_as_column], axis=1)
+
     # Execute cross signal correlation
-    features_matrix = signals.metadata["features_matrix"]
-    corr_matrix = features_matrix.corr(method='pearson')
+    corr_matrix = df_features_matrix.corr(method='kendall')
     signals.metadata["corr_matrix"] = corr_matrix
 
     # label each of the signals with the correlation with all other signals
     for index, extracted_signal in enumerate(signals):
         extracted_signal_name = extracted_signal.metadata["__name__"]
-        extracted_signal.metadata["corr_features"] = corr_matrix[extracted_signal_name]
+        extracted_signal.metadata["corr_signals"] = corr_matrix[extracted_signal_name]
 
     # Analyze the list of signals that can be reduces
 
@@ -83,7 +149,10 @@ def analyze_correlations(signals, pairwise_similarity_threshold):
     for signal_to_reduce in signals_to_reduce:
         signal = signal_to_reduce["signal"]
         correlated_signals = signal_to_reduce["correlated_signals"]
-        insights += f"{signal} - it is highly correlated with {correlated_signals}\n"
+        insights += \
+            (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal}&apos;);">'
+             f'{signal}</a> - it is highly correlated with '
+             f'{correlated_signals}\n\n')
     insights += f"-=-=--=\n\n"
 
     logging.debug(f"\n\n{insights}\n")
@@ -136,7 +205,12 @@ def analyze_compound_correlations(signals, compound_similarity_threshold):
         # skip signals that are used to predict other signals
         if the_signal in signals_to_keep:
             continue
-        insights += f"{the_signal} - it is constructed from {dependent_signals[the_signal]}\n"
+
+        insights += \
+            (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{the_signal}&apos;);">'
+             f'{the_signal}</a> - it is constructed from '
+             f'{dependent_signals[the_signal]}\n\n')
+
         signals_to_reduce.append({"signal": the_signal, "constructed_from": dependent_signals[the_signal]})
         signals_to_keep += dependent_signals[the_signal]
     insights += f"-=-=--=\n\n"

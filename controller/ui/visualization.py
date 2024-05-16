@@ -38,6 +38,10 @@ def fill_insights(the_insights):
 
 
 @flaskApp.route('/')
+@flaskApp.route('/home')
+@flaskApp.route('/index')
+@flaskApp.route('/index.htm')
+@flaskApp.route('/index.html')
 def index():
     series_names = list(time_series.keys())
     return render_template('index.html', series_names=series_names)
