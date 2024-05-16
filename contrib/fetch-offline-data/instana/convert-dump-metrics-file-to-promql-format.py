@@ -43,6 +43,7 @@ def convert_to_promql_format(src_json_file, dst_promql_file):
                         "__name__": "{metric}",
                         "instance": "{snapshot_metrics["host"]}",
                         "plugin": "{snapshot_metrics["plugin"]}",
+                        "label": "{snapshot_metrics["label"]}",
                         "snapshotId": "{snapshot_metrics["snapshotId"]}",
                         "job": "prometheus"
                         }},
