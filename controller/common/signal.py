@@ -44,8 +44,17 @@ class Signals:
     def filter_by_type(self, type):
         return [signal for signal in self.signals if signal.type == type]
 
-    def filter_by_names(self, names):
-        return Signals({}, [signal for signal in self.signals if signal.metadata["__name__"] in names])
+    def filter_by_names(self, names, filter_in=True):
+        filtered_signals = []
+        for signal in self.signals:
+            if signal.metadata["__name__"] in names:
+                if filter_in:
+                    filtered_signals.append(signal)
+            else:
+                if not filter_in:
+                    filtered_signals.append(signal)
+
+        return Signals({}, filtered_signals)
 
     def __iter__(self):
         return iter(self.signals)

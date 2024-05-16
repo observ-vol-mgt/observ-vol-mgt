@@ -30,7 +30,7 @@
 
 <div class="main_container">
     <h1>Signals Analysis and Visualization</h1>
-    <form action="/signal_visualization" method="post">
+    <form id="selectSignals" action="/signal_visualization" method="post">
         <label for="timeSeries">Choose one or more signals:</label><br>
         <select id="timeSeries" multiple name="timeSeries">
             {% for series_name in series_names %}
