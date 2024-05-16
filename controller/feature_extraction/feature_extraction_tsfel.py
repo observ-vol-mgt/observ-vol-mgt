@@ -62,16 +62,4 @@ def extract(signals):
         extracted_signal = extract_signal(signal)
         extracted_signals.append(extracted_signal)
 
-    # cross-signals features extraction
-    df_extracted_features = pd.DataFrame()
-    for index, extracted_signal in enumerate(extracted_signals):
-        extracted_signal_name = extracted_signal.metadata["__name__"]
-        extracted_signal_features = extracted_signal.metadata["extracted_features"]
-
-        # df_extracted_features.insert(index, f"{index}", extracted_signal_features.values.tolist())
-        extracted_signal_features_as_column = (
-            pd.DataFrame(extracted_signal_features.transpose()).rename(columns={0: extracted_signal_name}))
-        df_extracted_features = pd.concat([df_extracted_features, extracted_signal_features_as_column], axis=1)
-
-    extracted_signals.metadata["features_matrix"] = df_extracted_features
     return extracted_signals

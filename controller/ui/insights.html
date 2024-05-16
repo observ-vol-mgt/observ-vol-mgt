@@ -23,6 +23,18 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="#000000" name="theme-color"/>
     <title>Time Series Analysis</title>
+    <script>
+    function submitForm(value) {
+        // Load the form page into an iframe
+        const newWindow = window.open('index.html', '_blank');
+        newWindow.onload = function() {
+            inputElement = newWindow.document.getElementById('timeSeries');
+            inputElement.value = value;
+            const formElement = inputElement.form;
+            formElement.submit();
+        };
+    }
+    </script>
 </head>
 <body>
 <!-- Include header -->
@@ -31,7 +43,7 @@
 <div class="main_container">
     <h1>Signals Analysis and Visualization</h1>
     <h2>The current insights are:</h2>
-    <p>{{ insights }}</p>
+    <p>{{ insights|safe }}</p>
 </div>
 
 <!-- Include footer -->
