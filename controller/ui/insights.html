@@ -25,7 +25,6 @@
     <title>Time Series Analysis</title>
     <script>
     function submitForm(value) {
-        // Load the form page into an iframe
         const newWindow = window.open('index.html', '_blank');
         newWindow.onload = function() {
             inputElement = newWindow.document.getElementById('timeSeries');
@@ -33,7 +32,23 @@
             const formElement = inputElement.form;
             formElement.submit();
         };
-    }
+    };
+
+    function showTab(index) {
+        var tabs = document.getElementsByClassName("tab");
+        var buttons = document.getElementsByClassName("tab-button");
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            buttons[i].classList.remove("active");
+        }
+        tabs[index].style.display = "block";
+        buttons[index].classList.add("active");
+    };
+
+    window.onload = function() {
+    showTab(0);
+    };
+
     </script>
 </head>
 <body>
@@ -43,7 +58,18 @@
 <div class="main_container">
     <h1>Signals Analysis and Visualization</h1>
     <h2>The current insights are:</h2>
-    <p>{{ insights|safe }}</p>
+    <div class="tab-buttons">
+    {% for i in range(insights|length) %}
+        <button class="tab-button" onclick="showTab({{ i }})">Insight details {{ i+1 }}</button>
+    {% endfor %}
+    </div>
+
+    {% for insight in insights %}
+    <div class="tab" id="tab-{{ loop.index0 }}">
+        <p>{{ insight|safe }}</p>
+    </div>
+    {% endfor %}
+
 </div>
 
 <!-- Include footer -->
