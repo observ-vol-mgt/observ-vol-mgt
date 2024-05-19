@@ -1,5 +1,24 @@
 /* styles.css */
 
+/* handling tabs */
+.tab {
+    display: none;
+}
+.tab-buttons {
+    display: flex;
+    margin-bottom: 10px;
+}
+.tab-buttons button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.tab-buttons button.active {
+    background-color: #ddd;
+}
+/******/
 
 body {
     font-family: Arial, sans-serif;
@@ -15,6 +34,7 @@ body {
     width: 90%;
     margin-top: 50px;
     padding: 20px;
+    font-family: Arial, sans-serif;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

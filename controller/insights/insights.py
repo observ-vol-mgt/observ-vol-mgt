@@ -24,9 +24,11 @@ logger = logging.getLogger(__name__)
 
 def generate_insights(subtype, config, signals_list):
     pairwise_similarity_threshold = config["pairwise_similarity_threshold"] \
-        if 'pairwise_similarity_threshold' in config else 0.95
+        if config and 'pairwise_similarity_threshold' in config else 0.95
     compound_similarity_threshold = config["compound_similarity_threshold"] \
-        if 'compound_similarity_threshold' in config else 0.99
+        if config and 'compound_similarity_threshold' in config else 0.99
+    compound_similarity_method = config["compound_similarity_method"] \
+        if config and 'compound_similarity_method' in config else 'pearson'
 
     # finding zero signals
     zero_value_signals, zero_value_insights = analyze_zero_value(signals_list)
@@ -40,7 +42,7 @@ def generate_insights(subtype, config, signals_list):
 
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = \
-        analyze_correlations(signals_to_keep_post_fixed_value, pairwise_similarity_threshold)
+        analyze_correlations(signals_to_keep_post_fixed_value, compound_similarity_method, pairwise_similarity_threshold)
 
     # Get the compound correlation for the remaining signals
     signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
@@ -51,9 +53,12 @@ def generate_insights(subtype, config, signals_list):
     return (compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
             [signal["signal"] for signal in compound_signals_to_reduce],
-            zero_value_insights + fixed_value_insights +
-            pairwise_correlation_insights + compound_correlation_insights +
-            summary_insights)
+            [summary_insights,
+             zero_value_insights,
+             fixed_value_insights,
+             pairwise_correlation_insights,
+             compound_correlation_insights]
+            )
 
 
 def analyze_fixed_value(signals):
@@ -68,7 +73,7 @@ def analyze_fixed_value(signals):
         if signal.metadata["__name__"] in fixed_value_signals:
             continue
         if ((signal.metadata["extracted_features"]["value_Min"][0] ==
-                signal.metadata["extracted_features"]["value_Max"][0]) and
+             signal.metadata["extracted_features"]["value_Max"][0]) and
                 signal.metadata["extracted_features"]["value_Var"][0] == 0):
             signal_name = signal.metadata["__name__"]
             fixed_value_signals.append(signal_name)
@@ -101,7 +106,7 @@ def analyze_zero_value(signals):
     return zero_value_signals, zero_value_insights
 
 
-def analyze_correlations(signals, pairwise_similarity_threshold):
+def analyze_correlations(signals, method, pairwise_similarity_threshold):
     """
     Find the pairwise correlation between signals
     """
@@ -117,7 +122,7 @@ def analyze_correlations(signals, pairwise_similarity_threshold):
         df_features_matrix = pd.concat([df_features_matrix, extracted_signal_features_as_column], axis=1)
 
     # Execute cross signal correlation
-    corr_matrix = df_features_matrix.corr(method='kendall')
+    corr_matrix = df_features_matrix.corr(method=method)
     signals.metadata["corr_matrix"] = corr_matrix
 
     # label each of the signals with the correlation with all other signals
