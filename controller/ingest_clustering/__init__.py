@@ -12,22 +12,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-TYPE_INGEST = 'ingest'
-TYPE_INGEST_CLUSTERING = 'ingest_clustering'
-TYPE_EXTRACT = 'extract'
-TYPE_INSIGHTS = 'insights'
-TYPE_CONFIG_GENERATOR = 'config_generator'
-
-SUBTYPE_INGEST_FILE = 'file'
-SUBTYPE_INGEST_DUMMY = 'dummy'
-SUBTYPE_INGEST_PROMQL = 'promql'
-
-SUBTYPE_INGEST_CLUSTERING_BY_NAME = 'by_name'
-
-SUBTYPE_EXTRACT_TSFEL = 'tsfel'
-SUBTYPE_EXTRACT_TSFRESH = 'tsfresh'
-
-SUBTYPE_CONFIG_GENERATOR_NONE = 'none'
-SUBTYPE_CONFIG_GENERATOR_OTEL = 'otel'
-SUBTYPE_CONFIG_GENERATOR_PROCESSOR = 'processor'
 

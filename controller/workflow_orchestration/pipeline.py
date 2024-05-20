@@ -20,19 +20,23 @@ from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
-from common.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_CONFIG_GENERATOR
+from ingest_clustering.ingest_clustering import ingest_clustering
+from common.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_INGEST_CLUSTERING, TYPE_CONFIG_GENERATOR
 
 import logging
+
+
 logger = logging.getLogger(__name__)
+
 
 class Pipeline:
     def __init__(self):
         self.output_data_dict = {}
         self.stage_execution_order = []
 
-
         # variables used for GUI of POC
         self.signals = None
+        self.clustered_signals = None
         self.extracted_signals = None
         self.signals_to_keep = None
         self.signals_to_reduce = None
@@ -73,7 +77,7 @@ class Pipeline:
                     stg.set_follows(f)
                     t.add_follower(stg)
             else:
-                if stg.input_data_fields != None and len(stg.input_data_fields) > 0:
+                if stg.input_data_fields is not None and len(stg.input_data_fields) > 0:
                     raise Exception(f"stage {stg.name} is a first stage so it should not have input data")
 
             # collect all the output data items in a dictionary
@@ -95,13 +99,12 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
-
     def add_stage_to_schedule(self, s):
         if s.scheduled:
             return
         for i in s.input_data_fields:
             s_prev = self.output_data_dict[i]
-            if  not s_prev.scheduled:
+            if not s_prev.scheduled:
                 self.add_stage_to_schedule(s_prev)
         self.stage_execution_order.append(s)
         s.set_scheduled()
@@ -110,19 +113,23 @@ class Pipeline:
         if stage.type == TYPE_INGEST:
             self.signals = ingest(stage.subtype, stage.config)
             output_data = [self.signals]
+        elif stage.type == TYPE_INGEST_CLUSTERING:
+            self.clustered_signals = ingest_clustering(stage.subtype, stage.config, input_data[0])
+            output_data = [self.clustered_signals]
         elif stage.type == TYPE_EXTRACT:
             self.extracted_signals = feature_extraction(stage.subtype, stage.config, input_data[0])
             output_data = [self.extracted_signals]
         elif stage.type == TYPE_INSIGHTS:
-            self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.subtype, stage.config, input_data[0])
-            output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
+            self.signals_to_keep, self.signals_to_reduce, self.text_insights = generate_insights(stage.subtype,
+                                                                                                 stage.config,
+                                                                                                 input_data[0])
+            output_data = [self.signals_to_keep, self.signals_to_reduce, self.text_insights]
         elif stage.type == TYPE_CONFIG_GENERATOR:
             self.r_value = config_generator(stage.subtype, stage.config, input_data[0], input_data[1], input_data[2])
             output_data = [self.r_value]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
-
 
     def run_iteration(self):
         for s in self.stage_execution_order:
@@ -138,4 +145,3 @@ class Pipeline:
                         break
                 input_data.append(s_prev.latest_output_data[index])
             self.run_stage(s, input_data)
-

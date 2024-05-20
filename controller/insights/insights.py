@@ -142,7 +142,7 @@ def analyze_correlations(signals, method, pairwise_similarity_threshold):
         keep_metric = True
         for index in upper.index:
             if upper.loc[index, column] > pairwise_similarity_threshold:
-                signals_to_reduce.append({"signal": column, "correlated_signals": index})
+                signals_to_reduce.append({"signal": column, "correlated_signal": index})
                 keep_metric = False
                 break
         if keep_metric:
@@ -153,11 +153,12 @@ def analyze_correlations(signals, method, pairwise_similarity_threshold):
     insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
     for signal_to_reduce in signals_to_reduce:
         signal = signal_to_reduce["signal"]
-        correlated_signals = signal_to_reduce["correlated_signals"]
+        correlated_signal = signal_to_reduce["correlated_signal"]
         insights += \
             (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal}&apos;);">'
              f'{signal}</a> - it is highly correlated with '
-             f'{correlated_signals}\n\n')
+             f'<a href="javascript:void(0);" onclick="submitForm(&apos;{correlated_signal}&apos;);">'
+             f'{correlated_signal}</a>\n\n')
     insights += f"-=-=--=\n\n"
 
     logging.debug(f"\n\n{insights}\n")
