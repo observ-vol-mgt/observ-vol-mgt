@@ -14,7 +14,7 @@
 
 from common.conf import get_configuration
 
-from workflow_orchestration.stage import StageParameters
+from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
 
 from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
@@ -46,12 +46,19 @@ class Pipeline:
         pipeline = configuration['pipeline']
         stages_parameters = configuration['parameters']
 
+        # verify that configuration is valid
+        # if not valid, the following line will throw an exception
+        PipelineDefinition(**configuration)
+
         # create stage structs for each of the stages
         for stage_params in stages_parameters:
+            stg1 = BaseStageParameters(**stage_params)
+            print("stg1 = ", stg1)
             stg = StageParameters(stage_params)
-            if stg.name in stages_params_dict:
-                raise Exception(f"duplicate stage parameters defined: {stg.name}")
-            stages_params_dict[stg.name] = stg
+            print("stg = ", stg)
+            if stg.base_stage.name in stages_params_dict:
+                raise Exception(f"duplicate stage parameters defined: {stg.base_stage.name}")
+            stages_params_dict[stg.base_stage.name] = stg
         logger.info(f"stages = {stages_params_dict}")
 
         # parse pipeline section
@@ -73,11 +80,11 @@ class Pipeline:
                     stg.set_follows(f)
                     t.add_follower(stg)
             else:
-                if stg.input_data_fields != None and len(stg.input_data_fields) > 0:
-                    raise Exception(f"stage {stg.name} is a first stage so it should not have input data")
+                if stg.base_stage.input_data != None and len(stg.base_stage.input_data) > 0:
+                    raise Exception(f"stage {stg.base_stage.name} is a first stage so it should not have input data")
 
             # collect all the output data items in a dictionary
-            for od in stg.output_data_fields:
+            for od in stg.base_stage.output_data:
                 if od in self.output_data_dict:
                     raise Exception(f"output_data field must be unique to a single stage: {od}")
                 self.output_data_dict[od] = stg
@@ -99,7 +106,7 @@ class Pipeline:
     def add_stage_to_schedule(self, s):
         if s.scheduled:
             return
-        for i in s.input_data_fields:
+        for i in s.base_stage.input_data:
             s_prev = self.output_data_dict[i]
             if  not s_prev.scheduled:
                 self.add_stage_to_schedule(s_prev)
@@ -107,17 +114,17 @@ class Pipeline:
         s.set_scheduled()
 
     def run_stage(self, stage, input_data):
-        if stage.type == TYPE_INGEST:
-            self.signals = ingest(stage.subtype, stage.config)
+        if stage.base_stage.type == TYPE_INGEST:
+            self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
             output_data = [self.signals]
-        elif stage.type == TYPE_EXTRACT:
-            self.extracted_signals = feature_extraction(stage.subtype, stage.config, input_data[0])
+        elif stage.base_stage.type == TYPE_EXTRACT:
+            self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
             output_data = [self.extracted_signals]
-        elif stage.type == TYPE_INSIGHTS:
-            self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.subtype, stage.config, input_data[0])
+        elif stage.base_stage.type == TYPE_INSIGHTS:
+            self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
             output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
-        elif stage.type == TYPE_CONFIG_GENERATOR:
-            self.r_value = config_generator(stage.subtype, stage.config, input_data[0], input_data[1], input_data[2])
+        elif stage.base_stage.type == TYPE_CONFIG_GENERATOR:
+            self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0], input_data[1], input_data[2])
             output_data = [self.r_value]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
@@ -128,13 +135,13 @@ class Pipeline:
         for s in self.stage_execution_order:
             # gather the input data
             input_data = []
-            for i_field in s.input_data_fields:
+            for i_field in s.base_stage.input_data:
                 # find the stage where that input field is generated
                 s_prev = self.output_data_dict[i_field]
                 #  latest_output_data contains a list of outputs; select the right one
-                for o_field in s_prev.output_data_fields:
+                for o_field in s_prev.base_stage.output_data:
                     if o_field == i_field:
-                        index = s_prev.output_data_fields.index(o_field)
+                        index = s_prev.base_stage.output_data.index(o_field)
                         break
                 input_data.append(s_prev.latest_output_data[index])
             self.run_stage(s, input_data)
