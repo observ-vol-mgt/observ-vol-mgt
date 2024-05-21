@@ -14,27 +14,33 @@
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, Union
 
 class StageType(Enum):
-    INGEST = 1
-    EXTRACT = 2
-    INSIGHTS = 3
-    CONFIG_GEN = 4
+    INGEST = "ingest"
+    EXTRACT = "extract"
+    INSIGHTS = "insights"
+    CONF_GEN = "config_generator"
 
 class IngestSubType(Enum):
-    DUMMY = 1
-    FILE = 2
-    PROMQL = 3
+    INGEST_DUMMY = "dummy"
+    INGEST_FILE = "file"
+    INGEST_PROMQL = "promql"
 
 class ExtractSubType(Enum):
-    TSFEL = 1
-    TSFRESH = 2
+    EXTRACT_TSFEL = "tsfel"
+    EXTRACT_TSFRESH = "tsfresh"
+
+class ConfigGenSubType(Enum):
+    CONF_GENERATOR_NONE = 'none'
+    CONF_GENERATOR_OTEL = 'otel'
+    CONF_GENERATOR_PROCESSOR = 'processor'
 
 class ConfigIngestFile(BaseModel):
     model_config = ConfigDict(extra='forbid')
     file_name: str
     filter_metadata: Optional[str] = ""
+    ingest_name_template: Optional[str] = ""
 
 class ConfigIngestPromql(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -44,20 +50,26 @@ class ConfigIngestPromql(BaseModel):
 class ConfigIngestDummy(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
+class ConfigExtractTsfel(BaseModel):
+    model_config = ConfigDict(extra='forbid')
 
-TYPE_INGEST = 'ingest'
-TYPE_EXTRACT = 'extract'
-TYPE_INSIGHTS = 'insights'
-TYPE_CONFIG_GENERATOR = 'config_generator'
+class ConfigExtractTsfresh(BaseModel):
+    model_config = ConfigDict(extra='forbid')
 
-SUBTYPE_INGEST_FILE = 'file'
-SUBTYPE_INGEST_DUMMY = 'dummy'
-SUBTYPE_INGEST_PROMQL = 'promql'
+class ConfigGenerateInsights(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    pairwise_similarity_threshold: Optional[float] = 0.95
+    compound_similarity_threshold: Optional[float] = 0.99
+    compound_similarity_method: Optional[str] = 'pearson' # change to Enum?
 
-SUBTYPE_EXTRACT_TSFEL = 'tsfel'
-SUBTYPE_EXTRACT_TSFRESH = 'tsfresh'
+class ConfigConfGenOtel(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    directory: Optional[str] = "/tmp"
 
-SUBTYPE_CONFIG_GENERATOR_NONE = 'none'
-SUBTYPE_CONFIG_GENERATOR_OTEL = 'otel'
-SUBTYPE_CONFIG_GENERATOR_PROCESSOR = 'processor'
+class ConfigConfGenProcessor(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
+
+class ConfigConfGenNone(BaseModel):
+    model_config = ConfigDict(extra='forbid')
 

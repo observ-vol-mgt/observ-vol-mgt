@@ -15,16 +15,18 @@
 from prometheus_api_client import PrometheusConnect
 from prometheus_api_client.utils import parse_datetime
 
+from common.configuration_api import IngestSubType
 from common.signal import Signal, Signals
 
 
+
 def ingest(ingest_config):
-    ingest_url = ingest_config["url"]
-    ingest_window = ingest_config["window"]
+    ingest_url = ingest_config.url
+    ingest_window = ingest_config.ingest_window
     signals = Signals()
     signal_type = "metric"
 
-    signals.metadata["ingest_type"] = "promql"
+    signals.metadata["ingest_type"] = IngestSubType.INGEST_PROMQL.value
     signals.metadata["ingest_source"] = ingest_url
     signals.metadata["ingest_window"] = ingest_window
 
