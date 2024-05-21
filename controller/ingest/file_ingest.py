@@ -18,17 +18,19 @@ import re
 from string import Template
 
 from common.signal import Signal, Signals
+from common.configuration_api import IngestSubType
+
 
 logger = logging.getLogger(__name__)
 
 
 def ingest(ingest_config):
     signals = Signals()
-    ingest_file = ingest_config['file_name']
-    ingest_name_template = ingest_config['ingest_name_template'] if 'ingest_name_template' in ingest_config else None
-    ingest_filter_metadata = ingest_config['filter_metadata'] if 'filter_metadata' in ingest_config else None
+    ingest_file = ingest_config.file_name
+    ingest_name_template = ingest_config.ingest_name_template
+    ingest_filter_metadata = ingest_config.filter_metadata
 
-    signals.metadata["ingest_type"] = "file"
+    signals.metadata["ingest_type"] = IngestSubType.INGEST_FILE.value
     signals.metadata["ingest_source"] = ingest_file
 
     logger.info(f"Reading signals from {ingest_file}")

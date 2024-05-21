@@ -20,13 +20,11 @@ parameters:
   subtype: tsfel
   input_data: [signals]
   output_data: [extracted_signals]
-  config:
 - name: generate_insights
   type: insights
   subtype:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
-  config:
 - name: config_generator_otel
   type: config_generator
   subtype: otel

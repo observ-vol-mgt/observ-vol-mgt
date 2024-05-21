@@ -18,17 +18,19 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.stats.outliers_influence as oi
+from common.configuration_api import ConfigGenerateInsights
+
 
 logger = logging.getLogger(__name__)
 
 
 def generate_insights(subtype, config, signals_list):
-    pairwise_similarity_threshold = config["pairwise_similarity_threshold"] \
-        if config and 'pairwise_similarity_threshold' in config else 0.95
-    compound_similarity_threshold = config["compound_similarity_threshold"] \
-        if config and 'compound_similarity_threshold' in config else 0.99
-    compound_similarity_method = config["compound_similarity_method"] \
-        if config and 'compound_similarity_method' in config else 'pearson'
+    # verify config parameters conform to structure
+    config1 = ConfigGenerateInsights(**config)
+
+    pairwise_similarity_threshold = config1.pairwise_similarity_threshold
+    compound_similarity_threshold = config1.compound_similarity_threshold
+    compound_similarity_method = config1.compound_similarity_method
 
     # finding zero signals
     zero_value_signals, zero_value_insights = analyze_zero_value(signals_list)

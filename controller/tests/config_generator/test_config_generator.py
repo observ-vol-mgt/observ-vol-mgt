@@ -13,12 +13,12 @@
 #  limitations under the License.
 
 from config_generator.config_generator import config_generator
-from common.configuration_api import SUBTYPE_CONFIG_GENERATOR_NONE
+from common.configuration_api import ConfigGenSubType
 
 
 def test_returns_not_generating_configuration_when_config_generator_type_is_none(mocker):
     # Call the config_generator function
-    result = config_generator(SUBTYPE_CONFIG_GENERATOR_NONE, {}, [], [], [])
+    result = config_generator(ConfigGenSubType.CONF_GENERATOR_NONE.value, {}, [], [], [])
 
     # Assert that the result is "not generating configuration"
     assert result == "not generating configuration"

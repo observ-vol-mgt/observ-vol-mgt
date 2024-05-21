@@ -20,7 +20,7 @@ from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
-from common.configuration_api import TYPE_INGEST, TYPE_EXTRACT, TYPE_INSIGHTS, TYPE_CONFIG_GENERATOR
+from common.configuration_api import StageType
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,10 +52,7 @@ class Pipeline:
 
         # create stage structs for each of the stages
         for stage_params in stages_parameters:
-            stg1 = BaseStageParameters(**stage_params)
-            print("stg1 = ", stg1)
             stg = StageParameters(stage_params)
-            print("stg = ", stg)
             if stg.base_stage.name in stages_params_dict:
                 raise Exception(f"duplicate stage parameters defined: {stg.base_stage.name}")
             stages_params_dict[stg.base_stage.name] = stg
@@ -114,16 +111,16 @@ class Pipeline:
         s.set_scheduled()
 
     def run_stage(self, stage, input_data):
-        if stage.base_stage.type == TYPE_INGEST:
+        if stage.base_stage.type == StageType.INGEST.value:
             self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
             output_data = [self.signals]
-        elif stage.base_stage.type == TYPE_EXTRACT:
+        elif stage.base_stage.type == StageType.EXTRACT.value:
             self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
             output_data = [self.extracted_signals]
-        elif stage.base_stage.type == TYPE_INSIGHTS:
+        elif stage.base_stage.type == StageType.INSIGHTS.value:
             self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
             output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
-        elif stage.base_stage.type == TYPE_CONFIG_GENERATOR:
+        elif stage.base_stage.type == StageType.CONF_GEN.value:
             self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0], input_data[1], input_data[2])
             output_data = [self.r_value]
         else:

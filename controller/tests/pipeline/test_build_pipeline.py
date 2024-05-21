@@ -66,8 +66,8 @@ def test_build_pipeline():
     p.build_pipeline()
 
 
-    assert p.stage_execution_order[0].name == "stage1"
-    assert p.stage_execution_order[2].name == "stage3"
+    assert p.stage_execution_order[0].base_stage.name == "stage1"
+    assert p.stage_execution_order[2].base_stage.name == "stage3"
 
 config_multiple_initial = """
 pipeline:
