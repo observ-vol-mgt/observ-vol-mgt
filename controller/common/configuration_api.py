@@ -12,6 +12,39 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from enum import Enum
+from pydantic import BaseModel, ConfigDict
+from typing import Optional
+
+class StageType(Enum):
+    INGEST = 1
+    EXTRACT = 2
+    INSIGHTS = 3
+    CONFIG_GEN = 4
+
+class IngestSubType(Enum):
+    DUMMY = 1
+    FILE = 2
+    PROMQL = 3
+
+class ExtractSubType(Enum):
+    TSFEL = 1
+    TSFRESH = 2
+
+class ConfigIngestFile(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    file_name: str
+    filter_metadata: Optional[str] = ""
+
+class ConfigIngestPromql(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    url: str
+    ingest_window: str # should be a time interval
+
+class ConfigIngestDummy(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
+
 TYPE_INGEST = 'ingest'
 TYPE_EXTRACT = 'extract'
 TYPE_INSIGHTS = 'insights'
