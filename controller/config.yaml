@@ -41,4 +41,5 @@ parameters:
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
+    directory: /tmp
     url: http://0.0.0.0:5010/
