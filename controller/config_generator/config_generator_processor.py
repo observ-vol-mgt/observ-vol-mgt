@@ -52,14 +52,19 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
     for i, signal in enumerate(signals_to_reduce):
         processor_rule = ProcessorRule(_id=i,
                                        processors=[i],
-                                       expr="",
-                                       duration=30,
-                                       description=f"Rule to reduce signal: {signal}",
+                                       expr='""',
+                                       duration="1s",
+                                       description=f'"Rule to reduce signal: {signal}"',
                                        firing_action=ProcessorRuleFiringAction(
-                                           action_type="",
-                                           processors=f"i",
-                                           dag=""),
-                                       resolved_action=None)
+                                           action_type="create_dag",
+                                           processors=f"- type: filter\n"
+                                                      f"id: f1\n"
+                                                      f"metrics:\n"
+                                                      f"    metric_name: {signal}\n"
+                                                      f"    action: include",
+                                           dag=f"- node: f1\n"
+                                               "children: []"),
+                                       resolved_action=f"action_type: delete_dag")
         context['processor_rules'].append(processor_rule)
 
     output = template.render(context)
