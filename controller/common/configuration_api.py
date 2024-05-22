@@ -36,6 +36,7 @@ class MetadataClassificationZeroShot(BaseModel):
                                                     "/observability_metrics_classification_zero_shot.json")
 
 
+
 class IngestSubType(Enum):
     PIPELINE_INGEST_DUMMY = "dummy"
     PIPELINE_INGEST_FILE = "file"
@@ -103,6 +104,8 @@ class GeneratorOtel(BaseModel):
 
 class GeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
+    directory: Optional[str] = None
+    url: Optional[str] = None
 
 
 class GeneratorNone(BaseModel):
