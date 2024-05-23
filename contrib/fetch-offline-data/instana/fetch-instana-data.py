@@ -14,6 +14,7 @@
 
 import logging
 import os
+import re
 
 import requests
 import json
@@ -23,7 +24,7 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 
-def fetch_instana_plugins_catalog(url, token):
+def fetch_instana_plugins_catalog(url, token, plugins_filter):
     # Instana API endpoint for fetching plugins
     instana_api_url = f"{url}/api/infrastructure-monitoring/catalog/plugins"
 
@@ -38,13 +39,17 @@ def fetch_instana_plugins_catalog(url, token):
 
     # Check if the request was successful
     if response.status_code == 200:
-        return response.json()
+        plugins = list(map(lambda item: item['plugin'], response.json()))
+        if plugins_filter:
+            plugins_filter_regex = re.compile(plugins_filter)
+            plugins = [plugin for plugin in plugins if plugins_filter_regex.search(plugin)]
+        return plugins
     else:
         logging.error("Error fetching plugins:", response.text)
         return None
 
 
-def fetch_instana_snapshots(url, token, plugin, start_time, end_time):
+def fetch_instana_snapshots(url, token, plugin, start_time, end_time, query):
     # Instana API endpoint for fetching plugins
     instana_api_url = f"{url}/api/infrastructure-monitoring/snapshots"
 
@@ -61,6 +66,7 @@ def fetch_instana_snapshots(url, token, plugin, start_time, end_time):
 
     parameters = {'plugin': plugin,
                   'to': params["end"],
+                  'query': query,
                   'windowSize': params["end"] - params["start"]}
 
     # fetch metrics
@@ -135,15 +141,11 @@ def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_i
         return None
 
 
-def fetch_instana_metrics(url, token, start_time, end_time, granularity=1, limit=1000):
+def fetch_instana_metrics(url, token, start_time, end_time, snapshots_query, plugins_filter, granularity=1, limit=1000):
     time_series_metrics = []
     metrics_count = 0
-    plugins_catalog = fetch_instana_plugins_catalog(url, token)
-    if plugins_catalog is None:
-        return None
-
-    plugins = list(map(lambda item: item['plugin'], plugins_catalog))
-    if "prometheus" not in plugins:
+    plugins = fetch_instana_plugins_catalog(url, token, plugins_filter)
+    if plugins is None:
         return None
 
     # for each plugin, fetch snapshots and metrics
@@ -152,7 +154,7 @@ def fetch_instana_metrics(url, token, start_time, end_time, granularity=1, limit
         logging.info(f"fetching metrics for plugin: {plugin} [{p}/{len(plugins)}]")
 
         # fetch the snapshots
-        snapshots = fetch_instana_snapshots(url, token, plugin, start_time, end_time)
+        snapshots = fetch_instana_snapshots(url, token, plugin, start_time, end_time, snapshots_query)
         if not snapshots:
             continue
 
@@ -206,6 +208,10 @@ def main():
                         help="Start time in YYYY-MM-DDTHH:MM:SS format (default: last 10 minutes)")
     parser.add_argument("--end", type=str, default=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                         help="End time in YYYY-MM-DDTHH:MM:SS format (default: current time)")
+    parser.add_argument("--query", type=str, default="",
+                        help="Query to filter snapshots by (default: Empty)")
+    parser.add_argument("--plugins_filter", type=str, default="",
+                        help="Filter to limit plugins to fetch (default: Empty)")
     parser.add_argument("--url", type=str, required=True, help="Instana API base URL")
     parser.add_argument("--token", type=str, required=True, help="Instana API token")
     parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for metrics and events")
@@ -226,7 +232,14 @@ def main():
         return
 
     # Fetch metrics from Instana API
-    instana_metrics = fetch_instana_metrics(args.url, args.token, start_time, end_time, limit=args.limit)
+    instana_metrics = fetch_instana_metrics(url=args.url,
+                                            token=args.token,
+                                            start_time=start_time,
+                                            end_time=end_time,
+                                            snapshots_query=args.query,
+                                            plugins_filter=args.plugins_filter,
+                                            granularity=1,
+                                            limit=args.limit)
     if instana_metrics:
         # Persist metrics to a file
         file_name = f"{args.output_dir}/instana_metrics.json"
