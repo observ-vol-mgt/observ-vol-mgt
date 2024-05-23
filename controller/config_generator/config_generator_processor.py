@@ -49,7 +49,7 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
         'processor_rules': []
     }
 
-    for i, signal in enumerate(signals_to_reduce):
+    for i, signal in enumerate(signals_to_keep):
         processor_rule = ProcessorRule(_id=i,
                                        processors=[i],
                                        expr='""',
