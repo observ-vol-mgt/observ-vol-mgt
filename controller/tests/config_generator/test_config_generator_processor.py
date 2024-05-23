@@ -14,9 +14,24 @@
 
 from config_generator.config_generator_processor import generate
 
+from common.configuration_api import ConfigGeneratorProcessor
+from common.signal import Signals
+
+expected_processor_generated_empty_content = """
+rules:
+"""
+
 
 class TestGenerate:
 
-    #  The function returns a string "Not implemented" when called.
-    def test_returns_not_implemented(self):
-        assert generate({}, None, None, None) == "Not implemented"
+    def test_config_generator_processor(self):
+        config_generator_processor_config = ConfigGeneratorProcessor(directory="/tmp/test")
+        extracted_signals = Signals()
+        extracted_signals.metadata["ingest_source"] = "test"
+        generate(config_generator_processor_config, extracted_signals, [], [])
+
+        filename = config_generator_processor_config.directory + "/test/processor_filter_processor_config.yaml"
+
+        # read the file and check if it contains the expected content
+        with open(filename, "r") as f:
+            assert f.read() == expected_processor_generated_empty_content
