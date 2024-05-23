@@ -36,7 +36,7 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
     source = re.sub('-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
     output = template.render(context)
-    directory = config.get('directory', '/tmp')
+    directory = config.directory
     output_dir = add_slash_to_dir(directory)
     path = re.sub('/+', '/', f"{output_dir}/{source}")
 

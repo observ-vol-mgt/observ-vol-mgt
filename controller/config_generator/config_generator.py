@@ -25,25 +25,27 @@
 #  limitations under the License.
 
 import logging
-from common.configuration_api import SUBTYPE_CONFIG_GENERATOR_NONE, SUBTYPE_CONFIG_GENERATOR_OTEL, SUBTYPE_CONFIG_GENERATOR_PROCESSOR
-
+import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
-
 def config_generator(subtype, config, extracted_signals, signals_to_keep, signals_to_reduce):
     # switch based on the configuration config_generator type
-    if subtype == SUBTYPE_CONFIG_GENERATOR_NONE:
+    # verify config parameters conform to structure
+    if subtype == api.GeneratorSubType.PIPELINE_GENERATOR_NONE.value:
+        api.GeneratorNone(**config)
         logger.info("not generating configuration")
         r_value = "not generating configuration"
-    elif subtype == SUBTYPE_CONFIG_GENERATOR_OTEL:
+    elif subtype == api.GeneratorSubType.PIPELINE_GENERATOR_OTEL.value:
+        typed_config = api.GeneratorOtel(**config)
         logger.info("using otel config_generator")
         from config_generator.config_generator_otel import generate
-        r_value = generate(config, extracted_signals, signals_to_keep, signals_to_reduce)
-    elif subtype == SUBTYPE_CONFIG_GENERATOR_PROCESSOR:
+        r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
+    elif subtype == api.GeneratorSubType.PIPELINE_GENERATOR_PROCESSOR.value:
+        typed_config = api.GeneratorProcessor(**config)
         logger.info("using processor config_generator")
         from config_generator.config_generator_processor import generate
-        r_value = generate(config, extracted_signals, signals_to_keep, signals_to_reduce)
+        r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
     else:
         raise "unsupported feature_extraction configuration"
     return r_value

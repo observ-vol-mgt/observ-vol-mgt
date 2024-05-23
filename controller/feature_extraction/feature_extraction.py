@@ -13,17 +13,20 @@
 #  limitations under the License.
 
 import logging
-from common.configuration_api import TYPE_EXTRACT, SUBTYPE_EXTRACT_TSFEL, SUBTYPE_EXTRACT_TSFRESH
+import common.configuration_api as api
 
 
 logger = logging.getLogger(__name__)
 def feature_extraction(subtype, config, signals_list):
     # switch based on the configuration feature_extraction type
-    if subtype == SUBTYPE_EXTRACT_TSFEL:
+    # verify config parameters conform to structure
+    if subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL.value:
+        api.ExtractTsfel(**config)
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
         extracted_signals = extract(signals_list)
-    elif subtype == SUBTYPE_EXTRACT_TSFRESH:
+    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFRESH.value:
+        api.ExtractTsfresh(**config)
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals_list)

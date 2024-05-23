@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import pytest
+from common.configuration_api import IngestFile
 
 time_series_type1 = [[10, '1'], [20, '2'], [30, '3']]
 
@@ -56,9 +57,7 @@ def input_file(tmpdir):
 
 
 def test_ingest(input_file):
-    ingest_config = {
-            "file_name": input_file
-        }
+    ingest_config = IngestFile(file_name=str(input_file))
     from ingest.file_ingest import ingest
     signals = ingest(ingest_config)
 
