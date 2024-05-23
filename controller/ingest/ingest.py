@@ -14,7 +14,7 @@
 
 import logging
 
-from common.configuration_api import IngestSubType, ConfigIngestFile, ConfigIngestPromql, ConfigIngestDummy
+import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
@@ -22,20 +22,20 @@ logger = logging.getLogger(__name__)
 def ingest(subtype, config):
     # switch based on the configuration ingest type
     # verify config parameters conform to structure
-    if subtype == IngestSubType.INGEST_DUMMY.value:
+    if subtype == api.IngestSubType.PIPELINE_INGEST_DUMMY.value:
         logger.debug("using dummy ingest logger")
-        ConfigIngestDummy(**config)
+        api.IngestDummy(**config)
         from ingest.dummy_ingest import ingest
         signals = ingest()
-    elif subtype == IngestSubType.INGEST_FILE.value:
+    elif subtype == api.IngestSubType.PIPELINE_INGEST_FILE.value:
         # verify config parameters conform to structure
-        config1 = ConfigIngestFile(**config)
+        typed_config = api.IngestFile(**config)
         from ingest.file_ingest import ingest
-        signals = ingest(config1)
-    elif subtype == IngestSubType.INGEST_PROMQL.value:
-        config1 = ConfigIngestPromql(**config)
+        signals = ingest(typed_config)
+    elif subtype == api.IngestSubType.PIPELINE_INGEST_PROMQL.value:
+        typed_config = api.IngestPromql(**config)
         from ingest.promql_ingest import ingest
-        signals = ingest(config1)
+        signals = ingest(typed_config)
     else:
         raise "unsupported ingest configuration"
     return signals

@@ -26,7 +26,7 @@ def ingest(ingest_config):
     signals = Signals()
     signal_type = "metric"
 
-    signals.metadata["ingest_type"] = IngestSubType.INGEST_PROMQL.value
+    signals.metadata["ingest_type"] = IngestSubType.PIPELINE_INGEST_PROMQL.value
     signals.metadata["ingest_source"] = ingest_url
     signals.metadata["ingest_window"] = ingest_window
 
