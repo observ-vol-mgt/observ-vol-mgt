@@ -23,53 +23,58 @@ class StageType(Enum):
     CONF_GEN = "config_generator"
 
 class IngestSubType(Enum):
-    INGEST_DUMMY = "dummy"
-    INGEST_FILE = "file"
-    INGEST_PROMQL = "promql"
+    PIPELINE_INGEST_DUMMY = "dummy"
+    PIPELINE_INGEST_FILE = "file"
+    PIPELINE_INGEST_PROMQL = "promql"
 
 class ExtractSubType(Enum):
-    EXTRACT_TSFEL = "tsfel"
-    EXTRACT_TSFRESH = "tsfresh"
+    PIPELINE_EXTRACT_TSFEL = "tsfel"
+    PIPELINE_EXTRACT_TSFRESH = "tsfresh"
 
-class ConfigGenSubType(Enum):
-    CONF_GENERATOR_NONE = 'none'
-    CONF_GENERATOR_OTEL = 'otel'
-    CONF_GENERATOR_PROCESSOR = 'processor'
+class GeneratorSubType(Enum):
+    PIPELINE_GENERATOR_NONE = "none"
+    PIPELINE_GENERATOR_OTEL = "otel"
+    PIPELINE_GENERATOR_PROCESSOR = "processor"
 
-class ConfigIngestFile(BaseModel):
+class GenerateInsightsType(Enum):
+    INSIGHTS_SIMILARITY_METHOD_PEARSON = "pearson"
+    INSIGHTS_SIMILARITY_METHOD_SPEARMAN = "spearman"
+    INSIGHTS_SIMILARITY_METHOD_KENDALL = "kendall"
+
+class IngestFile(BaseModel):
     model_config = ConfigDict(extra='forbid')
     file_name: str
     filter_metadata: Optional[str] = ""
     ingest_name_template: Optional[str] = ""
 
-class ConfigIngestPromql(BaseModel):
+class IngestPromql(BaseModel):
     model_config = ConfigDict(extra='forbid')
     url: str
     ingest_window: str # should be a time interval
 
-class ConfigIngestDummy(BaseModel):
+class IngestDummy(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
-class ConfigExtractTsfel(BaseModel):
+class ExtractTsfel(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
-class ConfigExtractTsfresh(BaseModel):
+class ExtractTsfresh(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
-class ConfigGenerateInsights(BaseModel):
+class GenerateInsights(BaseModel):
     model_config = ConfigDict(extra='forbid')
     pairwise_similarity_threshold: Optional[float] = 0.95
     compound_similarity_threshold: Optional[float] = 0.99
-    compound_similarity_method: Optional[str] = 'pearson' # change to Enum?
+    compound_similarity_method: Optional[str] = GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value
 
-class ConfigConfGenOtel(BaseModel):
+class GeneratorOtel(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = "/tmp"
 
-class ConfigConfGenProcessor(BaseModel):
+class GeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
 
-class ConfigConfGenNone(BaseModel):
+class GeneratorNone(BaseModel):
     model_config = ConfigDict(extra='forbid')
 

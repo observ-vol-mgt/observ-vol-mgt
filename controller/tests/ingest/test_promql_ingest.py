@@ -14,7 +14,7 @@
 
 import re
 from unittest.mock import patch
-from common.configuration_api import ConfigIngestPromql
+from common.configuration_api import IngestPromql
 
 import requests_mock
 
@@ -23,7 +23,7 @@ time_series_type2 = ["7"]
 
 
 def test_ingest():
-    ingest_config = ConfigIngestPromql(
+    ingest_config = IngestPromql(
         url = "https://localhost:8000/data",
         ingest_window = "10s",
     )

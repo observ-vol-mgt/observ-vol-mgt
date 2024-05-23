@@ -9,8 +9,8 @@ Standard field names for each stage are:
 - name
 - type (e.g. ingest, extract, insights)
 - subtype (e.g. file ingest, promql ingest)
-- input_data_types (Signals, Text)
-- output_data_types (Signals, Text)
+- input_data_types (list of lists)
+- output_data_types (list of lists)
 - config (configuration specific to this stage)
 
 A sample config file might look like this:
@@ -44,5 +44,5 @@ parameters:
   config:
 ```
 
-A stage may follow multiple other stages, and may beceive input from multiple earlier stages.
+A stage may follow multiple other stages, and may receive input from multiple earlier stages.
 

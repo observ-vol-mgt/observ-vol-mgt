@@ -30,7 +30,7 @@ def ingest(ingest_config):
     ingest_name_template = ingest_config.ingest_name_template
     ingest_filter_metadata = ingest_config.filter_metadata
 
-    signals.metadata["ingest_type"] = IngestSubType.INGEST_FILE.value
+    signals.metadata["ingest_type"] = IngestSubType.PIPELINE_INGEST_FILE.value
     signals.metadata["ingest_source"] = ingest_file
 
     logger.info(f"Reading signals from {ingest_file}")
