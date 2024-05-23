@@ -36,7 +36,6 @@ class MetadataClassificationZeroShot(BaseModel):
                                                     "/observability_metrics_classification_zero_shot.json")
 
 
-
 class IngestSubType(Enum):
     PIPELINE_INGEST_DUMMY = "dummy"
     PIPELINE_INGEST_FILE = "file"
@@ -48,10 +47,10 @@ class ExtractSubType(Enum):
     PIPELINE_EXTRACT_TSFRESH = "tsfresh"
 
 
-class GeneratorSubType(Enum):
-    PIPELINE_GENERATOR_NONE = "none"
-    PIPELINE_GENERATOR_OTEL = "otel"
-    PIPELINE_GENERATOR_PROCESSOR = "processor"
+class ConfigGeneratorSubType(Enum):
+    PIPELINE_CONFIG_GENERATOR_NONE = "none"
+    PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
+    PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
 
 
 class GenerateInsightsType(Enum):
@@ -97,12 +96,12 @@ class GenerateInsights(BaseModel):
     compound_similarity_threshold: Optional[float] = 0.99
 
 
-class GeneratorOtel(BaseModel):
+class ConfigGeneratorOtel(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = "/tmp"
 
 
-class GeneratorProcessor(BaseModel):
+class ConfigGeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = None
     url: Optional[str] = None
