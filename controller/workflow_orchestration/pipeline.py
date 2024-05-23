@@ -120,7 +120,7 @@ class Pipeline:
         elif stage.base_stage.type == StageType.INSIGHTS.value:
             self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
             output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
-        elif stage.base_stage.type == StageType.CONF_GEN.value:
+        elif stage.base_stage.type == StageType.CONFIG_GENERATOR.value:
             self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0], input_data[1], input_data[2])
             output_data = [self.r_value]
         else:

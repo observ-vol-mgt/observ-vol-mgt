@@ -21,7 +21,7 @@ class StageType(Enum):
     INGEST = "ingest"
     EXTRACT = "extract"
     INSIGHTS = "insights"
-    CONF_GEN = "config_generator"
+    CONFIG_GENERATOR = "config_generator"
 
 
 class IngestSubType(Enum):
@@ -35,10 +35,10 @@ class ExtractSubType(Enum):
     PIPELINE_EXTRACT_TSFRESH = "tsfresh"
 
 
-class GeneratorSubType(Enum):
-    PIPELINE_GENERATOR_NONE = "none"
-    PIPELINE_GENERATOR_OTEL = "otel"
-    PIPELINE_GENERATOR_PROCESSOR = "processor"
+class ConfigGeneratorSubType(Enum):
+    PIPELINE_CONFIG_GENERATOR_NONE = "none"
+    PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
+    PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
 
 
 class GenerateInsightsType(Enum):
@@ -79,12 +79,12 @@ class GenerateInsights(BaseModel):
     compound_similarity_method: Optional[str] = GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value
 
 
-class GeneratorOtel(BaseModel):
+class ConfigGeneratorOtel(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = "/tmp"
 
 
-class GeneratorProcessor(BaseModel):
+class ConfigGeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = None
     url: Optional[str] = None
