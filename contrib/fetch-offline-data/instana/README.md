@@ -18,8 +18,14 @@ Instana is a popular monitoring tool used by many organizations to monitor their
    
 3. **Configuration**: You need to obtain an Instana API token and know the base URL of your Instana instance. Set these values in the script or provide them as command-line arguments (see below).
 4. **Run the Script**: Use the following command to run the script:
+
 ```bash
-python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-events --start START_TIME --end END_TIME --output_dir OUTPUT_DIR --limit LIMIT
+python instana_fetcher.py 
+--url YOUR_INSTANA_URL --token YOUR_API_TOKEN 
+--fetch-events NOT_IMPLEMENTED
+--start START_TIME --end END_TIME 
+--query QUERY --plugins_filter PLUGINS_FILTER
+--output_dir OUTPUT_DIR --limit LIMIT
 ```
 
 > [!NOTE]  
@@ -27,6 +33,12 @@ python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-
  
 > You can also specify the START_TIME and END_TIME in the format YYYY-MM-DDTHH:MM:SS to fetch data for a specific time window.  
 > If you omit the --start and --end parameters, the script will fetch data for the last 24 hours by default.
+
+> You can also specify a QUERY string to limit fetching to subset of the instana snapshots  
+> If you omit the --query parameters, the script will fetch data from all snapshots.
+
+> You can also specify a PLUGINS_FILTER string to limit fetching to regex instana plugins  
+> If you omit the --plugins_filter parameters, the script will fetch data from all plugins.
  
 > You can also specify the OUTPUT_DIR to save the data into a specific directory.  
 > If you omit the --output_dir parameter, the script will save the data into the current directory.  
@@ -48,6 +60,7 @@ python instana_fetcher.py --url YOUR_INSTANA_URL --token YOUR_API_TOKEN --fetch-
 > output file is `promql_metrics.json`  
 > 
 > To load into the controller, execute from the controller directory:
+
 ```bash
 python main.py --ingest_type=file --ingest_file=../contrib/fetch-offline-data/instana/promql_metrics.json --feature_extraction_type=tsfel --config_generator_type=otel --config_generator_directory=/tmp
 ```
