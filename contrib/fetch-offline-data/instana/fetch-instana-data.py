@@ -49,6 +49,27 @@ def fetch_instana_plugins_catalog(url, token, plugins_filter):
         return None
 
 
+def fetch_instana_snapshot_details(url, token, snapshot_id):
+    # Instana API endpoint for fetching plugins
+    instana_api_url = f"{url}/api/infrastructure-monitoring/snapshots/{snapshot_id}"
+
+    # Define headers with the API token
+    headers = {
+        "Authorization": f"apiToken {token}",
+        "Content-Type": "application/json"
+    }
+
+    # Make a GET request to fetch plugins
+    response = requests.get(instana_api_url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        return response.json()
+    else:
+        logging.error("Error fetching plugins:", response.text)
+        return None
+
+
 def fetch_instana_snapshots(url, token, plugin, start_time, end_time, query):
     # Instana API endpoint for fetching plugins
     instana_api_url = f"{url}/api/infrastructure-monitoring/snapshots"
@@ -169,6 +190,12 @@ def fetch_instana_metrics(url, token, start_time, end_time, snapshots_query, plu
         snapshots_api_limit = 30  # <<<--- limitation of the API to max 30 snapshots per call
         for i in range(0, len(snapshots), snapshots_api_limit):
             snapshots_subset = snapshots[i:i + snapshots_api_limit]
+
+            if logging.getLogger().isEnabledFor(logging.DEBUG):
+                for snapshot_id in snapshots_subset:
+                    snapshot_details = fetch_instana_snapshot_details(url, token, snapshot_id)
+                    logging.debug(f"For snapshot {snapshot_id} details are: {snapshot_details}")
+
             for j in range(0, len(metric_ids), metrics_api_limit):
                 metric_ids_subset = metric_ids[j:j + metrics_api_limit]
                 logging.info(f"=> fetching time series for plugin: {plugin}, "
