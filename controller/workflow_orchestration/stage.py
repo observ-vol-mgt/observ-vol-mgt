@@ -25,6 +25,7 @@ class BaseStageParameters(BaseModel):
     name: str
     type: str
     subtype: Optional[str] = None
+    multi_stage: Optional[bool] = False
     input_data: Optional[List[str]] = []
     output_data: Optional[List[str]] = []
     config: Optional[dict] = {}

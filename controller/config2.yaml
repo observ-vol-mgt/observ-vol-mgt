@@ -1,0 +1,50 @@
+pipeline:
+- name: ingest_file
+- name: split1
+  follows: [ingest_file]
+- name: feature_extraction_tsfel
+  follows: [split1]
+- name: merge1
+  follows: [feature_extraction_tsfel]
+- name: generate_insights
+  follows: [merge1]
+- name: config_generator_otel
+  follows: [feature_extraction_tsfel, generate_insights]
+parameters:
+- name: ingest_file
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [signals]
+  config:
+    filter_metadata: ""
+    file_name: ../contrib/examples/generate-synthetic-metrics/time_series_data.json
+- name: feature_extraction_tsfel
+  type: extract
+  subtype: tsfel
+  multi_stage: True
+  input_data: [signals_lists]
+  output_data: [extracted_signals_sublist]
+- name: generate_insights
+  type: insights
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+- name: config_generator_otel
+  type: config_generator
+  subtype: otel
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+  config:
+    directory: /tmp
+- name: split1
+  type: split
+  subtype: simple
+  input_data: [signals]
+  output_data: [signals_lists]
+  config:
+    number: 3
+- name: merge1
+  type: merge
+  subtype: simple
+  input_data: [extracted_signals_sublist]
+  output_data: [extracted_signals]

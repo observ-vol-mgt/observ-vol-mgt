@@ -7,10 +7,10 @@ Each stage has a name, and the names must match between the 'pipeline' and 'para
 
 Standard field names for each stage are:
 - name
-- type (e.g. ingest, extract, insights)
+- type (e.g. ingest, split, transform, merge, extract, insights)
 - subtype (e.g. file ingest, promql ingest)
-- input_data_types (list of lists)
-- output_data_types (list of lists)
+- input_data (list of inputs)
+- output_data (list of outputs)
 - config (configuration specific to this stage)
 
 A sample config file might look like this:
@@ -45,4 +45,16 @@ parameters:
 ```
 
 A stage may follow multiple other stages, and may receive input from multiple earlier stages.
+
+# Special types of stages
+
+## Split, Compute, Merge
+
+A splitter stage takes a single list of elements as input and divides it into some number of output lists.
+Each output list is then provided as input to a separate copy of a specified compute (or transform) stage.
+Each such (identical) compute/transform stage returns a list of a list as output, which are provided as input to a merge stage.
+This can be thought as similar to the map-reduce model.
+Each intermediate compute/transform stage must be specified with `multi_stage: True` as one of the coniguration parameters.
+Each intermediate compute/transform stage is provided a single input list from its previous stage
+and should output a single list to its next stage.
 

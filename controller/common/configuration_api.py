@@ -21,6 +21,8 @@ class StageType(Enum):
     EXTRACT = "extract"
     INSIGHTS = "insights"
     CONF_GEN = "config_generator"
+    SPLIT = "split"
+    MERGE = "merge"
 
 class IngestSubType(Enum):
     PIPELINE_INGEST_DUMMY = "dummy"
@@ -35,6 +37,12 @@ class GeneratorSubType(Enum):
     PIPELINE_GENERATOR_NONE = "none"
     PIPELINE_GENERATOR_OTEL = "otel"
     PIPELINE_GENERATOR_PROCESSOR = "processor"
+
+class SplitSubType(Enum):
+    PIPELINE_SPLIT_SIMPLE = "simple"
+
+class MergeSubType(Enum):
+    PIPELINE_MERGE_SIMPLE = "simple"
 
 class GenerateInsightsType(Enum):
     INSIGHTS_SIMILARITY_METHOD_PEARSON = "pearson"
@@ -78,3 +86,9 @@ class GeneratorProcessor(BaseModel):
 class GeneratorNone(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
+class SplitSimple(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    number: int
+
+class MergeSimple(BaseModel):
+    model_config = ConfigDict(extra='forbid')
