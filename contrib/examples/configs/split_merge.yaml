@@ -9,7 +9,7 @@ pipeline:
 - name: generate_insights
   follows: [merge1]
 - name: config_generator_otel
-  follows: [feature_extraction_tsfel, generate_insights]
+  follows: [merge1, generate_insights]
 parameters:
 - name: ingest_file
   type: ingest
