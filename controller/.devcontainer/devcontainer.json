@@ -1,0 +1,33 @@
+{
+    "name": "controller",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": "..",
+        "args": {
+            "EXECUTE_TESTS": "false",
+        },
+        "target": "devcontainer-stage"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-python.vscode-pylance",
+                "ms-vscode.makefile-tools",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.notepadplusplus-keybindings",
+                "ms-azuretools.vscode-docker",
+                "golang.go",
+                "ryanluker.vscode-coverage-gutters",
+                "streetsidesoftware.code-spell-checker",
+                "BelkacemBerras.spellcheck",
+                "redhat.vscode-yaml",
+                "amazonwebservices.amazon-q-vscode",
+                "eamodio.gitlens"
+            ]
+        }
+    },
+    "forwardPorts": [5000],
+    "remoteUser": "unprivilegeduser"
+}

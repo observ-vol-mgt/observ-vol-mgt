@@ -1,3 +1,11 @@
+
+VERSION ?= latest
+BUILD_DATE := $(shell date +%Y-%m-%d\ %H:%M)
+DOCKER_IMAGE_ORG ?= observ-vol-mgt
+DOCKER_IMAGE_BASE ?= quay.io/$(DOCKER_IMAGE_ORG)/
+DOCKER_TAG ?= ${VERSION}
+
+
 # Set the default target
 .DEFAULT_GOAL := help
 
@@ -8,11 +16,30 @@ help: ## Display this help.
 install_requirements:
 	@pip install -q -r requirements.txt
 
+##@ Docker
+docker_build: ## build to container
+	echo "building docker images"
+	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --target execute-stage -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} .
+
+docker_push: ## push to docker registry
+	echo "pushing docker images"
+	docker push ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG}
+
+.PHONY: docker_run_tests
+docker_run_tests: ## Execute tests using docker
+	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --target tests-stage
+
+.PHONY: docker_run_dev
+docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
+	docker run --name controller ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} 
+
 ##@ Development
+.PHONY: tests
 tests: install_requirements ## Execute tests
 	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
 
-run_dev: install_requirements ## Execute the pipeline synchronously on synthetic data
+.PHONY: run_dev
+run_dev: install_requirements  ## Execute the pipeline synchronously on synthetic data
 	python main.py -c config.yaml
 
 feature_extraction_tsfel: install_requirements ## Execute the feature extraction using tsfel
