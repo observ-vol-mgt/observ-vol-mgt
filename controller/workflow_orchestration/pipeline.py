@@ -98,6 +98,7 @@ class Pipeline:
                         raise Exception(f"stage {f} used but not declared in pipeline section")
 
         # for each multi_stage, verify it follows a single previous split or multi_stage
+        # if a non-multi_stage follows a multi_stage, it must be of type merge
         for stg in stages_params_dict.values():
             if stg.base_stage.multi_stage:
                 if len(stg.follows) != 1:
@@ -109,6 +110,14 @@ class Pipeline:
                     raise Exception(f"multi_stage {stg.base_stage.name} may have only one input list")
                 if len(stg.base_stage.output_data) != 1:
                     raise Exception(f"multi_stage {stg.base_stage.name} may have only one output list")
+            elif len(stg.follows) == 0:
+                continue
+            else:
+                # if any previous stage is a multi_stage, flag an error
+                for fol in stg.follows:
+                    prev_stage = stages_params_dict[fol]
+                    if prev_stage.base_stage.multi_stage and stg.base_stage.type != api.StageType.MERGE.value:
+                        raise Exception(f"non multi_stage {stg.base_stage.name} may not follow multi_stage {prev_stage.base_stage.name}")
 
         # decide the order in which to run the stages
         # support for parallel execution of tasks of DAG performed elsewhere (during execution of DAG)
