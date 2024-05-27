@@ -27,6 +27,11 @@ def split(subtype, config, input_data):
         typed_config = api.SplitSimple(**config)
         from split.simple_split import split
         output_lists = split(typed_config, input_data)
+    elif subtype == api.SplitSubType.PIPELINE_SPLIT_BY_NAME.value:
+        logger.debug("using simple splitter")
+        typed_config = api.SplitByName(**config)
+        from split.by_name_clustering import split
+        output_lists = split(typed_config, input_data)
     else:
         raise "unsupported split configuration"
     return output_lists

@@ -40,6 +40,7 @@ class GeneratorSubType(Enum):
 
 class SplitSubType(Enum):
     PIPELINE_SPLIT_SIMPLE = "simple"
+    PIPELINE_SPLIT_BY_NAME = "by_name"
 
 class MergeSubType(Enum):
     PIPELINE_MERGE_SIMPLE = "simple"
@@ -89,6 +90,10 @@ class GeneratorNone(BaseModel):
 class SplitSimple(BaseModel):
     model_config = ConfigDict(extra='forbid')
     number: int
+
+class SplitByName(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    name_pattern: str
 
 class MergeSimple(BaseModel):
     model_config = ConfigDict(extra='forbid')

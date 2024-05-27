@@ -1,0 +1,35 @@
+pipeline:
+- name: ingest_file
+- name: cluster_by_name
+  follows: [ingest_file]
+- name: feature_extraction_tsfel
+  follows: [cluster_by_name]
+- name: generate_insights
+  follows: [feature_extraction_tsfel]
+parameters:
+- name: ingest_file
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [signals]
+  config:
+    filter_metadata: "odh-model-controller"
+    ingest_name_template: "$plugin-$instance-$label-$__name__"
+    file_name: ../contrib/examples/promql_metrics_1000_metrics_with_labels.json
+- name: feature_extraction_tsfel
+  type: extract
+  subtype: tsfel
+  multi_stage: True
+  input_data: [clustered_signals]
+  output_data: [extracted_signals_sublist]
+- name: generate_insights
+  type: insights
+  input_data: [extracted_signals_sublist]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+- name: cluster_by_name
+  type: split
+  subtype: by_name
+  input_data: [signals]
+  output_data: [clustered_signals]
+  config:
+      name_pattern: "([0-9a-fA-F]{2}:){7}[0-9a-fA-F]{2}"

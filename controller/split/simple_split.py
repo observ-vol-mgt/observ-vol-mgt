@@ -21,9 +21,6 @@ def split(config, input_data):
     signals = input_data.signals
     n_records = len(signals)
     list_size = n_records // number_of_lists
-    print("n_records = ", n_records)
-    print("number_of_lists = ", number_of_lists)
-    print("list_size = ", list_size)
     list_of_outputs = []
     for i in range(number_of_lists-1):
         start = i * list_size
@@ -36,5 +33,4 @@ def split(config, input_data):
     list1 = [input_data[j] for j in range(start, end)]
     new_signals = Signals(input_data.metadata, list1)
     list_of_outputs.append(new_signals)
-    print("number of outputs = ", len(list_of_outputs))
     return list_of_outputs

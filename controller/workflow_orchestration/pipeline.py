@@ -129,8 +129,6 @@ class Pipeline:
 
     def run_stage(self, stage, input_data):
         attrs = vars(stage)
-        print("run_stage, stage = ", attrs)
-        print("run_stage, len of input_data = ", len(input_data))
         if stage.base_stage.type == StageType.INGEST.value:
             self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
             output_data = [self.signals]
@@ -150,7 +148,6 @@ class Pipeline:
             output_data = [self.extracted_signals]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
-        print("run_stage, len of output_data = ", len(output_data))
         stage.set_latest_output_data(output_data)
 
     def run_multi_stage(self, stage, input_data):
@@ -158,7 +155,6 @@ class Pipeline:
         # provide each copy of stage with a single list
         # collect hte output lists into a common output list
         number_of_copies = len(input_data)
-        print("run_multi_stage number_of_copies = ", number_of_copies)
         substages = []
         for index in range(number_of_copies):
             stage_copy = copy.copy(stage)
@@ -174,12 +170,10 @@ class Pipeline:
             output_data.append(substages[index].latest_output_data[0])
 
         stage.set_latest_output_data(output_data)
-        print("end of multi_stage, len of output = ", len(output_data))
 
 
     def run_iteration(self):
         for s in self.stage_execution_order:
-            print("run_iteration:, s = ", s.base_stage.name)
             if s.base_stage.multi_stage:
                 # find the stage where that input field is generated
                 i_field = s.base_stage.input_data[0]
@@ -209,6 +203,5 @@ class Pipeline:
                 input_data.append(s_prev.latest_output_data[index])
 
             self.run_stage(s, input_data)
-            print("run_iteration, after run_stage, s = ", s.base_stage.name)
 
 

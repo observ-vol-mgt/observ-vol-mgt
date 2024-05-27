@@ -15,7 +15,6 @@
 from common.signal import Signals
 
 def merge(config, input_data):
-    print("simple_merge, input_data = ", input_data)
     output_list = []
     for item in input_data:
         sublist = item.signals
@@ -23,4 +22,4 @@ def merge(config, input_data):
 
     new_signals = Signals(input_data[0].metadata, output_list)
 
-    return [new_signals]
+    return new_signals
