@@ -31,7 +31,7 @@ docker_run_tests: ## Execute tests using docker
 
 .PHONY: docker_run_dev
 docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
-	docker run ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} --name controller
+	docker run --name controller ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} 
 
 ##@ Development
 .PHONY: tests
