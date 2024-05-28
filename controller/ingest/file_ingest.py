@@ -48,7 +48,7 @@ def ingest(ingest_config):
                     continue
             signal_type = "metric"
             if ingest_name_template:
-                json_signal["metric"]["__name__"] = Template(ingest_name_template).substitute(json_signal["metric"])
+                json_signal["metric"]["__name__"] = Template(ingest_name_template).safe_substitute(json_signal["metric"])
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
         else:
