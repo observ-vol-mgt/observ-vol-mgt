@@ -15,10 +15,12 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
+
 class BaseStageSchedule(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str
     follows: Optional[List[str]] = []
+
 
 class BaseStageParameters(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -29,9 +31,11 @@ class BaseStageParameters(BaseModel):
     output_data: Optional[List[str]] = []
     config: Optional[dict] = {}
 
+
 class PipelineDefinition(BaseModel):
     pipeline: List[BaseStageSchedule]
     parameters: List[BaseStageParameters]
+
 
 class StageParameters:
     def __init__(self, stg):
