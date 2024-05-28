@@ -15,8 +15,9 @@
 import logging
 import common.configuration_api as api
 
-
 logger = logging.getLogger(__name__)
+
+
 def feature_extraction(subtype, config, signals_list):
     # switch based on the configuration feature_extraction type
     # verify config parameters conform to structure
