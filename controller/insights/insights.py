@@ -76,6 +76,8 @@ def analyze_metadata_classification(signals):
     metadata_classification_insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
     for signal in signals:
         signal_name = signal.metadata["__name__"]
+        if "classification" not in signal.metadata:
+            continue
         signal_classification = signal.metadata["classification"]
         signal_classification_score = signal.metadata["classification_score"]
         metadata_classification_insights += \

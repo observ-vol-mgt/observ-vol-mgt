@@ -1,0 +1,36 @@
+pipeline:
+- name: ingest_promql
+- name: feature_extraction_tsfel
+  follows: [ingest_promql]
+- name: generate_insights
+  follows: [feature_extraction_tsfel]
+- name: config_generator_processor
+  follows: [feature_extraction_tsfel, generate_insights]
+parameters:
+- name: ingest_promql
+  type: ingest
+  subtype: promql
+  input_data: []
+  output_data: [signals]
+  config:
+    url: 'http://127.0.0.1:19192'
+    ingest_window: '60s'
+    filter_metadata: "metricgen"
+    ingest_name_template: "$count-$cluster-$instance-$processor-$app-$IP-$__name__"
+- name: feature_extraction_tsfel
+  type: extract
+  subtype: tsfel
+  input_data: [signals]
+  output_data: [extracted_signals]
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+- name: config_generator_processor
+  type: config_generator
+  subtype: otel
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+  config:
+    directory: /tmp
