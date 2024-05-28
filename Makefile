@@ -18,7 +18,16 @@ push_docker_images: push_controller_docker_image ## Push docker images
 
 build_controller_docker_image:
 	echo "building docker images"
-	docker build -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} -f contrib/docker/controller/Dockerfile .
+	cd controller; \
+	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+	DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+	DOCKER_TAG=${DOCKER_TAG}; \
+	make docker_build
 
 push_controller_docker_image:
-	docker push ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG}
+	echo "building docker images"
+	cd controller; \
+	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+	DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+	DOCKER_TAG=${DOCKER_TAG}; \
+	make docker_push
