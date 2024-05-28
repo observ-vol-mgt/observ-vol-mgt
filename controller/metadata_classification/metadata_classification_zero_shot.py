@@ -14,12 +14,13 @@
 import json
 import logging
 from transformers import pipeline
+from common.signal import Signal, Signals
 
 logger = logging.getLogger(__name__)
 
 
 def metadata_classification(config, signals):
-    classified_signals = []
+    classified_signals = Signals(metadata=signals.metadata, signals=[])
 
     # Initialize the zero-shot classification pipeline
     # Load the zero-shot classification model
@@ -51,7 +52,7 @@ def metadata_classification(config, signals):
         classified_signal = signal
         classified_signal.metadata['classification'] = classification_result['labels'][0]
         classified_signal.metadata['classification_score'] = classification_result['scores'][0]
-        classified_signals.append(classified_signal)
+        classified_signals.signals.append(classified_signal)
 
     return classified_signals
 
