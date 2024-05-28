@@ -18,14 +18,11 @@ from common.configuration_api import IngestPromql
 
 import requests_mock
 
-time_series_type1 = ["7"]
-time_series_type2 = ["7"]
-
 
 def test_ingest():
     ingest_config = IngestPromql(
-        url = "https://localhost:8000/data",
-        ingest_window = "10s",
+        url="https://localhost:8000/data",
+        ingest_window="10s",
     )
 
     with patch("common.conf.get_configuration") as mocked_get_configuration:
@@ -34,11 +31,11 @@ def test_ingest():
             mocker.get(re.compile('https://localhost:8000/data/api/v1/label/__name__/values'),
                        json={"data": ["metric1", "metric2"]})
             mocker.get(re.compile('https://localhost:8000/data/api/v1/query*'),
-                       json={"data": {"result": "7"}})
+                       json={"data": {"result": [{"metric": {"__name__": "test"}, "values": [[500, "7"]]}]}})
             from ingest.promql_ingest import ingest
             signals = ingest(ingest_config)
 
     assert signals[0].type == "metric"
-    assert signals[0].time_series == time_series_type1
+    assert signals[0].time_series == [[500, "7"]]
     assert signals[1].type == "metric"
-    assert signals[1].time_series == time_series_type2
+    assert signals[1].time_series == [[500, "7"]]
