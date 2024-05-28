@@ -51,6 +51,9 @@ def generate_insights(subtype, config, signals_list):
     compound_signals_to_keep, compound_signals_to_reduce, compound_correlation_insights = \
         analyze_compound_correlations(signals_to_keep_post_pairwise_correlation, compound_similarity_threshold)
 
+    # Get the metadata classification insights
+    metadata_classification_insights = analyze_metadata_classification(signals_list)
+
     summary_insights = f"\n ==> Summary: The signals to keep are: {compound_signals_to_keep}:\n\n"
     return (compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
@@ -59,8 +62,29 @@ def generate_insights(subtype, config, signals_list):
              zero_value_insights,
              fixed_value_insights,
              pairwise_correlation_insights,
-             compound_correlation_insights]
+             compound_correlation_insights,
+             metadata_classification_insights]
             )
+
+
+def analyze_metadata_classification(signals):
+    """
+    Find the metadata classification insights
+    """
+
+    metadata_classification_insights = f"Based on analysis, the metadata classification for signals:\n"
+    metadata_classification_insights += f"-=-=--=-=-=--=-=-=--=-=-=--=-=-=--=\n"
+    for signal in signals:
+        signal_name = signal.metadata["__name__"]
+        signal_classification = signal.metadata["classification"]
+        signal_classification_score = signal.metadata["classification_score"]
+        metadata_classification_insights += \
+            (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal_name}&apos;);">'
+             f'{signal_name}</a> - Signal is '
+             f'classified as {signal_classification} '
+             f'with a score of {signal_classification_score}\n')
+    metadata_classification_insights += f"-=-=--=\n\n"
+    return metadata_classification_insights
 
 
 def analyze_fixed_value(signals):

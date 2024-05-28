@@ -17,22 +17,25 @@ from common.conf import get_configuration
 from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
 
 from config_generator.config_generator import config_generator
+from metadata_classification.metadata_classification import metadata_classification
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
 from common.configuration_api import StageType
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class Pipeline:
     def __init__(self):
         self.output_data_dict = {}
         self.stage_execution_order = []
 
-
         # variables used for GUI of POC
         self.signals = None
+        self.classified_signals = None
         self.extracted_signals = None
         self.signals_to_keep = None
         self.signals_to_reduce = None
@@ -58,9 +61,9 @@ class Pipeline:
             stages_params_dict[stg.base_stage.name] = stg
         logger.info(f"stages = {stages_params_dict}")
 
-        # parse pipeline section
-        # connect between stages
-        # check that same stage name does not appear twice in pipeline section
+        # Parse pipeline sections to create connections
+        # Connects between the stages
+        # check that the same stage name does not appear twice in a pipeline section
         for pip_stage in pipeline:
             name = pip_stage['name']
             if name in stages_pipeline_dict:
@@ -99,13 +102,12 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
-
     def add_stage_to_schedule(self, s):
         if s.scheduled:
             return
         for i in s.base_stage.input_data:
             s_prev = self.output_data_dict[i]
-            if  not s_prev.scheduled:
+            if not s_prev.scheduled:
                 self.add_stage_to_schedule(s_prev)
         self.stage_execution_order.append(s)
         s.set_scheduled()
@@ -114,19 +116,25 @@ class Pipeline:
         if stage.base_stage.type == StageType.INGEST.value:
             self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
             output_data = [self.signals]
-        elif stage.base_stage.type == StageType.EXTRACT.value:
-            self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
+        elif stage.base_stage.type == StageType.METADATA_CLASSIFICATION.value:
+            self.classified_signals = metadata_classification(stage.base_stage.subtype, stage.base_stage.config,
+                                                              input_data[0])
+            output_data = [self.classified_signals]
+        elif stage.base_stage.type == StageType.METADATA_EXTRACTION.value:
+            self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config,
+                                                        input_data[0])
             output_data = [self.extracted_signals]
         elif stage.base_stage.type == StageType.INSIGHTS.value:
-            self.signals_to_keep, self.signals_to_reduce,  self.text_insights = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data[0])
-            output_data = [self.signals_to_keep, self.signals_to_reduce,  self.text_insights]
-        elif stage.base_stage.type == StageType.CONF_GEN.value:
-            self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0], input_data[1], input_data[2])
+            self.signals_to_keep, self.signals_to_reduce, self.text_insights = generate_insights(
+                stage.base_stage.subtype, stage.base_stage.config, input_data[0])
+            output_data = [self.signals_to_keep, self.signals_to_reduce, self.text_insights]
+        elif stage.base_stage.type == StageType.CONFIG_GENERATOR.value:
+            self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0],
+                                            input_data[1], input_data[2])
             output_data = [self.r_value]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
-
 
     def run_iteration(self):
         for s in self.stage_execution_order:
@@ -142,4 +150,3 @@ class Pipeline:
                         break
                 input_data.append(s_prev.latest_output_data[index])
             self.run_stage(s, input_data)
-
