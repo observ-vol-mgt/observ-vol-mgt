@@ -19,12 +19,13 @@ from common.signal import Signal, Signals
 logger = logging.getLogger(__name__)
 
 
+# Initialize the zero-shot classification pipeline
+# Load the zero-shot classification model
+classifier = pipeline(task="zero-shot-classification", model="roberta-large-mnli")
+
+
 def metadata_classification(config, signals):
     classified_signals = Signals(metadata=signals.metadata, signals=[])
-
-    # Initialize the zero-shot classification pipeline
-    # Load the zero-shot classification model
-    classifier = pipeline(task="zero-shot-classification", model="facebook/bart-large-mnli")
 
     # Loading zero-shot samples from file
     with open(config.zero_shot_classification_file) as f:
@@ -35,7 +36,9 @@ def metadata_classification(config, signals):
     labels = [item[1] for item in data]
 
     # Perform zero-shot classification
+    logger.debug(f"Classifier is starting to work on the corpus of data")
     results = classifier(sentences, labels)
+    logger.debug(f"Classifier is done.")
 
     # Print results for existing sentences
     for sentence, result in zip(sentences, results):
@@ -57,9 +60,9 @@ def metadata_classification(config, signals):
     return classified_signals
 
 
-def metadata_classification_signal(classifier, labels, signal):
+def metadata_classification_signal(_classifier, labels, signal):
     metadata = f"{signal.metadata}"
-    result = classifier(metadata, labels)
+    result = _classifier(metadata, labels)
     logger.debug(f"Metadata for classify: {metadata}")
     logger.debug(f"Predicted Label: {result['labels'][0]}")
     logger.debug(f"Score: {result['scores'][0]}")
