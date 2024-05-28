@@ -11,7 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-
+import re
+from string import Template
 from prometheus_api_client import PrometheusConnect
 from prometheus_api_client.utils import parse_datetime
 
@@ -19,10 +20,12 @@ from common.configuration_api import IngestSubType
 from common.signal import Signal, Signals
 
 
-
 def ingest(ingest_config):
     ingest_url = ingest_config.url
     ingest_window = ingest_config.ingest_window
+    ingest_name_template = ingest_config.ingest_name_template
+    ingest_filter_metadata = ingest_config.filter_metadata
+
     signals = Signals()
     signal_type = "metric"
 
@@ -33,6 +36,7 @@ def ingest(ingest_config):
     try:
         prom = PrometheusConnect(url=ingest_url, disable_ssl=True)
         metrics = prom.all_metrics()
+        signal_count = 0
         for metric in metrics:
             start_time = parse_datetime(ingest_window)
             end_time = parse_datetime("now")
@@ -41,7 +45,16 @@ def ingest(ingest_config):
                 start_time=start_time,
                 end_time=end_time,
             )
-            signals.append(Signal(type=signal_type, time_series=metric_data))
+            for signal in metric_data:
+                if ingest_filter_metadata != "":
+                    if not re.findall(ingest_filter_metadata, str(signal["metric"])):
+                        continue
+                if ingest_name_template != "":
+                    signal["metric"]["count"] = signal_count
+                    signal["metric"]["__name__"] = Template(ingest_name_template).safe_substitute(signal["metric"])
+
+                signals.append(Signal(type=signal_type, metadata=signal['metric'], time_series=signal['values']))
+                signal_count += 1
 
     except Exception as e:
         err = f"The url {ingest_url} does not exist {e}"

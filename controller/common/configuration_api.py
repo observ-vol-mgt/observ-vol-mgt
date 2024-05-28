@@ -69,6 +69,8 @@ class IngestPromql(BaseModel):
     model_config = ConfigDict(extra='forbid')
     url: str
     ingest_window: str  # should be a time interval
+    filter_metadata: Optional[str] = ""
+    ingest_name_template: Optional[str] = ""
 
 
 class IngestDummy(BaseModel):
