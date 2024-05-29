@@ -31,6 +31,7 @@ class MetadataClassificationSubType(Enum):
 
 class MetadataClassificationZeroShot(BaseModel):
     model_config = ConfigDict(extra='forbid')
+    model: Optional[str] = "roberta-large-mnli"
     zero_shot_classification_file: Optional[str] = ("./metadata_classification/data"
                                                     "/observability_metrics_classification_zero_shot.json")
 
@@ -77,19 +78,22 @@ class IngestDummy(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
 
-class ExtractTsfel(BaseModel):
+class FeatureExtractionTsfel(BaseModel):
     model_config = ConfigDict(extra='forbid')
+    features_json_file:  Optional[str] = "feature_extraction/tsfel_conf/limited_statistical.json"
+    resample_rate: Optional[str] = "30s"
+    sampling_frequency: Optional[float] = (1/30)
 
 
-class ExtractTsfresh(BaseModel):
+class FeatureExtractionTsfresh(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
 
 class GenerateInsights(BaseModel):
     model_config = ConfigDict(extra='forbid')
     pairwise_similarity_threshold: Optional[float] = 0.95
+    pairwise_similarity_method: Optional[str] = GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value
     compound_similarity_threshold: Optional[float] = 0.99
-    compound_similarity_method: Optional[str] = GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value
 
 
 class GeneratorOtel(BaseModel):
