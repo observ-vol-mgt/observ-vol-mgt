@@ -13,7 +13,7 @@ parameters:
   input_data: []
   output_data: [signals]
   config:
-    url: 'http://127.0.0.1:19192'
+    url: 'http://thanos_query:19192'
     ingest_window: '60s'
     filter_metadata: "metricgen"
     ingest_name_template: "$count-$cluster-$instance-$processor-$app-$IP-$__name__"
