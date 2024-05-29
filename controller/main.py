@@ -14,13 +14,12 @@
 
 import logging
 
-from common.conf import parse_args
-from common.conf import get_args
+from common.conf import parse_args, get_args
 from workflow_orchestration.pipeline import Pipeline
 from ui.visualization import flaskApp, fill_time_series, fill_insights
 
-
 logger = logging.getLogger(__name__)
+
 
 def main():
     # getting the configuration
@@ -46,12 +45,11 @@ def main():
     logger.info(f"Config Generator returned: {pipeline.r_value}")
 
     # Show the UI
-    logger.info(f"To Visualize the signals use the provided URL:")
-    fill_time_series(pipeline.extracted_signals)
-    fill_insights(pipeline.text_insights)
-
-
-    flaskApp.run(debug=False)
+    if get_args().ui == 'True':
+        logger.info(f"To Visualize the signals use the provided URL:")
+        fill_time_series(pipeline.extracted_signals)
+        fill_insights(pipeline.text_insights)
+        flaskApp.run(host="0.0.0.0", debug=False)
 
 
 if __name__ == '__main__':
