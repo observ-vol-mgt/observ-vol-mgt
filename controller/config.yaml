@@ -24,6 +24,7 @@ parameters:
   output_data: [classified_signals]
   config:
     zero_shot_classification_file: ./metadata_classification/data/observability_metrics_classification_zero_shot.json
+    model: "Recognai/zeroshot_selectra_small"
 - name: feature_extraction_tsfel
   type: extract
   subtype: tsfel
