@@ -114,24 +114,22 @@ class Pipeline:
 
     def run_stage(self, stage, input_data):
         if stage.base_stage.type == StageType.INGEST.value:
-            self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
-            output_data = [self.signals]
+            output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
+            self.signals = output_data[0]
         elif stage.base_stage.type == StageType.METADATA_CLASSIFICATION.value:
-            self.classified_signals = metadata_classification(stage.base_stage.subtype, stage.base_stage.config,
-                                                              input_data[0])
-            output_data = [self.classified_signals]
+            output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config,
+                                                              input_data)
+            self.classified_signals = output_data[0]
         elif stage.base_stage.type == StageType.METADATA_EXTRACTION.value:
-            self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config,
-                                                        input_data[0])
-            output_data = [self.extracted_signals]
+            output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config,
+                                                        input_data)
+            self.extracted_signals = output_data[0]
         elif stage.base_stage.type == StageType.INSIGHTS.value:
-            self.signals_to_keep, self.signals_to_reduce, self.text_insights = generate_insights(
-                stage.base_stage.subtype, stage.base_stage.config, input_data[0])
-            output_data = [self.signals_to_keep, self.signals_to_reduce, self.text_insights]
+            output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.signals_to_keep, self.signals_to_reduce, self.text_insights = output_data[0], output_data[1], output_data[2]
         elif stage.base_stage.type == StageType.CONFIG_GENERATOR.value:
-            self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0],
-                                            input_data[1], input_data[2])
-            output_data = [self.r_value]
+            output_data = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.r_value = output_data[0]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)

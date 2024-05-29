@@ -38,4 +38,4 @@ def ingest(subtype, config):
         signals = ingest(typed_config)
     else:
         raise "unsupported ingest configuration"
-    return signals
+    return [signals]
