@@ -21,7 +21,9 @@ LENGTH = 1000
 metrics = []
 cluster_metrics = []
 node_metrics = []
+nw_metrics = []
 app_metrics = []
+app_nw_metrics = []
 
 def read_yaml(yamlfile):
     with open(yamlfile, "r") as f:
@@ -52,6 +54,16 @@ def create_random_gutentag_ts():
         return gt.random_mode_jump(length=LENGTH, frequency=freq) + offset
     return [offset + random.randint(amplitude) for _ in range(LENGTH)]
 
+def create_fixed_gutentag_ts():
+    # curves = ["sine", "cylinder_bell_funnel", "square", "random_mode_jump"]
+    curves = ["sine"]
+    ampl = 45
+    #offset = random.randint(60,65) # small rate randomize
+    offset = 60
+    #freq = random.random()/2 + 0.5
+    freq = 5.0
+    return [offset + ampl for _ in range(LENGTH)]
+
 """
 Labels is an array of dicts
 Since for every unique named metric, if only labels change we add it to the gauge by looping and calling gauge.labels() for every unique set of labels
@@ -63,6 +75,11 @@ We store different sets of unique label values since it is needed during "set"
 def create_new_gutentag_metric(prefix, idx, labels):
     g = Gauge("{0}_metric_{1}".format(prefix, idx), prefix + " Metric", labels[0].keys())
     ts = [create_random_gutentag_ts() for _ in labels]
+    return (g, ts, labels)
+
+def create_duplicate_gutentag_metric(prefix, idx, labels):
+    g = Gauge("{0}_metric_{1}".format(prefix, idx), prefix + " Metric", labels[0].keys())
+    ts = [create_fixed_gutentag_ts() for _ in labels]
     return (g, ts, labels)
 
 def create_fake_metric(prefix, idx, labels):
@@ -94,7 +111,7 @@ def create_fake_metrics(total_metrics, nlabels, name="fake"):
     metrics = fake_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
 
-def create_all_gutentag_metrics(conf_file, opt_config=None):
+def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
     config = read_yaml(conf_file)
     cluster_name = opt_config['name'] if opt_config is not None else config['name']
     num_cluster_metrics = config['clusters']['num_metrics']
@@ -107,24 +124,34 @@ def create_all_gutentag_metrics(conf_file, opt_config=None):
     # Create hardware metrics
     num_hardware_metrics = config['hardware']['num_metrics']
     num_nodes = config['hardware']['num_nodes']
+    
     global node_metrics
     node_metrics += [create_new_gutentag_metric("cluster_hardware",
                                    idx,
                                    [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "node": node} for node in range(num_nodes)])
         for idx in range(num_hardware_metrics)]
+    # Create cluster network metrics
+    global nw_metrics
+    
+    if duplicate == "true":
+        nw_metrics += [create_duplicate_gutentag_metric("cluster_network",
+                                    0,
+                                    [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "node": 0}])]
 
     # Create application metrics
     num_apps = len(config['apps'])
     global app_metrics
+    global app_nw_metrics
     for app in range(num_apps):
         app_name = config['apps'][app]['name']
         num_app_metrics = config['apps'][app]['num_metrics']
-        network_metrics = int(num_app_metrics/5)
+        network_metrics = int(num_app_metrics/5)        
         app_metrics += [create_new_gutentag_metric("app_" + str(app_name) + "_network", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "IP": id} for id in ["192.168.1.1", "192.168.1.2", "192.168.1.3"]]) for idx in range(network_metrics)]
         app_metrics += [create_new_gutentag_metric("app_" + str(app_name), idx, [{"cluster": cluster_name,"metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "app": app_name}]) for idx in range(num_app_metrics)]
-
+    if duplicate == "true":
+            app_nw_metrics += [create_duplicate_gutentag_metric("app_A_network_utilization", 0 , [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "address": "192.168.1.1"}])]
     global metrics
-    metrics = cluster_metrics + node_metrics + app_metrics
+    metrics = cluster_metrics + node_metrics + app_metrics + app_nw_metrics + nw_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
 
 def set_metrics_runner(fake=True):
@@ -203,6 +230,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--name', dest='name', help='Name of the cluster', default='c0')
     parser.add_argument('-p', '--port', dest='port', help='Port to run http server for metrics', default=8000, type=int)
     parser.add_argument('-cp', '--clientport', dest='clientport', help='Port to run http server for reconfiguration', default=5002, type=int)
+    parser.add_argument('-d', '--duplicate', dest='duplicate', help='Should app network metric be duplicate of cluster network metric', default='false')
     # To create artificial metrics with as many labels as we want
     parser.add_argument('--fake', dest='fake', action='store_true')
     parser.add_argument('--nmetrics', dest='nmetrics', default=1000, type=int)
@@ -214,7 +242,7 @@ if __name__ == '__main__':
     }
     
     if not args.fake:
-        create_all_gutentag_metrics(args.conf, opt_config)
+        create_all_gutentag_metrics(args.conf, args.duplicate, opt_config)
     else:
         create_fake_metrics(args.nmetrics, args.nlabels, args.name)
                             

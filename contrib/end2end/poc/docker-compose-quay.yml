@@ -13,6 +13,7 @@ services:
      - '-cp=5002'
      - '--nmetrics=100'
      - '--nlabels=10'
+     - '--duplicate=true'
     expose:
      - 5002
      - 8000
@@ -32,6 +33,7 @@ services:
      - '--clientport=5003'
      - '--nmetrics=100'
      - '--nlabels=10'
+     - '--duplicate=true'
     expose:
      - 5003
      - 8001
