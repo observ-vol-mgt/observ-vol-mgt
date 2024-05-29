@@ -41,13 +41,20 @@ def ingest(ingest_config):
         err = f"The file {ingest_file} does not exist {e}"
         raise RuntimeError(err) from e
     json_signals = data["data"]["result"]
+    signal_count = 0
     for json_signal in json_signals:
         if 'metric' in json_signal.keys():
             if ingest_filter_metadata:
                 if not re.findall(ingest_filter_metadata, str(json_signal["metric"])):
                     continue
             signal_type = "metric"
-            if ingest_name_template:
+            if ingest_name_template != "":
+                # adding `count` to allow usage by template
+                json_signal["metric"]["count"] = signal_count
+                # save original signal name into `original_name` if needed
+                if "__name__" in json_signal["metric"]:
+                    json_signal["metric"]["original_name"] = json_signal["metric"]["__name__"]
+                # build new name based on template
                 json_signal["metric"]["__name__"] = Template(ingest_name_template).safe_substitute(json_signal["metric"])
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
@@ -57,5 +64,6 @@ def ingest(ingest_config):
         signals.append(Signal(type=signal_type,
                               metadata=signal_metadata,
                               time_series=signal_time_series))
+        signal_count += 1
 
     return signals
