@@ -18,15 +18,19 @@ import yaml
 args = None
 configuration = None
 
+
 def get_args():
     return args
+
 
 def get_configuration():
     return configuration
 
+
 def set_configuration(config):
     global configuration
     configuration = config
+
 
 def parse_args():
     p = configargparse.ArgParser()
@@ -34,6 +38,8 @@ def parse_args():
           default='config.yaml', env_var='CONFIGFILE')
     p.add('-v', '--loglevel', help='logging level',
           default='info', env_var='LOGLEVEL')
+    p.add('--ui', help='Show the UI',
+          default='True', env_var='SHOW_CONTROLLER_UI')
 
     global args
     args = p.parse_args()
@@ -45,4 +51,3 @@ def parse_args():
         print("----------")
         print("Configuration")
         print(configuration)
-
