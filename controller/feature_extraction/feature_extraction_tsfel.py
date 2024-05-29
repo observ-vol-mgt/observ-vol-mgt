@@ -25,24 +25,23 @@ logger = logging.getLogger(__name__)
 
 # ref: https://tsfel.readthedocs.io/en/latest/descriptions/get_started.html
 
-def extract_signal(signal):
+def extract_signal(signal, features_json_file, resample_rate=30, sampling_frequency=(1/30), verbose=0):
     # Normalize the time series (to evenly sampled data in 30s granularity)
     df_signal = pd.DataFrame(signal.time_series, columns=['Time', 'value'])
     df_signal['value'] = pd.to_numeric(df_signal['value'])
     df_signal["Time"] = pd.to_datetime(df_signal["Time"], unit='s')
     df_signal = df_signal.set_index("Time")
-    df_signal = df_signal.resample('30s').mean().interpolate('linear')
+    df_signal = df_signal.resample(resample_rate).mean().interpolate('linear')
 
     # list of features to extract from configuration file
     # cfg_file = tsfel.get_features_by_domain('statistical') # ==> this will use all the statistical features
-    file_path = "feature_extraction/tsfel_conf/limited_statistical.json"
-    with open(file_path, 'r') as file:
+    with open(features_json_file, 'r') as file:
         # Load the JSON data from the file
         cfg_file = json.load(file)
 
     # execute feature extraction
     extracted_features = tsfel.time_series_features_extractor(
-        dict_features=cfg_file, signal_windows=df_signal, fs=(1 / 30), verbose=1)
+        dict_features=cfg_file, signal_windows=df_signal, fs=sampling_frequency, verbose=verbose)
 
     logging.debug(extracted_features.shape)
     logging.debug(extracted_features.describe())
@@ -53,13 +52,18 @@ def extract_signal(signal):
     return signal
 
 
-def extract(signals):
+def extract(tsfel_config, signals):
     extracted_signals = Signals(metadata=signals.metadata)
+    resample_rate = tsfel_config.resample_rate
+    sampling_frequency = tsfel_config.sampling_frequency
+    features_json_file = tsfel_config.features_json_file
+
+    verbose = 1 if logging.getLogger().getEffectiveLevel() == logging.DEBUG else 0
 
     # features extraction
     for index, signal in enumerate(signals):
         # extract features from the signal
-        extracted_signal = extract_signal(signal)
+        extracted_signal = extract_signal(signal, features_json_file, resample_rate, sampling_frequency, verbose)
         extracted_signals.append(extracted_signal)
 
     return extracted_signals

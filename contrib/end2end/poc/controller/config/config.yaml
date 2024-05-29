@@ -14,19 +14,26 @@ parameters:
   output_data: [signals]
   config:
     url: 'http://thanos_query:19192'
-    ingest_window: '60s'
-    filter_metadata: "metricgen"
-    ingest_name_template: "$count-$cluster-$instance-$processor-$app-$IP-$__name__"
+    ingest_window: '60m'
+    filter_metadata: "app_|cluster_"
+    ingest_name_template: "$count|$__name__($app,$cluster,$instance,$processor,$IP)"
 - name: feature_extraction_tsfel
   type: extract
   subtype: tsfel
   input_data: [signals]
   output_data: [extracted_signals]
+  config:
+    sampling_frequency: 0.0333
+    resample_rate: "5s"
+    features_json_file: "feature_extraction/tsfel_conf/limited_features.json"
 - name: generate_insights
   type: insights
   subtype:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+    pairwise_similarity_threshold: 0.999999999
+    pairwise_similarity_method: pearson
 - name: config_generator_processor
   type: config_generator
   subtype: otel

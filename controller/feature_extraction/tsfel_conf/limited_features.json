@@ -1,4 +1,37 @@
 {
+  "temporal": {
+    "AreaUnderTheCurve": {
+      "function": "tsfel.auc",
+      "parameters": {
+        "fs": 100
+      },
+      "n_features": 1,
+      "use": "yes"
+    },
+    "PositiveTurningPoints": {
+      "function": "tsfel.positive_turning",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes",
+      "tag": "emg"
+    },
+    "SpectralSkewness": {
+      "function": "tsfel.spectral_skewness",
+      "parameters": {
+        "fs": 100
+      },
+      "n_features": 1,
+      "use": "yes"
+    },
+    "SpectralSlope": {
+      "function": "tsfel.spectral_slope",
+      "parameters": {
+        "fs": 100
+      },
+      "n_features": 1,
+      "use": "yes"
+    }
+  },
   "statistical": {
     "Max": {
       "function": "tsfel.calc_max",
@@ -30,12 +63,6 @@
       "n_features": 1,
       "use": "yes"
     },
-    "Std": {
-      "function": "tsfel.calc_std",
-      "parameters": "",
-      "n_features": 1,
-      "use": "yes"
-    },
     "Histogram": {
       "function": "tsfel.hist",
       "parameters": {
@@ -45,8 +72,20 @@
       "n_features": "nbins",
       "use": "yes"
     },
+    "Std": {
+      "function": "tsfel.calc_std",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
     "AbsoluteEnergy": {
       "function": "tsfel.abs_energy",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Skewness": {
+      "function": "tsfel.skewness",
       "parameters": "",
       "n_features": 1,
       "use": "yes"

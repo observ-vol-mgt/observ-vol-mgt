@@ -22,12 +22,12 @@ def feature_extraction(subtype, config, signals_list):
     # switch based on the configuration feature_extraction type
     # verify config parameters conform to structure
     if subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL.value:
-        api.ExtractTsfel(**config)
+        tsfel_config = api.FeatureExtractionTsfel(**config)
         logger.info("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
-        extracted_signals = extract(signals_list)
+        extracted_signals = extract(tsfel_config, signals_list)
     elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFRESH.value:
-        api.ExtractTsfresh(**config)
+        api.FeatureExtractionTsfresh(**config)
         logger.info("using tsfresh feature_extraction")
         from feature_extraction.feature_extraction_tsfresh import extract
         extracted_signals = extract(signals_list)

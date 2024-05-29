@@ -19,16 +19,18 @@ from common.signal import Signal, Signals
 logger = logging.getLogger(__name__)
 
 
-# Initialize the zero-shot classification pipeline
-# Load the zero-shot classification model
-classifier = pipeline(task="zero-shot-classification", model="roberta-large-mnli")
-
-
 def metadata_classification(config, signals):
     classified_signals = Signals(metadata=signals.metadata, signals=[])
 
+    labeled_corpus_file = config.zero_shot_classification_file
+    model = config.model
+
+    # Initialize the zero-shot classification pipeline
+    # Load the zero-shot classification model
+    classifier = pipeline(task="zero-shot-classification", model=model)
+
     # Loading zero-shot samples from file
-    with open(config.zero_shot_classification_file) as f:
+    with open(labeled_corpus_file) as f:
         data = json.load(f)
 
     # Extract sentences and labels
