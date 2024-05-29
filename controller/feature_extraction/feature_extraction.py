@@ -18,7 +18,10 @@ import common.configuration_api as api
 logger = logging.getLogger(__name__)
 
 
-def feature_extraction(subtype, config, signals_list):
+def feature_extraction(subtype, config, input_data):
+    if len(input_data) != 1:
+        raise "feature_extraction configuration should have one input"
+    signals_list = input_data[0]
     # switch based on the configuration feature_extraction type
     # verify config parameters conform to structure
     if subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL.value:
@@ -33,4 +36,4 @@ def feature_extraction(subtype, config, signals_list):
         extracted_signals = extract(signals_list)
     else:
         raise "unsupported feature_extraction configuration"
-    return extracted_signals
+    return [extracted_signals]
