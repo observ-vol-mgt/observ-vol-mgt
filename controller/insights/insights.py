@@ -29,8 +29,8 @@ def generate_insights(subtype, config, signals_list):
     typed_config = api.GenerateInsights(**config)
 
     pairwise_similarity_threshold = typed_config.pairwise_similarity_threshold
+    pairwise_similarity_method = typed_config.pairwise_similarity_method
     compound_similarity_threshold = typed_config.compound_similarity_threshold
-    compound_similarity_method = typed_config.compound_similarity_method
 
     # finding zero signals
     zero_value_signals, zero_value_insights = analyze_zero_value(signals_list)
@@ -44,7 +44,9 @@ def generate_insights(subtype, config, signals_list):
 
     # Get the pairwise correlation between signals
     pairwise_signals_to_keep, pairwise_signals_to_reduce, pairwise_correlation_insights = \
-        analyze_correlations(signals_to_keep_post_fixed_value, compound_similarity_method, pairwise_similarity_threshold)
+        analyze_pairwise_correlations(signals_to_keep_post_fixed_value,
+                                      pairwise_similarity_method,
+                                      pairwise_similarity_threshold)
 
     # Get the compound correlation for the remaining signals
     signals_to_keep_post_pairwise_correlation = signals_list.filter_by_names(pairwise_signals_to_keep)
@@ -54,7 +56,9 @@ def generate_insights(subtype, config, signals_list):
     # Get the metadata classification insights
     metadata_classification_insights = analyze_metadata_classification(signals_list)
 
-    summary_insights = f"\n ==> Summary: The signals to keep are: {compound_signals_to_keep}:\n\n"
+    # Get summary insights
+    summary_insights = analyze_summary(signals_list.filter_by_names(compound_signals_to_keep))
+
     return (compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
             [signal["signal"] for signal in compound_signals_to_reduce],
@@ -65,6 +69,19 @@ def generate_insights(subtype, config, signals_list):
              compound_correlation_insights,
              metadata_classification_insights]
             )
+
+
+def analyze_summary(signals):
+
+    summary_insights = f"Based on analysis, summary, signals to keep:\n"
+    summary_insights += f"-=-=--=-=-=--=-=-==-=-=--==--==--==--==--=-\n"
+    for signal in signals:
+        signal_name = signal.metadata["__name__"]
+        summary_insights += \
+            (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal_name}&apos;);">'
+             f'{signal_name}</a>\n')
+    summary_insights += f"-=-=--=\n\n"
+    return summary_insights
 
 
 def analyze_metadata_classification(signals):
@@ -134,7 +151,7 @@ def analyze_zero_value(signals):
     return zero_value_signals, zero_value_insights
 
 
-def analyze_correlations(signals, method, pairwise_similarity_threshold):
+def analyze_pairwise_correlations(signals, method, pairwise_similarity_threshold):
     """
     Find the pairwise correlation between signals
     """
@@ -219,7 +236,7 @@ def analyze_compound_correlations(signals, compound_similarity_threshold):
         features_matrix_to_test = sm.add_constant(features_matrix_to_test)
         model = sm.OLS(signals_features_matrix[the_signal], features_matrix_to_test)
         results = model.fit()
-        logger.info(results.summary())
+        logger.debug(results.summary())
         significant_signal_predictors = results.pvalues[results.pvalues < threshold].index.tolist()
         if 'const' in significant_signal_predictors:
             significant_signal_predictors.remove('const')

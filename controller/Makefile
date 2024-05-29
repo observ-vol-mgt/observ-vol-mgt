@@ -47,3 +47,10 @@ feature_extraction_tsfel: install_requirements ## Execute the feature extraction
 	
 feature_extraction_tsfresh: install_requirements ## Execute the feature extraction using tsfresh
 	python feature_extraction/feature_extraction_tsfresh.py
+
+##@ Development
+
+.PHONY: ci_pull_request
+ci_pull_request: tests ## Executed upon ci pull_request event
+
+

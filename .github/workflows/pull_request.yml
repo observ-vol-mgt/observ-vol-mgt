@@ -22,4 +22,4 @@ jobs:
     - name: run controller tests
       run: |
           cd controller
-          make tests
+          make ci_pull_request
