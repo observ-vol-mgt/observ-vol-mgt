@@ -1,17 +1,9 @@
-
-rules:
-{% for processor_rule in processor_rules -%}
-- rule_id: {{ processor_rule.id }}
-  processors: {{ processor_rule.processors }}
-  expr: {{ processor_rule.expr }}
-  duration: {{ processor_rule.duration }}
-  description: {{ processor_rule.description }}
-  firing_action:
-    action_type: {{ processor_rule.firing_action.action_type }}
-    processors:
-      {{ processor_rule.firing_action.processors | indent(8) }}
-    dag:
-      {{ processor_rule.firing_action.dag | indent(8) }}
-  resolved_action:
-    {{ processor_rule.resolved_action }}
+processors:
+{% for signal_to_drop in signals_to_drop -%}
+  - type: filter
+    id: {{ signal_to_drop.id }}
+    metrics:
+      metric_name: {{ signal_to_drop.name }}
+      condition: {{ signal_to_drop.condition }}
+      action: exclude
 {% endfor %}

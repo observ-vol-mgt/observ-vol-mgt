@@ -14,6 +14,7 @@
 
 import logging
 import os
+from string import Template
 
 import requests
 from jinja2 import Environment, FileSystemLoader
@@ -23,71 +24,52 @@ import re
 logger = logging.getLogger(__name__)
 
 
-class ProcessorRuleFiringAction:
-    def __init__(self, action_type, processors, dag):
-        self.action_type = action_type
-        self.processors = processors
-        self.dag = dag
-
-
-class ProcessorRule:
-    def __init__(self, _id, processors, expr, duration, description, firing_action, resolved_action):
-        self.id = _id
-        self.processors = processors
-        self.expr = expr
-        self.duration = duration
-        self.description = description
-        self.firing_action = firing_action
-        self.resolved_action = resolved_action
-
-
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
+    directory = config.directory
+    processor_id_template = config.processor_id_template
+    signal_name_template = config.signal_name_template
+    signal_condition_template = config.signal_condition_template
+
     logger.debug(f"generating processor configuration using: ")
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template('config_generator/templates/processor_filter_processor_template.yaml')
-    context = {
-        'processor_rules': []
-    }
+    context_per_processor = {}
 
-    for i, signal in enumerate(signals_to_keep):
-        processor_rule = ProcessorRule(_id=i,
-                                       processors=[i],
-                                       expr='""',
-                                       duration="1s",
-                                       description=f'"Rule to reduce signal: {signal}"',
-                                       firing_action=ProcessorRuleFiringAction(
-                                           action_type="create_dag",
-                                           processors=f"- type: filter\n"
-                                                      f"id: f1\n"
-                                                      f"metrics:\n"
-                                                      f"    metric_name: {signal}\n"
-                                                      f"    action: include",
-                                           dag=f"- node: f1\n"
-                                               "children: []"),
-                                       resolved_action=f"action_type: delete_dag")
-        context['processor_rules'].append(processor_rule)
+    # building context per each of the processors with signals to drop (for the jinja template)
+    for _id, signal_name in enumerate(signals_to_reduce):
+        signal = extracted_signals.filter_by_names(signal_name)[0]
+        signal_to_drop = {"id": _id,
+                          "name": Template(signal_name_template).safe_substitute(signal.metadata),
+                          "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
+                          }
+        processor_id = Template(processor_id_template).safe_substitute(signal.metadata)
 
-    output = template.render(context)
+        if processor_id not in context_per_processor:
+            context_per_processor[processor_id] = {"signals_to_drop": []}
+        context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
 
-    # Write to file if directory exists in configuration
-    directory = config.directory
-    if directory:
-        response = write_to_file(directory, extracted_signals, output)
-        logger.debug(f"write_to_file returned: {response}")
+    # writing and sending configuration to relevant processors based on configuration
+    for processor_id, processor_context in context_per_processor.items():
+        output = template.render(processor_context)
 
-    # Send to processor URL if url exists in configuration
-    url = config.url
-    if url:
-        response = send_to_processor(url, output)
-        logger.debug(f"send_to_processor returned: {response}")
+        # Write to file if directory exists in configuration
+        if directory:
+            response = write_to_file(directory+f"/{processor_id}", extracted_signals, output)
+            logger.debug(f"write_to_file returned: {response}")
+
+        # Send to processor URL if url exists in configuration
+        url = config.url
+        if url:
+            response = send_to_processor(url, output, processor_id)
+            logger.debug(f"send_to_processor returned: {response}")
 
     return
 
 
-def send_to_processor(url, processor_rules_as_text):
-    logger.debug(f"sending processor configuration to processor"
+def send_to_processor(url, processor_configuration, processor_id):
+    logger.debug(f"sending processor configuration to processor {processor_id} "
                  f" using: {url}")
-    response = requests.post(url+"/api/v1/rules", processor_rules_as_text)
+    response = requests.post(f"{url}/api/v1/processors/{processor_id}", processor_configuration)
     logger.debug(f"response from processor: {response}")
     if response.status_code != 200:
         logger.error(f"Error sending configuration to processor: {url} response is: {response}")
@@ -95,7 +77,7 @@ def send_to_processor(url, processor_rules_as_text):
     return response.status_code
 
 
-def write_to_file(directory, extracted_signals, processor_rules_as_text):
+def write_to_file(directory, extracted_signals, processor_configuration):
     logger.debug(f"writing processor configuration to file"
                  f" using: {directory}")
 
@@ -108,6 +90,6 @@ def write_to_file(directory, extracted_signals, processor_rules_as_text):
 
     file_name = f"{path}/processor_filter_processor_config.yaml"
     with open(file_name, 'w') as f:
-        f.write(processor_rules_as_text)
+        f.write(processor_configuration)
 
     return f"Configuration file was written in processor format to {file_name}"

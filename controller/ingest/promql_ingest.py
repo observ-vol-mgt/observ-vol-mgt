@@ -50,7 +50,12 @@ def ingest(ingest_config):
                     if not re.findall(ingest_filter_metadata, str(signal["metric"])):
                         continue
                 if ingest_name_template != "":
+                    # adding `count` to allow usage by template
                     signal["metric"]["count"] = signal_count
+                    # save original signal name into `original_name` if needed
+                    if "__name__" in signal["metric"]:
+                        signal["metric"]["original_name"] = signal["metric"]["__name__"]
+                    # build new name based on template
                     signal["metric"]["__name__"] = Template(ingest_name_template).safe_substitute(signal["metric"])
 
                 signals.append(Signal(type=signal_type, metadata=signal['metric'], time_series=signal['values']))

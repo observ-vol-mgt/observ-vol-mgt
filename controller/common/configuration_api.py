@@ -103,6 +103,11 @@ class ConfigGeneratorOtel(BaseModel):
 
 class ConfigGeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
+    # Template to extract the processor id from the signal metadata
+    processor_id_template: Optional[str] = ""
+    # Template to extract the metric name from the signal metadata
+    signal_name_template: Optional[str] = ""
+    signal_condition_template: Optional[str] = ""
     directory: Optional[str] = None
     url: Optional[str] = None
 
