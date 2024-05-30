@@ -29,20 +29,21 @@ import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
+
 def config_generator(subtype, config, extracted_signals, signals_to_keep, signals_to_reduce):
     # switch based on the configuration config_generator type
     # verify config parameters conform to structure
-    if subtype == api.GeneratorSubType.PIPELINE_GENERATOR_NONE.value:
+    if subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_NONE.value:
         api.GeneratorNone(**config)
         logger.info("not generating configuration")
         r_value = "not generating configuration"
-    elif subtype == api.GeneratorSubType.PIPELINE_GENERATOR_OTEL.value:
-        typed_config = api.GeneratorOtel(**config)
+    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_OTEL.value:
+        typed_config = api.ConfigGeneratorOtel(**config)
         logger.info("using otel config_generator")
         from config_generator.config_generator_otel import generate
         r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
-    elif subtype == api.GeneratorSubType.PIPELINE_GENERATOR_PROCESSOR.value:
-        typed_config = api.GeneratorProcessor(**config)
+    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PROCESSOR.value:
+        typed_config = api.ConfigGeneratorProcessor(**config)
         logger.info("using processor config_generator")
         from config_generator.config_generator_processor import generate
         r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)

@@ -36,8 +36,12 @@ parameters:
     pairwise_similarity_method: pearson
 - name: config_generator_processor
   type: config_generator
-  subtype: otel
+  subtype: processor
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
+    signal_name_template: "$original_name"
+    signal_condition_template: "cluster=$cluster and instance=$instance"
+    processor_id_template: "$processor"
     directory: /tmp
+    url: http://manager:5010
