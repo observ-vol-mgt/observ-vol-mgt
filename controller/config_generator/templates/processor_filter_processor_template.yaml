@@ -7,3 +7,4 @@ processors:
       condition: {{ signal_to_drop.condition }}
       action: exclude
 {% endfor %}
+
