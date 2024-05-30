@@ -47,10 +47,10 @@ class ExtractSubType(Enum):
     PIPELINE_EXTRACT_TSFRESH = "tsfresh"
 
 
-class GeneratorSubType(Enum):
-    PIPELINE_GENERATOR_NONE = "none"
-    PIPELINE_GENERATOR_OTEL = "otel"
-    PIPELINE_GENERATOR_PROCESSOR = "processor"
+class ConfigGeneratorSubType(Enum):
+    PIPELINE_CONFIG_GENERATOR_NONE = "none"
+    PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
+    PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
 
 
 class GenerateInsightsType(Enum):
@@ -96,13 +96,20 @@ class GenerateInsights(BaseModel):
     compound_similarity_threshold: Optional[float] = 0.99
 
 
-class GeneratorOtel(BaseModel):
+class ConfigGeneratorOtel(BaseModel):
     model_config = ConfigDict(extra='forbid')
     directory: Optional[str] = "/tmp"
 
 
-class GeneratorProcessor(BaseModel):
+class ConfigGeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')
+    # Template to extract the processor id from the signal metadata
+    processor_id_template: Optional[str] = ""
+    # Template to extract the metric name from the signal metadata
+    signal_name_template: Optional[str] = ""
+    signal_condition_template: Optional[str] = ""
+    directory: Optional[str] = None
+    url: Optional[str] = None
 
 
 class GeneratorNone(BaseModel):

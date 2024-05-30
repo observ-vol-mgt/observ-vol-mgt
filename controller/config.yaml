@@ -6,7 +6,7 @@ pipeline:
   follows: [metadata_classification_zero_shot]
 - name: generate_insights
   follows: [feature_extraction_tsfel]
-- name: config_generator_otel
+- name: config_generator_processor
   follows: [feature_extraction_tsfel, generate_insights]
 parameters:
 - name: ingest_file
@@ -35,10 +35,9 @@ parameters:
   subtype:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
-- name: config_generator_otel
+- name: config_generator_processor
   type: config_generator
-  subtype: otel
+  subtype: processor
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
-  config:
-    directory: /tmp
+
