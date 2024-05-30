@@ -46,3 +46,44 @@ parameters:
 
 A stage may follow multiple other stages, and may receive input from multiple earlier stages.
 
+# Details about some types of stages
+
+## Map Reduce
+A map_reduce stage takes some input, breaks it up into some number of pieces,
+and then runs some computation (possibly in parallel) on each of the pieces.
+The output of the `map` operation is a list of sublists.
+Each sublist is provided to a different instance of the `compute`.
+The `compute` part of a map_reduce stage takes a single sublist and outputs a single sublist.
+The outputs of each of the computations are then collected by the `reduce` operation into a combined output.
+The config of a map_reduce stage looks like the following:
+
+```commandline
+- name: parallel_extract_stage
+  type: map_reduce
+  input_data: [signals]
+  output_data: [extracted_signals]
+  config:
+    map_function:
+      name: map1
+      type: map
+      subtype: simple
+      config:
+        <any parameters needed to customize the map operation>
+    compute_function:
+      name: extract_in_parallel
+      type: extract
+      subtype: tsfel
+      config:
+        <any parameters needed to customize the compute operation>
+    reduce_function:
+      name: reduce1
+      type: reduce
+      subtype: simple
+      config:
+        <any parameters needed to customize the reduce operation>
+```
+
+All map_reduce `compute` operations are of the same structure.
+A single list as input and a single list as output.
+These must be preregistered in the code base as valid map_reduce `compute` operations
+The `map` and `reduce` operations must likewise be preregistered in the code base as such operations.

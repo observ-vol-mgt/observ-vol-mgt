@@ -23,6 +23,7 @@ class StageType(Enum):
     INSIGHTS = "insights"
     CONFIG_GENERATOR = "config_generator"
     METADATA_CLASSIFICATION = "metadata_classification"
+    MAP_REDUCE = "map_reduce"
 
 
 class MetadataClassificationSubType(Enum):
@@ -57,6 +58,13 @@ class GenerateInsightsType(Enum):
     INSIGHTS_SIMILARITY_METHOD_PEARSON = "pearson"
     INSIGHTS_SIMILARITY_METHOD_SPEARMAN = "spearman"
     INSIGHTS_SIMILARITY_METHOD_KENDALL = "kendall"
+
+class MapSubType(Enum):
+    PIPELINE_MAP_SIMPLE = "simple"
+    PIPELINE_MAP_BY_NAME = "by_name"
+
+class ReduceSubType(Enum):
+    PIPELINE_REDUCE_SIMPLE = "simple"
 
 
 class IngestFile(BaseModel):
@@ -115,4 +123,15 @@ class ConfigGeneratorProcessor(BaseModel):
 
 
 class GeneratorNone(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+
+class MapSimple(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    number: int
+
+class MapByName(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    name_pattern: str
+
+class ReduceSimple(BaseModel):
     model_config = ConfigDict(extra='forbid')
