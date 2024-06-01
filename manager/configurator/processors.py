@@ -185,7 +185,7 @@ def delete_all_processors_config():
     success_list = []
     try:
         for processor_id in processor_ids:
-            _, status_code = delete_processor(processor_id)
+            _, status_code = delete_processor_config(processor_id)
 
             if status_code in [200, 202, 204]:
                 success_list.append(processor_id)
