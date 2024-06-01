@@ -32,9 +32,9 @@ class AdaptiveStatefulMetric(Metric):
     function: str
 
 class Processor(BaseModel):
-    type: Literal["aggregate", "aggregate_over_metrics", "enrichment", "filter", "adaptive", "frequency", "adaptive_stateful"]
+    type: Literal["aggregate", "aggregate_over_metrics", "enrichment", "filter", "adaptive", "frequency", "adaptive_stateful", "drop"]
     id: str
-    metrics: Union[AggregateMetric, AggregateOverMetricsMetric, EnrichmentMetric, FilterMetric, AdaptiveMetric, FrequencyMetric, AdaptiveStatefulMetric]
+    metrics: Union[AggregateMetric, AggregateOverMetricsMetric, EnrichmentMetric, FilterMetric, AdaptiveMetric, FrequencyMetric, AdaptiveStatefulMetric, Metric]
 
 class DAGNode(BaseModel):
     node: str
