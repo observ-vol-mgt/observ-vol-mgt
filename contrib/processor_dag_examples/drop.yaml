@@ -1,0 +1,6 @@
+processors:
+  - type: drop
+    id: f1
+    metrics:
+      metric_name: app_A_network_metric_0
+      condition: IP=192.168.1.3
