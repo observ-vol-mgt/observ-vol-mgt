@@ -51,6 +51,6 @@ feature_extraction_tsfresh: install_requirements ## Execute the feature extracti
 ##@ CI
 
 .PHONY: ci_pull_request
-ci_pull_request: tests ## Executed upon ci pull_request event
+ci_pull_request: docker_run_tests ## Executed upon ci pull_request event
 
 

@@ -1,10 +1,9 @@
 processors:
-{% for signal_to_drop in signals_to_drop -%}
-  - type: filter
-    id: {{ signal_to_drop.id }}
+{%- for signal_to_drop in signals_to_drop %}
+  - type: drop
+    id: drop_{{ signal_to_drop.id }}
     metrics:
       metric_name: {{ signal_to_drop.name }}
       condition: {{ signal_to_drop.condition }}
-      action: exclude
-{% endfor %}
+{% endfor -%}
 
