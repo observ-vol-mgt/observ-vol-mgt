@@ -15,23 +15,36 @@
 from config_generator.config_generator_processor import generate
 
 from common.configuration_api import ConfigGeneratorProcessor
-from common.signal import Signals
+from common.signal import Signal, Signals
 
-expected_processor_generated_empty_content = """
-rules:
+expected_processor_generated_empty_content = """processors:
+  - type: drop
+    id: drop_0
+    metrics:
+      metric_name: name_test
+      condition: condition_test
 """
 
 
 class TestGenerate:
 
     def test_config_generator_processor(self):
-        config_generator_processor_config = ConfigGeneratorProcessor(directory="/tmp/test")
-        extracted_signals = Signals()
-        extracted_signals.metadata["ingest_source"] = "test"
-        generate(config_generator_processor_config, extracted_signals, [], [])
+        config_generator_processor_config = ConfigGeneratorProcessor(directory="/tmp/test",
+                                                                     processor_id_template="$processor",
+                                                                     signal_name_template="$__name__",
+                                                                     signal_condition_template="$condition"
+                                                                     )
+        extracted_signal = Signal("metric", {"processor": "p1",
+                                             "_id": "id_test",
+                                             "__name__": "name_test",
+                                             "condition": "condition_test"})
+        extracted_signals = Signals({"ingest_source": "test"}, [extracted_signal])
+        generate(config_generator_processor_config,
+                 extracted_signals, [], ["name_test"])
 
-        filename = config_generator_processor_config.directory + "/test/processor_filter_processor_config.yaml"
+        filename = config_generator_processor_config.directory + "/p1/test/processor_filter_processor_config.yaml"
 
         # read the file and check if it contains the expected content
         with open(filename, "r") as f:
-            assert f.read() == expected_processor_generated_empty_content
+            text = f.read()
+            assert text == expected_processor_generated_empty_content
