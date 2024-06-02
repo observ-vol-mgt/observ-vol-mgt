@@ -69,7 +69,7 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 def send_to_processor(url, processor_configuration, processor_id):
     logger.debug(f"sending processor configuration to processor {processor_id} "
                  f" using: {url}")
-    response = requests.post(f"{url}/api/v1/processors/{processor_id}", processor_configuration)
+    response = requests.post(f"{url}/api/v1/processor_config/{processor_id}", processor_configuration)
     logger.debug(f"response from processor: {response}")
     if response.status_code != 200:
         logger.error(f"Error sending configuration to processor: {url} response is: {response}")
@@ -82,7 +82,8 @@ def write_to_file(directory, extracted_signals, processor_configuration):
                  f" using: {directory}")
 
     output_dir = add_slash_to_dir(directory)
-    source = re.sub('-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
+    source = re.sub('-+', '-',
+                    extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
     path = re.sub('/+', '/', f"{output_dir}/{source}")
 
     if not os.path.exists(path):
