@@ -166,3 +166,48 @@ def test_missing_params():
         assert False
     except:
         assert True
+
+config_duplicate_stage = """
+pipeline:
+- name: stage1
+- name: stage2
+  follows: [stage1]
+- name: stage3
+parameters:
+- name: stage1
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [data1]
+  config:
+    file_name: dummy_file.txt
+- name: stage2
+  type: extract
+  subtype: tsfel
+  input_data: [data1]
+  output_data: [data2]
+  config:
+- name: stage3
+  type: ingest
+  subtype: none
+  input_data: []
+  output_data: [data3, data4, data5]
+  config:
+- name: stage1
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [data1]
+  config:
+    file_name: dummy_file.txt
+"""
+
+def test_duplicate_stage():
+    build_config(config_multiple_initial)
+
+    try:
+        p = Pipeline()
+        p.build_pipeline()
+        assert False
+    except:
+        assert True

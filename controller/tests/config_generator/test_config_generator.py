@@ -21,4 +21,4 @@ def test_returns_not_generating_configuration_when_config_generator_type_is_none
     result = config_generator(ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_NONE.value, {}, [], [], [])
 
     # Assert that the result is "not generating configuration"
-    assert result == "not generating configuration"
+    assert result == ["not generating configuration"]
