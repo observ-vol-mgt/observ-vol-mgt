@@ -13,67 +13,59 @@
 #  limitations under the License.
 
 import datetime
+import logging
 import os
 from datetime import datetime
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
 
 import matplotlib.pyplot as plt
-from flask import Flask, render_template, request
+from flask import render_template, request, Blueprint
+from controller.ux.utils import get_insights, get_time_series
+
+logger = logging.getLogger(__name__)
 
 current_path = os.path.dirname(os.path.realpath(__file__))
-flaskApp = Flask(__name__, template_folder=current_path, static_folder=f"{current_path}/static")
-
-time_series = {}
-insights = ""
-
-
-def fill_time_series(extracted_signals):
-    for extracted_signal in extracted_signals:
-        time_series_name = extracted_signal.metadata["__name__"]
-        time_series[time_series_name] = extracted_signal.time_series
+ui = Blueprint('visualization', __name__,
+               template_folder=current_path,
+               static_folder=f"{current_path}/static")
 
 
-def fill_insights(the_insights):
-    global insights
-    insights = the_insights
-
-
-@flaskApp.route('/')
-@flaskApp.route('/home')
-@flaskApp.route('/index')
-@flaskApp.route('/index.htm')
-@flaskApp.route('/index.html')
-def index():
-    series_names = list(time_series.keys())
+@ui.route('/')
+@ui.route('/home')
+@ui.route('/index')
+@ui.route('/index.htm')
+@ui.route('/index.html')
+def _index():
+    series_names = list(get_time_series().keys())
     return render_template('index.html', series_names=series_names)
 
 
-@flaskApp.route('/insights')
-def insights():
-    return render_template('insights.html', insights=insights)
+@ui.route('/insights')
+def _insights():
+    return render_template('insights.html', insights=get_insights())
 
 
-@flaskApp.route('/about')
-def about():
+@ui.route('/about')
+def _about():
     return render_template('about.html')
 
 
-@flaskApp.route('/styles.css')
-def serve_css():
-    return flaskApp.send_static_file('styles.css')
+@ui.route('/styles.css')
+def _serve_css():
+    return ui.send_static_file('styles.css')
 
 
-@flaskApp.route('/signal_visualization', methods=['POST'])
-def visualize():
+@ui.route('/signal_visualization', methods=['POST'])
+def _visualize():
     selected_series = request.form.getlist('timeSeries')
     plt.figure(figsize=(10, 6))
 
     # Plot selected time series
     all_timestamps = []
     for series_name in selected_series:
-        if series_name in time_series:
-            time_stamps, data = zip(*time_series[series_name])
+        if series_name in get_time_series():
+            time_stamps, data = zip(*get_time_series()[series_name])
             dates = [datetime.fromtimestamp(timestamp) for timestamp in time_stamps]
             points = [float(point) for point in data]
             plt.plot_date(x=dates, y=points, linestyle='solid', linewidth=1, label=series_name, marker='o')

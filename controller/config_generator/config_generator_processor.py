@@ -51,7 +51,16 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
         if processor_id not in context_per_processor:
             context_per_processor[processor_id] = {"signals_to_drop": []}
-        context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
+
+        # Adding the signal to the list of signals to drop, only if the signal is not already added to the list
+        found = False
+        for added_signal in context_per_processor[processor_id]['signals_to_drop']:
+            if (added_signal['name'] == signal_to_drop['name'] and
+                    added_signal['condition'] == signal_to_drop['condition']):
+                found = True
+                break
+        if not found:
+            context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
 
     # writing and sending configuration to relevant processors based on configuration
     for processor_id, processor_context in context_per_processor.items():
