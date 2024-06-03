@@ -15,7 +15,7 @@
 import logging
 
 from common.conf import parse_args, get_args
-from controller.ux.api import _rerun
+from ux.api import _rerun
 from workflow_orchestration.pipeline import Pipeline
 from ux.ux import start_ux
 from ux.utils import fill_time_series, fill_insights

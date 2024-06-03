@@ -17,8 +17,8 @@ import os
 from flask import Flask
 from flasgger import Swagger
 
-from controller.ux.api import api
-from controller.ux.ui import ui
+from ux.api import api
+from ux.ui import ui
 logger = logging.getLogger(__name__)
 
 current_path = os.path.dirname(os.path.realpath(__file__))
