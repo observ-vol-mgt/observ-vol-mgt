@@ -62,7 +62,7 @@ def create_fixed_gutentag_ts():
     offset = 60
     #freq = random.random()/2 + 0.5
     freq = 5.0
-    return [offset + ampl for _ in range(LENGTH)]
+    return gt.sine(length=LENGTH, frequency=freq, amplitude=ampl) + offset
 
 """
 Labels is an array of dicts
