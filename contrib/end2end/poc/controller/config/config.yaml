@@ -14,7 +14,7 @@ parameters:
   output_data: [signals]
   config:
     url: 'http://thanos_query:19192'
-    ingest_window: '60m'
+    ingest_window: '15m'
     filter_metadata: "app_|cluster_"
     ingest_name_template: "$count|$__name__($app,$cluster,$instance,$processor,$IP)"
 - name: feature_extraction_tsfel
@@ -40,6 +40,7 @@ parameters:
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
+    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0"
     signal_name_template: "$original_name"
     signal_condition_template: "cluster=$cluster and instance=$instance"
     processor_id_template: "$processor"

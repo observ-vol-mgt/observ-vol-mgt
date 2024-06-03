@@ -15,42 +15,32 @@
 import logging
 
 from common.conf import parse_args, get_args
+from controller.ux.api import _rerun
 from workflow_orchestration.pipeline import Pipeline
-from ui.visualization import flaskApp, fill_time_series, fill_insights
+from ux.ux import start_ux
+from ux.utils import fill_time_series, fill_insights
 
 logger = logging.getLogger(__name__)
 
 
-def main():
-    # getting the configuration
+def run():
+    # Getting configuration
     parse_args()
-    pipeline = Pipeline()
-    pipeline.build_pipeline()
+    _pipeline = Pipeline()
+    _pipeline.build_pipeline()
 
-    # set log level
+    # Setting log level
     level = logging.getLevelName(get_args().loglevel.upper())
     logging.getLogger()
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=level)
 
-    # starting the pipeline
-    logger.info("Starting the Controller Pipeline")
-    logger.info("--=-==--=-==--=-==--=-=-=-=-==--")
-    pipeline.run_iteration()
-
-    logger.info(f"the ingested signals are: {pipeline.signals}")
-    logger.info(f"the feature_extracted signals are: {pipeline.extracted_signals}")
-
-    logger.info(f"the insights are: {pipeline.text_insights}")
-    logger.info(f"Config Generator returned: {pipeline.r_value}")
-
-    # Show the UI
-    if get_args().ui == 'True':
-        logger.info(f"To Visualize the signals use the provided URL:")
-        fill_time_series(pipeline.extracted_signals)
-        fill_insights(pipeline.text_insights)
-        flaskApp.run(host="0.0.0.0", debug=False)
+    # Executing the first iteration of the pipline
+    _rerun()
 
 
 if __name__ == '__main__':
-    main()
+    run()
+    # starting the UX (UI and API)
+    start_ux()
+
