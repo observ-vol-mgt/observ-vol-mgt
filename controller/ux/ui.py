@@ -21,7 +21,7 @@ from matplotlib.ticker import MaxNLocator
 
 import matplotlib.pyplot as plt
 from flask import render_template, request, Blueprint
-from controller.ux.utils import get_insights, get_time_series
+from ux.utils import get_insights, get_time_series
 
 logger = logging.getLogger(__name__)
 
