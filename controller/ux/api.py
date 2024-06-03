@@ -16,8 +16,8 @@ import logging
 import os
 
 from flask import Blueprint
-from controller.ux.utils import fill_time_series, fill_insights
-from controller.workflow_orchestration.pipeline import Pipeline
+from ux.utils import fill_time_series, fill_insights
+from workflow_orchestration.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
