@@ -25,10 +25,15 @@ logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
+    signal_filter_template = config.signal_filter_template
     directory = config.directory
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
     signal_condition_template = config.signal_condition_template
+
+    # if signal filtering template is set, filter signals
+    if signal_filter_template != "":
+        signals_to_reduce = [signal_name for signal_name in signals_to_reduce if re.search(signal_filter_template, signal_name)]
 
     logger.debug(f"generating processor configuration using: ")
     env = Environment(loader=FileSystemLoader('.'))
@@ -46,7 +51,16 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
         if processor_id not in context_per_processor:
             context_per_processor[processor_id] = {"signals_to_drop": []}
-        context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
+
+        # Adding the signal to the list of signals to drop, only if the signal is not already added to the list
+        found = False
+        for added_signal in context_per_processor[processor_id]['signals_to_drop']:
+            if (added_signal['name'] == signal_to_drop['name'] and
+                    added_signal['condition'] == signal_to_drop['condition']):
+                found = True
+                break
+        if not found:
+            context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
 
     # writing and sending configuration to relevant processors based on configuration
     for processor_id, processor_context in context_per_processor.items():
@@ -54,7 +68,7 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
         # Write to file if directory exists in configuration
         if directory:
-            response = write_to_file(directory+f"/{processor_id}", extracted_signals, output)
+            response = write_to_file(directory + f"/{processor_id}", extracted_signals, output)
             logger.debug(f"write_to_file returned: {response}")
 
         # Send to processor URL if url exists in configuration
@@ -71,7 +85,7 @@ def send_to_processor(url, processor_configuration, processor_id):
                  f" using: {url}")
     response = requests.post(f"{url}/api/v1/processor_config/{processor_id}", processor_configuration)
     logger.debug(f"response from processor: {response}")
-    if response.status_code != 200:
+    if response.status_code not in [200, 201]:
         logger.error(f"Error sending configuration to processor: {url} response is: {response}")
 
     return response.status_code

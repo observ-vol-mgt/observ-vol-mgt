@@ -3,7 +3,13 @@
 # ignore all zip files
 **.zip
 # ignore development data 
+**/.vscode/settings.json
 **/__MACOSX/
 **/UCI*/
 **/.idea/
 *.log
+# poc data files
+/contrib/end2end/poc/prometheus_data1/
+/contrib/end2end/poc/prometheus_data2/
+# ignore controller temp plot data
+/controller/ux/static/plot.png
