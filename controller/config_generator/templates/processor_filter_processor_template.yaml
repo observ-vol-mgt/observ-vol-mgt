@@ -5,5 +5,5 @@ processors:
     metrics:
       metric_name: {{ signal_to_drop.name }}
       condition: {{ signal_to_drop.condition }}
-{% endfor -%}
+{%- endfor %}
 
