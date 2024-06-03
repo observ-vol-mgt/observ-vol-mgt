@@ -23,7 +23,9 @@ expected_processor_generated_empty_content = """processors:
     metrics:
       metric_name: name_test
       condition: condition_test
-"""
+dag:
+  - node: drop_0
+    children: []"""
 
 
 class TestGenerate:

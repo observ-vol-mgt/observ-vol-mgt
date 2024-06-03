@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+import logging
 import re
 from string import Template
 from prometheus_api_client import PrometheusConnect
@@ -19,6 +21,7 @@ from prometheus_api_client.utils import parse_datetime
 from common.configuration_api import IngestSubType
 from common.signal import Signal, Signals
 
+logger = logging.getLogger(__name__)
 
 def ingest(ingest_config):
     ingest_url = ingest_config.url
@@ -65,4 +68,5 @@ def ingest(ingest_config):
         err = f"The url {ingest_url} does not exist {e}"
         raise RuntimeError(err) from e
 
+    logger.info(f"Ingested {len(signals.signals)} signals from {ingest_url} ")
     return signals
