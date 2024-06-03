@@ -108,6 +108,8 @@ class ConfigGeneratorProcessor(BaseModel):
     # Template to extract the metric name from the signal metadata
     signal_name_template: Optional[str] = ""
     signal_condition_template: Optional[str] = ""
+    # Template to filter just a subset of the signals to be dropped by the processor
+    signal_filter_template: Optional[str] = ""
     directory: Optional[str] = None
     url: Optional[str] = None
 
