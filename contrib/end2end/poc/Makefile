@@ -18,12 +18,15 @@ stop_controller: ## Stop controller container
 	docker compose -f docker-compose-quay.yml stop controller
 
 cleanup: compose_down ## Complete cleanup
-	sudo rm -R prometheus_data1
-	sudo rm -R prometheus_data2
-	sudo rm -R thanos_data
-	docker volume rm poc_manager_volume
-	docker volume rm poc_shared-data
+	-sudo rm -R prometheus_data1
+	-sudo rm -R prometheus_data2
+	-sudo rm -R thanos_data
+	-docker volume rm poc_manager_volume
+	-docker volume rm poc_shared-data
 
 ##@ visualize
 show_thanos: ## Show the thanos endpoint (:19192)
 	chrome --new-window http://127.0.0.1:19192/
+
+show_controller: ## Show the controller endpoint (:5000)
+	chrome --new-window http://127.0.0.1:5000/
