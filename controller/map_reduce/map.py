@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def map(subtype, config, input_data):
-    print("inside map function, subtype = ", subtype)
+    logger.info(f"inside map function, subtype = {subtype}")
     if len(input_data) != 1:
         raise "feature_extraction configuration should have one input"
     signals_list = input_data[0]
@@ -29,12 +29,12 @@ def map(subtype, config, input_data):
     if subtype == api.MapSubType.PIPELINE_MAP_SIMPLE.value:
         logger.debug("using simple mapper")
         typed_config = api.MapSimple(**config)
-        from map.simple_map import map
+        from map_reduce.simple_map import map
         output_lists = map(typed_config, signals_list)
     elif subtype == api.MapSubType.PIPELINE_MAP_BY_NAME.value:
         logger.debug("using map by name")
         typed_config = api.MapByName(**config)
-        from map.by_name_clustering import map
+        from map_reduce.by_name_clustering import map
         output_lists = map(typed_config, signals_list)
     else:
         raise "unsupported map configuration"

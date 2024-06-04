@@ -22,9 +22,9 @@ def map(config, input_data):
     n_records = len(signals)
     list_size = n_records // number_of_lists
     list_of_outputs = []
-    for i in range(number_of_lists-1):
-        start = i * list_size
-        end = (i+1) * list_size
+    for index in range(number_of_lists-1):
+        start = index * list_size
+        end = (index+1) * list_size
         list1 = [signals[j] for j in range(start,end)]
         new_signals = Signals(input_data.metadata, list1)
         list_of_outputs.append(new_signals)
