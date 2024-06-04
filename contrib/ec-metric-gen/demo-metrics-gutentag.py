@@ -57,11 +57,12 @@ def create_random_gutentag_ts():
 def create_fixed_gutentag_ts():
     # curves = ["sine", "cylinder_bell_funnel", "square", "random_mode_jump"]
     curves = ["sine"]
-    ampl = 45
+    ampl = 2
     #offset = random.randint(60,65) # small rate randomize
     offset = 60
     #freq = random.random()/2 + 0.5
-    freq = 5.0
+    freq = 1
+    #return [offset + ampl for _ in range(LENGTH)]
     return gt.sine(length=LENGTH, frequency=freq, amplitude=ampl) + offset
 
 """
