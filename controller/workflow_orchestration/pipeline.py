@@ -74,15 +74,15 @@ class Pipeline:
                 raise Exception(f"stage {name} specified more than once in pipeline section")
             stages_pipeline_dict[name] = pip_stage
             if name not in stages_params_dict:
-                raise Exception(f"stage {name} not defined in parametes section")
+                raise Exception(f"stage {name} not defined in parameters section")
             stg = stages_params_dict[name]
             if 'follows' in pip_stage:
-                for f in pip_stage['follows']:
-                    if f not in stages_params_dict:
-                        raise Exception(f"stage {f} used but not defined")
-                    t = stages_params_dict[f]
-                    stg.set_follows(f)
-                    t.add_follower(stg)
+                for fol in pip_stage['follows']:
+                    if fol not in stages_params_dict:
+                        raise Exception(f"stage {fol} used but not defined")
+                    prev = stages_params_dict[fol]
+                    stg.set_follows(fol)
+                    prev.add_follower(stg)
             else:
                 if stg.base_stage.input_data != None and len(stg.base_stage.input_data) > 0:
                     raise Exception(f"stage {stg.base_stage.name} is a first stage so it should not have input data")
@@ -96,9 +96,9 @@ class Pipeline:
         # check that each follows stage actually exists
         for pip_stage in pipeline:
             if 'follows' in pip_stage:
-                for f in pip_stage['follows']:
-                    if f not in stages_pipeline_dict:
-                        raise Exception(f"stage {f} used but not declared in pipeline section")
+                for fol in pip_stage['follows']:
+                    if fol not in stages_pipeline_dict:
+                        raise Exception(f"stage {fol} used but not declared in pipeline section")
 
         # decide the order in which to run the stages
         # TBD - eventually support parallel execution of tasks of DAG
@@ -168,7 +168,8 @@ class Pipeline:
     def run_map_reduce_compute(self, stage, input_data):
         # make k copies of stage, where k is the number of input lists
         # provide each copy of stage with a single list
-        # collect hte output lists into a common output list
+        # collect the output lists into a common output list
+        # TBD - these should be run in parallel
         number_of_copies = len(input_data)
         substages = []
         for index in range(number_of_copies):
