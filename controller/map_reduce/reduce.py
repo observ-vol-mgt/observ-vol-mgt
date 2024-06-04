@@ -20,12 +20,13 @@ logger = logging.getLogger(__name__)
 
 
 def reduce(subtype, config, input_data):
+    logger.info(f"inside reduce function, subtype = {subtype}")
     # switch based on the configuration ingest type
     # verify config parameters conform to structure
     if subtype == api.ReduceSubType.PIPELINE_REDUCE_SIMPLE.value:
-        logger.debug("using simple merge")
+        logger.debug("using simple reduce")
         typed_config = api.ReduceSimple(**config)
-        from reduce.simple_reduce import reduce
+        from map_reduce.simple_reduce import reduce
         output_list = reduce(typed_config, input_data)
     else:
         raise "unsupported reduce configuration"

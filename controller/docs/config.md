@@ -9,8 +9,8 @@ Standard field names for each stage are:
 - name
 - type (e.g. ingest, extract, insights)
 - subtype (e.g. file ingest, promql ingest)
-- input_data_types (list of lists)
-- output_data_types (list of lists)
+- input_data (list of input (lists))
+- output_data (list of output (lists))
 - config (configuration specific to this stage)
 
 A sample config file might look like this:
@@ -85,5 +85,9 @@ The config of a map_reduce stage looks like the following:
 
 All map_reduce `compute` operations are of the same structure.
 A single list as input and a single list as output.
-These must be preregistered in the code base as valid map_reduce `compute` operations
+These must be preregistered in the code base as valid map_reduce `compute` operations.
 The `map` and `reduce` operations must likewise be preregistered in the code base as such operations.
+
+## Ingest
+An `ingest` type stage usually takes no input data and outputs a single list.
+
