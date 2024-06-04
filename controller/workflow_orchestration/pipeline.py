@@ -15,15 +15,19 @@
 from common.conf import get_configuration
 
 from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
+from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
 
 from config_generator.config_generator import config_generator
 from metadata_classification.metadata_classification import metadata_classification
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
-from common.configuration_api import StageType
+import common.configuration_api as api
+from map_reduce.map import map
+from map_reduce.reduce import reduce
 
 import logging
+import copy
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +47,7 @@ class Pipeline:
         self.r_value = None
 
     def build_pipeline(self):
+        logger.debug("Building Pipeline")
         stages_params_dict = {}
         stages_pipeline_dict = {}
         configuration = get_configuration()
@@ -70,15 +75,15 @@ class Pipeline:
                 raise Exception(f"stage {name} specified more than once in pipeline section")
             stages_pipeline_dict[name] = pip_stage
             if name not in stages_params_dict:
-                raise Exception(f"stage {name} not defined in parametes section")
+                raise Exception(f"stage {name} not defined in parameters section")
             stg = stages_params_dict[name]
             if 'follows' in pip_stage:
-                for f in pip_stage['follows']:
-                    if f not in stages_params_dict:
-                        raise Exception(f"stage {f} used but not defined")
-                    t = stages_params_dict[f]
-                    stg.set_follows(f)
-                    t.add_follower(stg)
+                for follows_stage in pip_stage['follows']:
+                    if follows_stage not in stages_params_dict:
+                        raise Exception(f"stage {follows_stage} used but not defined")
+                    previous_stage = stages_params_dict[follows_stage]
+                    stg.set_follows(follows_stage)
+                    previous_stage.add_follower(stg)
             else:
                 if stg.base_stage.input_data != None and len(stg.base_stage.input_data) > 0:
                     raise Exception(f"stage {stg.base_stage.name} is a first stage so it should not have input data")
@@ -92,9 +97,9 @@ class Pipeline:
         # check that each follows stage actually exists
         for pip_stage in pipeline:
             if 'follows' in pip_stage:
-                for f in pip_stage['follows']:
-                    if f not in stages_pipeline_dict:
-                        raise Exception(f"stage {f} used but not declared in pipeline section")
+                for follows_stage in pip_stage['follows']:
+                    if follows_stage not in stages_pipeline_dict:
+                        raise Exception(f"stage {follows_stage} used but not declared in pipeline section")
 
         # decide the order in which to run the stages
         # TBD - eventually support parallel execution of tasks of DAG
@@ -102,51 +107,94 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
-    def add_stage_to_schedule(self, s):
-        if s.scheduled:
+    def add_stage_to_schedule(self, current_stage):
+        logger.debug(f"adding stage = {current_stage} to schedule")
+        if current_stage.scheduled:
             return
-        for i in s.base_stage.input_data:
-            s_prev = self.output_data_dict[i]
-            if not s_prev.scheduled:
-                self.add_stage_to_schedule(s_prev)
-        self.stage_execution_order.append(s)
-        s.set_scheduled()
+        for input_field in current_stage.base_stage.input_data:
+            previous_stage = self.output_data_dict[input_field]
+            if not previous_stage.scheduled:
+                self.add_stage_to_schedule(previous_stage)
+        self.stage_execution_order.append(current_stage)
+        current_stage.set_scheduled()
 
     def run_stage(self, stage, input_data):
-        if stage.base_stage.type == StageType.INGEST.value:
-            self.signals = ingest(stage.base_stage.subtype, stage.base_stage.config)
-            output_data = [self.signals]
-        elif stage.base_stage.type == StageType.METADATA_CLASSIFICATION.value:
-            self.classified_signals = metadata_classification(stage.base_stage.subtype, stage.base_stage.config,
-                                                              input_data[0])
-            output_data = [self.classified_signals]
-        elif stage.base_stage.type == StageType.METADATA_EXTRACTION.value:
-            self.extracted_signals = feature_extraction(stage.base_stage.subtype, stage.base_stage.config,
-                                                        input_data[0])
-            output_data = [self.extracted_signals]
-        elif stage.base_stage.type == StageType.INSIGHTS.value:
-            self.signals_to_keep, self.signals_to_reduce, self.text_insights = generate_insights(
-                stage.base_stage.subtype, stage.base_stage.config, input_data[0])
-            output_data = [self.signals_to_keep, self.signals_to_reduce, self.text_insights]
-        elif stage.base_stage.type == StageType.CONFIG_GENERATOR.value:
-            self.r_value = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data[0],
-                                            input_data[1], input_data[2])
-            output_data = [self.r_value]
+        logger.debug(f"running stage: {stage}")
+        if stage.base_stage.type == api.StageType.INGEST.value:
+            output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
+            self.signals = output_data[0]
+        elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
+            output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.classified_signals = output_data[0]
+        elif stage.base_stage.type == api.StageType.METADATA_EXTRACTION.value:
+            output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.extracted_signals = output_data[0]
+        elif stage.base_stage.type == api.StageType.INSIGHTS.value:
+            output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.signals_to_keep, self.signals_to_reduce, self.text_insights = output_data[0], output_data[1], output_data[2]
+        elif stage.base_stage.type == api.StageType.CONFIG_GENERATOR.value:
+            output_data = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data)
+            self.r_value = output_data[0]
+        elif stage.base_stage.type == api.StageType.MAP_REDUCE.value:
+            output_data = self.map_reduce(stage.base_stage.config, input_data)
+            self.extracted_signals = output_data[0]
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
 
     def run_iteration(self):
-        for s in self.stage_execution_order:
+        for current_stage in self.stage_execution_order:
             # gather the input data
             input_data = []
-            for i_field in s.base_stage.input_data:
+            for input_field in current_stage.base_stage.input_data:
                 # find the stage where that input field is generated
-                s_prev = self.output_data_dict[i_field]
+                previous_stage = self.output_data_dict[input_field]
                 #  latest_output_data contains a list of outputs; select the right one
-                for o_field in s_prev.base_stage.output_data:
-                    if o_field == i_field:
-                        index = s_prev.base_stage.output_data.index(o_field)
+                for output_field in previous_stage.base_stage.output_data:
+                    if output_field == input_field:
+                        index = previous_stage.base_stage.output_data.index(output_field)
                         break
-                input_data.append(s_prev.latest_output_data[index])
-            self.run_stage(s, input_data)
+                input_data.append(previous_stage.latest_output_data[index])
+            self.run_stage(current_stage, input_data)
+
+
+    def map_reduce(self, config, input_data):
+        # verify config parameters structure
+        logger.debug(f"running map_reduce")
+        params = MapReduceParameters(**config)
+        logger.debug(f"before map")
+        input_lists = map(params.map_function.subtype, params.map_function.config, input_data)
+        logger.debug(f"after map")
+        dummy_stage = create_dummy_compute_stage(params.compute_function)
+        logger.debug(f"dummy stage: {dummy_stage}")
+        output_lists = self.run_map_reduce_compute(dummy_stage, input_lists)
+        logger.debug(f"before reduce")
+        output_data = reduce(params.reduce_function.subtype, params.reduce_function.config, output_lists)
+        logger.debug(f"after reduce")
+        return output_data
+
+
+    def run_map_reduce_compute(self, stage, input_data):
+        # make k copies of stage, where k is the number of input lists
+        # provide each copy of stage with a single list
+        # collect the output lists into a common output list
+        # TBD - these should be run in parallel
+        number_of_copies = len(input_data)
+        logger.info(f"run_map_reduce_compute: stage = {stage}")
+        substages = []
+        for index in range(number_of_copies):
+            stage_copy = copy.copy(stage)
+            stage_copy.base_stage.name += f"_{index}"
+            logger.debug(f"parallel stage name = {stage_copy.base_stage.name}")
+            substages.append(stage_copy)
+            new_input_data = [input_data[index]]
+            self.run_stage(stage_copy, new_input_data)
+
+        # collect the output data
+        output_data = []
+        for index in range(number_of_copies):
+            output_data.append(substages[index].latest_output_data[0])
+
+        stage.set_latest_output_data(output_data)
+        return output_data
+

@@ -29,8 +29,12 @@ import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
-
-def config_generator(subtype, config, extracted_signals, signals_to_keep, signals_to_reduce):
+def config_generator(subtype, config, input_data):
+    if len(input_data) != 3:
+        raise "config_generator configuration should have 3 inputs"
+    extracted_signals = input_data[0]
+    signals_to_keep = input_data[1]
+    signals_to_reduce = input_data[2]
     # switch based on the configuration config_generator type
     # verify config parameters conform to structure
     if subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_NONE.value:
@@ -49,4 +53,4 @@ def config_generator(subtype, config, extracted_signals, signals_to_keep, signal
         r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
     else:
         raise "unsupported feature_extraction configuration"
-    return r_value
+    return [r_value]

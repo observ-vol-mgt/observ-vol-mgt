@@ -13,27 +13,29 @@
 #  limitations under the License.
 
 import logging
+
 import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
 
-def feature_extraction(subtype, config, input_data):
+def map(subtype, config, input_data):
+    logger.info(f"inside map function, subtype = {subtype}")
     if len(input_data) != 1:
         raise "feature_extraction configuration should have one input"
     signals_list = input_data[0]
-    # switch based on the configuration feature_extraction type
+    # switch based on the configuration ingest type
     # verify config parameters conform to structure
-    if subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL.value:
-        tsfel_config = api.FeatureExtractionTsfel(**config)
-        logger.info("using tsfel feature_extraction")
-        from feature_extraction.feature_extraction_tsfel import extract
-        extracted_signals = extract(tsfel_config, signals_list)
-    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFRESH.value:
-        api.FeatureExtractionTsfresh(**config)
-        logger.info("using tsfresh feature_extraction")
-        from feature_extraction.feature_extraction_tsfresh import extract
-        extracted_signals = extract(signals_list)
+    if subtype == api.MapSubType.PIPELINE_MAP_SIMPLE.value:
+        logger.debug("using simple mapper")
+        typed_config = api.MapSimple(**config)
+        from map_reduce.simple_map import map
+        output_lists = map(typed_config, signals_list)
+    elif subtype == api.MapSubType.PIPELINE_MAP_BY_NAME.value:
+        logger.debug("using map by name")
+        typed_config = api.MapByName(**config)
+        from map_reduce.by_name_clustering import map
+        output_lists = map(typed_config, signals_list)
     else:
-        raise "unsupported feature_extraction configuration"
-    return [extracted_signals]
+        raise "unsupported map configuration"
+    return output_lists

@@ -19,23 +19,15 @@ import common.configuration_api as api
 logger = logging.getLogger(__name__)
 
 
-def ingest(subtype, config):
+def reduce(subtype, config, input_data):
+    logger.info(f"inside reduce function, subtype = {subtype}")
     # switch based on the configuration ingest type
     # verify config parameters conform to structure
-    if subtype == api.IngestSubType.PIPELINE_INGEST_DUMMY.value:
-        logger.debug("using dummy ingest logger")
-        api.IngestDummy(**config)
-        from ingest.dummy_ingest import ingest
-        signals = ingest()
-    elif subtype == api.IngestSubType.PIPELINE_INGEST_FILE.value:
-        # verify config parameters conform to structure
-        typed_config = api.IngestFile(**config)
-        from ingest.file_ingest import ingest
-        signals = ingest(typed_config)
-    elif subtype == api.IngestSubType.PIPELINE_INGEST_PROMQL.value:
-        typed_config = api.IngestPromql(**config)
-        from ingest.promql_ingest import ingest
-        signals = ingest(typed_config)
+    if subtype == api.ReduceSubType.PIPELINE_REDUCE_SIMPLE.value:
+        logger.debug("using simple reduce")
+        typed_config = api.ReduceSimple(**config)
+        from map_reduce.simple_reduce import reduce
+        output_list = reduce(typed_config, input_data)
     else:
-        raise "unsupported ingest configuration"
-    return [signals]
+        raise "unsupported reduce configuration"
+    return output_list
