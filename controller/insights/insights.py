@@ -24,7 +24,10 @@ import common.configuration_api as api
 logger = logging.getLogger(__name__)
 
 
-def generate_insights(subtype, config, signals_list):
+def generate_insights(subtype, config, input_data):
+    if len(input_data) != 1:
+        raise "generate_insights configuration should have one input"
+    signals_list = input_data[0]
     # verify config parameters conform to structure
     typed_config = api.GenerateInsights(**config)
 
@@ -59,7 +62,7 @@ def generate_insights(subtype, config, signals_list):
     # Get summary insights
     summary_insights = analyze_summary(signals_list.filter_by_names(compound_signals_to_keep))
 
-    return (compound_signals_to_keep,
+    return [compound_signals_to_keep,
             [signal["signal"] for signal in pairwise_signals_to_reduce] +
             [signal["signal"] for signal in compound_signals_to_reduce],
             [summary_insights,
@@ -68,7 +71,7 @@ def generate_insights(subtype, config, signals_list):
              pairwise_correlation_insights,
              compound_correlation_insights,
              metadata_classification_insights]
-            )
+            ]
 
 
 def analyze_summary(signals):

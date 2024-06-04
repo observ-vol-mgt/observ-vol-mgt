@@ -12,13 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from config_generator.config_generator import config_generator
-from common.configuration_api import ConfigGeneratorSubType
+from common.signal import Signals
 
+def reduce(config, input_data):
+    output_list = []
+    for item in input_data:
+        sublist = item.signals
+        output_list.extend(sublist)
 
-def test_returns_not_generating_configuration_when_config_generator_type_is_none(mocker):
-    # Call the config_generator function
-    result = config_generator(ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_NONE.value, {}, [[], [], []])
+    new_signals = Signals(input_data[0].metadata, output_list)
 
-    # Assert that the result is "not generating configuration"
-    assert result == ["not generating configuration"]
+    return [new_signals]

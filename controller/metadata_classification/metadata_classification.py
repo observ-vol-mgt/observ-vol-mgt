@@ -18,7 +18,10 @@ import common.configuration_api as api
 logger = logging.getLogger(__name__)
 
 
-def metadata_classification(subtype, config, signals_list):
+def metadata_classification(subtype, config, input_data):
+    if len(input_data) != 1:
+        raise "metadata_classification configuration should have one input"
+    signals_list = input_data[0]
     # switch based on the configuration metadata_classification type
     # verify config parameters conform to structure
     if subtype == api.MetadataClassificationSubType.PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT.value:
@@ -28,4 +31,4 @@ def metadata_classification(subtype, config, signals_list):
         classified_signals = metadata_classification(zero_shot_config, signals_list)
     else:
         raise "unsupported metadata_classification configuration"
-    return classified_signals
+    return [classified_signals]
