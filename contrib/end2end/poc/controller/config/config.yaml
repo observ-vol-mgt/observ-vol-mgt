@@ -32,7 +32,7 @@ parameters:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
   config:
-    pairwise_similarity_threshold: 0.999999999
+    pairwise_similarity_threshold: 0.98
     pairwise_similarity_method: pearson
 - name: config_generator_processor
   type: config_generator
