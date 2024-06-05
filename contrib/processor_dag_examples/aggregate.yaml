@@ -6,3 +6,6 @@ processors:
       condition: cluster_id=wec1 and namespace_name=data-science
       function: avg
       time_window: 10m
+dag:
+  - node: a1
+    children: []

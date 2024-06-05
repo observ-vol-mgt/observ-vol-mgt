@@ -9,3 +9,6 @@ processors:
           label_value: true
         - label_name: data_factory_metric
           label_value: true
+dag:
+  - node: e1
+    children: []

@@ -39,3 +39,9 @@ dag:
     children: [filter1, adaptive1]
   - node: filter1
     children: [freq1, agg1]
+  - node: adaptive1
+    children: []
+  - node: freq1
+    children: []
+  - node: agg1
+    children: []

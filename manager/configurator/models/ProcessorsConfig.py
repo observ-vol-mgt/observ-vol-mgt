@@ -42,4 +42,4 @@ class DAGNode(BaseModel):
 
 class ProcessorsConfig(BaseModel):
     processors: List[Processor]
-    dag: List[DAGNode] = None
+    dag: List[DAGNode]
