@@ -17,16 +17,25 @@ compose_down: ## Docker compose down
 stop_controller: ## Stop controller container
 	docker compose -f docker-compose-quay.yml stop controller
 
-cleanup: compose_down ## Complete cleanup
+cleanup_artifacts: compose_down ## Cleanup compose artifacts ( prometheus, thanos and manager data)
 	-sudo rm -R prometheus_data1
 	-sudo rm -R prometheus_data2
 	-sudo rm -R thanos_data
 	-docker volume rm poc_manager_volume
 	-docker volume rm poc_shared-data
 
-##@ visualize
-show_thanos: ## Show the thanos endpoint (:19192)
-	chrome --new-window http://127.0.0.1:19192/
+clean_docker_images: compose_down ## Delete local docker images
+	-docker rmi quay.io/observ-vol-mgt/controller
+	-docker rmi quay.io/ppnaik/observ-vol-mgt/metricgen
+	-docker rmi quay.io/ppnaik/observ-vol-mgt/manager
+	-docker rmi quay.io/ppnaik/observ-vol-mgt/ruler_config
+	-docker rmi quay.io/ppnaik/observ-vol-mgt/pmf_processor
 
+##@ visualize
+.PHONY: show_thanos
+show_thanos: ## Show the thanos endpoint (:19192)
+	-@chrome --new-window http://127.0.0.1:19192/ &
+
+.PHONY: show_controller
 show_controller: ## Show the controller endpoint (:5000)
-	chrome --new-window http://127.0.0.1:5000/
+	-@chrome --new-window http://127.0.0.1:5000/ &
