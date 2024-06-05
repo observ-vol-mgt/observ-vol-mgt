@@ -76,7 +76,7 @@ def _visualize():
     plt.title('Time Series Visualization')
     plt.xlabel('Time')
     plt.ylabel('Value')
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
     plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=5))
     plt.gcf().autofmt_xdate()
     plt.xticks(rotation=45, fontsize=6)
