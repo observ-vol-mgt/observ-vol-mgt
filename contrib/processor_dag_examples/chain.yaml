@@ -27,3 +27,5 @@ dag:
     children: [a1]
   - node: a1
     children: [e1]
+  - node: e1
+    children: []

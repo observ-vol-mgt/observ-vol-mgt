@@ -5,3 +5,6 @@ processors:
       metric_name: cluster_cpu_usage
       condition: cluster_id=wec1 and namespace_name=data-science
       function: 2*std_dev
+dag:
+  - node: a1
+    children: []
