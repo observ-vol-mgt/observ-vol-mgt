@@ -6,8 +6,18 @@
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-##@ Development
+##@ POC Demo
+start: ## Starts the POC
+	make compose_up
 
+perform_analysis: ## Performs observability data analysis
+	curl 127.0.0.1:5000/api/v1/rerun
+
+delete_configuration: ## Deletes the processors configurations
+	curl -X DELETE "127.0.0.1:5010/api/v1/processor_config/1" -H "Content-Type: application/json"
+	curl -X DELETE "127.0.0.1:5010/api/v1/processor_config/2" -H "Content-Type: application/json"
+
+##@ POC Development
 compose_up: ## Docker compose up
 	docker compose -f docker-compose-quay.yml up -d
 
