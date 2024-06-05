@@ -54,7 +54,13 @@ def create_random_gutentag_ts():
         return gt.random_mode_jump(length=LENGTH, frequency=freq) + offset
     return [offset + random.randint(amplitude) for _ in range(LENGTH)]
 
+def create_flat_gutentag_ts():
+    offset = 100
+    ampl = 60
+    return [offset + ampl for _ in range(LENGTH)]
+
 def create_fixed_gutentag_ts():
+    #for  metrics with similarity
     # curves = ["sine", "cylinder_bell_funnel", "square", "random_mode_jump"]
     curves = ["sine"]
     ampl = 2
@@ -73,9 +79,12 @@ So every dict is a unique set of labels
 We only need to create a single Gauge for a uniquely named metric
 We store different sets of unique label values since it is needed during "set" 
 """
-def create_new_gutentag_metric(prefix, idx, labels):
+def create_new_gutentag_metric(prefix, idx, labels,duplicate):
     g = Gauge("{0}_metric_{1}".format(prefix, idx), prefix + " Metric", labels[0].keys())
-    ts = [create_random_gutentag_ts() for _ in labels]
+    if duplicate == "true":
+        ts = [create_flat_gutentag_ts() for _ in labels]
+    else:
+        ts = [create_random_gutentag_ts() for _ in labels]
     return (g, ts, labels)
 
 def create_duplicate_gutentag_metric(prefix, idx, labels):
@@ -120,7 +129,7 @@ def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
     # Create cluster metrics
     labels = {"cluster": cluster_name}
     global cluster_metrics
-    cluster_metrics += [create_new_gutentag_metric("cluster", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1())}]) for idx in range(num_cluster_metrics)]
+    cluster_metrics += [create_new_gutentag_metric("cluster", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1())}],duplicate) for idx in range(num_cluster_metrics)]
 
     # Create hardware metrics
     num_hardware_metrics = config['hardware']['num_metrics']
@@ -129,7 +138,7 @@ def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
     global node_metrics
     node_metrics += [create_new_gutentag_metric("cluster_hardware",
                                    idx,
-                                   [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "node": node} for node in range(num_nodes)])
+                                   [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "node": node} for node in range(num_nodes)],duplicate)
         for idx in range(num_hardware_metrics)]
     # Create cluster network metrics
     global nw_metrics
@@ -147,8 +156,8 @@ def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
         app_name = config['apps'][app]['name']
         num_app_metrics = config['apps'][app]['num_metrics']
         network_metrics = int(num_app_metrics/5)        
-        app_metrics += [create_new_gutentag_metric("app_" + str(app_name) + "_network", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "IP": id} for id in ["192.168.1.1", "192.168.1.2", "192.168.1.3"]]) for idx in range(network_metrics)]
-        app_metrics += [create_new_gutentag_metric("app_" + str(app_name), idx, [{"cluster": cluster_name,"metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "app": app_name}]) for idx in range(num_app_metrics)]
+        app_metrics += [create_new_gutentag_metric("app_" + str(app_name) + "_network", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "IP": id} for id in ["192.168.1.1", "192.168.1.2", "192.168.1.3"]],duplicate) for idx in range(network_metrics)]
+        app_metrics += [create_new_gutentag_metric("app_" + str(app_name), idx, [{"cluster": cluster_name,"metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "app": app_name}],duplicate) for idx in range(num_app_metrics)]
     if duplicate == "true":
             app_nw_metrics += [create_duplicate_gutentag_metric("app_A_network_utilization", 0 , [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "address": "192.168.1.1"}])]
     global metrics
