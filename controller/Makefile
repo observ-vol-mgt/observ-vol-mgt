@@ -52,6 +52,9 @@ feature_extraction_tsfel: install_requirements ## Execute the feature extraction
 feature_extraction_tsfresh: install_requirements ## Execute the feature extraction using tsfresh
 	python feature_extraction/feature_extraction_tsfresh.py
 
+docs: install_requirements ## Creates the project documentation
+	pydoc-markdown -I . -m common.configuration_api '{renderer: {type: markdown, classdef_code_block: false, descriptive_class_title: false, render_toc: true }}' > docs/configuration_parameters.md
+
 ##@ CI
 
 .PHONY: ci_pull_request
