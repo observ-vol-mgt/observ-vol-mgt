@@ -73,3 +73,4 @@ scikit-learn==1.5.0
 transformers==4.36.2
 torch==2.3.0
 flasgger==0.9.7.1
+pydoc-markdown==4.8.2

@@ -15,7 +15,7 @@
 import logging
 import os
 
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from ux.utils import fill_time_series, fill_insights
 from workflow_orchestration.pipeline import Pipeline
 
@@ -34,9 +34,13 @@ def _rerun():
     """
     Rerun the pipeline
     ---
+    summary: Reruns the controller analytics pipeline.
+    description: This endpoint reruns the controller analytics pipeline.
+    tags:
+      - Pipeline
     responses:
       200:
-        description: Success
+        description: Pipeline rerun successfully.
         content:
           application/json:
             schema:
@@ -44,6 +48,18 @@ def _rerun():
               properties:
                 message:
                   type: string
+                  example: "Pipeline rerun successfully."
+
+      500:
+        description: Internal Server Error.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "An unexpected error occurred."
     """
     try:
         # Build a new pipline
@@ -65,7 +81,11 @@ def _rerun():
         fill_time_series(_pipeline.extracted_signals)
         fill_insights(_pipeline.text_insights)
 
-    except Exception as e:
-        return str(e), 500
+        response = {"message": "success"}
+        return jsonify(response), 200
 
-    return "success"
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        response = {"error": str(e)}
+        return jsonify(response), 500
+
