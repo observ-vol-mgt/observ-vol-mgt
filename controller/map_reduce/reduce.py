@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def reduce(subtype, config, input_data):
-    logger.info(f"inside reduce function, subtype = {subtype}")
+    logger.debug(f"inside reduce function, subtype = {subtype}")
     # switch based on the configuration ingest type
     # verify config parameters conform to structure
     if subtype == api.ReduceSubType.PIPELINE_REDUCE_SIMPLE.value:
