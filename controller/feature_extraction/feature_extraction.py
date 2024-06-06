@@ -29,6 +29,11 @@ def feature_extraction(subtype, config, input_data):
         logger.debug("using tsfel feature_extraction")
         from feature_extraction.feature_extraction_tsfel import extract
         extracted_signals = extract(tsfel_config, signals_list)
+    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFRESH.value:
+        api.FeatureExtractionTsfresh(**config)
+        logger.debug("using tsfresh feature_extraction")
+        from feature_extraction.feature_extraction_tsfresh import extract
+        extracted_signals = extract(signals_list)
     else:
         raise "unsupported feature_extraction configuration"
     return [extracted_signals]

@@ -14,6 +14,7 @@
 
 import copy
 import logging
+import threading
 
 import common.configuration_api as api
 from common.conf import get_configuration
@@ -193,18 +194,30 @@ class Pipeline:
         # make k copies of stage, where k is the number of input lists
         # provide each copy of stage with a single list
         # collect the output lists into a common output list
-        # TBD - these should be run in parallel
+        # we run each copy of stage in a separate thread.
         number_of_copies = len(input_data)
+        logger.info(f"************************ run_map_reduce_compute: stage = {stage}")
         logger.info(f"Executing map-reduce on stage = {stage} . Mapping into {number_of_copies} stages")
         sub_stages = []
+        threads_list = []
         for index in range(number_of_copies):
-            stage_copy = copy.copy(stage)
+            logger.debug(f"stage name = {stage.base_stage.name}")
+            stage_copy = copy.deepcopy(stage)
             stage_copy.base_stage.name += f"_{index}"
             logger.info(f"=== #{index} ===> executing parallel stage {stage_copy.base_stage.name}")
             sub_stages.append(stage_copy)
             new_input_data = [input_data[index]]
             self.run_stage(stage_copy, new_input_data)
-            logger.info(f"=== #{index} ===> parallel stage Done.")
+            new_thread = threading.Thread(target=self.run_stage, args=(stage_copy, new_input_data))
+            threads_list.append(new_thread)
+            new_thread.start()
+
+        # wait for the threads to complete
+        for index in range(number_of_copies):
+            logger.info(f"************************ waiting for thread {index}")
+            threads_list[index].join()
+
+        logger.info("************************ finished waiting for threads")
 
         # collect the output data
         output_data = []
