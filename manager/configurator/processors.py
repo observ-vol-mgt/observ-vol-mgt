@@ -35,6 +35,50 @@ processor_ids = load_processors(processor_urls, PROCESSORS_FOLDER)
 
 @processor_bp.route('/processor_config/<processor_id>', methods=['GET'])
 def get_processor_config(processor_id):
+    """
+    Retrieve the configuration for a specific processor
+    ---
+    tags:
+      - Processor Configuration
+    operationId: getProcessorConfig
+    parameters:
+      - name: processor_id
+        in: path
+        description: The ID of the processor to retrieve the configuration for
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Success
+        content:
+          application/json:
+            schema:
+            type: object
+            properties:
+              processor_data:
+                type: object
+                description: The configuration data for the processor
+      404:
+        description: Processor not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
+
     logger.debug(f"GET config request received for processor with id {processor_id}")
     if processor_id not in processor_ids:
         return {"message":f"Processor with id {processor_id} not found"}, 404
@@ -49,6 +93,32 @@ def get_processor_config(processor_id):
 
 @processor_bp.route('/processor_config/', methods=['GET'])
 def get_all_processors_config():
+    """
+    Retrieve the configuration for all processors
+    ---
+    tags:
+      - Processor Configuration
+    operationId: getAllProcessorsConfig
+    responses:
+      200:
+        description: Success
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                description: The configuration data for each processor
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
     try:
         processor_list = []
         for processor_id in processor_ids:
@@ -67,16 +137,76 @@ def get_all_processors_config():
 def validate_yaml(processor_data_yaml):
     if "processors" not in processor_data_yaml:
         raise Exception("processors field must be specified")
-    processor_data_yaml_validated = ""
-    if "dag" in processor_data_yaml:
-        processor_data_yaml_validated = ProcessorsConfig(processors=processor_data_yaml["processors"], dag=processor_data_yaml["dag"])
-    else:
-        processor_data_yaml_validated = ProcessorsConfig(processors=processor_data_yaml["processors"])
+    processor_data_yaml_validated = ProcessorsConfig(processors=processor_data_yaml["processors"], dag=processor_data_yaml["dag"])
     return processor_data_yaml_validated
 
 
 @processor_bp.route('/processor_config/<processor_id>', methods=['POST'])
 def update_processor_config(processor_id):
+    """
+    Update the configuration for a specific processor
+    ---
+    tags:
+      - Processor Configuration
+    operationId: updateProcessorConfig
+    parameters:
+      - name: processor_id
+        in: path
+        description: The ID of the processor to update the configuration for
+        required: true
+        schema:
+          type: string
+      - name: processor_data
+        in: body
+        description: The YAML data for the processor configuration
+        required: true
+        content:
+          application/yaml:
+            schema:
+              $ref: '#/components/schemas/ProcessorsConfig'
+    responses:
+      201:
+        description: Successfully updated the processor configuration
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: success
+                processor_id:
+                  type: string
+      400:
+        description: Invalid YAML data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                error:
+                  type: string
+      404:
+        description: Processor not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
     logger.debug(f"POST config request received for processor with id {processor_id}")
     try:
         processor_data = request.get_data(as_text=True)
@@ -115,6 +245,84 @@ def update_processor_config(processor_id):
 
 @processor_bp.route('/processor_config', methods=['POST'])
 def update_all_processors_config():
+    """
+    Update configurations for all processors.
+    ---
+    tags:
+      - Processor Configuration
+    operationId: updateAllProcessorsConfig
+    parameters:
+      - name: processor_data
+        in: body
+        description: The YAML data for the processor configuration
+        required: true
+        content:
+          application/yaml:
+            schema:
+              $ref: '#/components/schemas/ProcessorsConfig'
+    responses:
+      201:
+        description: Successfully updated configurations for all processors.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: success
+                successfully_created:
+                  type: array
+                  items:
+                    type: string
+                  description: List of successfully created processors.
+      400:
+        description: Invalid YAML data or missing required fields.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Error message.
+                error:
+                  type: string
+                  description: Error details.
+      404:
+        description: Processor not found.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Error message.
+                successfully_created:
+                  type: array
+                  items:
+                    type: string
+                  description: List of successfully created processors before the error occurred.
+      500:
+        description: An error occurred while updating configurations for all processors.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Error message.
+                error:
+                  type: string
+                  description: Error details.
+                successfully_created:
+                  type: array
+                  items:
+                    type: string
+                  description: List of successfully created processors before the error occurred.
+    """
     logger.debug("POST config request received for all processors")
     success_list = []
     try:
@@ -157,6 +365,48 @@ def update_all_processors_config():
 
 @processor_bp.route('/processor_config/<processor_id>', methods=['DELETE'])
 def delete_processor_config(processor_id):
+    """
+    Delete the configuration for a specific processor.
+    ---
+    tags:
+      - Processor Configuration
+    operationId: deleteProcessorConfig
+    parameters:
+      - name: processor_id
+        in: path
+        description: The ID of the processor to delete the configuration for
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Configuration for the processor deleted successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      404:
+        description: Processor not found.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      500:
+        description: Internal server error.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
     logger.debug(f"DELETE config request received for processor with id {processor_id}")
     try:
         if processor_id not in processor_ids:
@@ -180,6 +430,45 @@ def delete_processor_config(processor_id):
 
 @processor_bp.route('/processor_config', methods=['DELETE'])
 def delete_all_processors_config():
+    """
+    Delete configurations for all processors.
+    ---
+    tags:
+      - Processor Configuration
+    operationId: deleteAllProcessorsConfig
+    parameters: []
+    responses:
+      200:
+        description: Configurations for all processors deleted successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Processors config delete request completed
+                successfully_deleted:
+                  type: array
+                  items:
+                    type: string
+                  description: List of successfully deleted processors.
+      500:
+        description: An error occurred while deleting processors.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: An error occurred while deleting the processors
+                successfully_deleted:
+                  type: array
+                  items:
+                    type: string
+                  description: List of processors that were successfully deleted before the error occurred.
+    """
     logger.debug("DELETE config request received for all processors")
 
     success_list = []
