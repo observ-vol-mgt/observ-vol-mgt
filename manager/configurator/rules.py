@@ -32,7 +32,61 @@ os.makedirs(RULES_FOLDER, exist_ok=True)
 rule_ids = load_rules(RULES_FOLDER)
 
 @rules_bp.route('/rules', methods=['POST'])
-def create_or_replace_rules():
+def update_rules():
+    """
+    Update rules by creating or replacing them
+    ---
+    tags:
+      - Rules
+    operationId: updateRules
+    parameters:
+      - name: rules_data
+        in: body
+        description: YAML data containing rules to be created or replaced
+        required: true
+        content:
+          application/yaml:
+            schema:
+              $ref: '#/components/schemas/Rules'
+    responses:
+      201:
+        description: Successfully created or replaced rules
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successfully_created:
+                  type: array
+                  items:
+                    type: string
+      400:
+        description: Invalid YAML data
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                error:
+                  type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successfully_created:
+                  type: array
+                  items:
+                    type: string
+    """
     logger.debug("Rules create and/or replace request received")
     success_list = []
     try:
@@ -72,6 +126,49 @@ def create_or_replace_rules():
 
 @rules_bp.route('/rules/<rule_id>', methods=['DELETE'])
 def delete_rule(rule_id):
+    """
+    Delete a specific rule
+    ---
+    tags:
+      - Rules
+    operationId: deleteRule
+    parameters:
+      - name: rule_id
+        in: path
+        description: The ID of the rule to delete
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Successfully deleted the rule
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      404:
+        description: Rule not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
+
     logger.debug(f"DELETE request received for rule with id {rule_id}")
     if rule_id not in rule_ids:
         return {"message":f"Rule with id {rule_id} not found"}, 404
@@ -96,6 +193,40 @@ def delete_rule(rule_id):
 
 @rules_bp.route('/rules', methods=['DELETE'])
 def delete_all_rules():
+    """
+    Delete all rules
+    ---
+    tags:
+      - Rules
+    operationId: deleteAllRules
+    responses:
+      200:
+        description: Successfully deleted all rules
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successfully_deleted:
+                  type: array
+                  items:
+                    type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                successfully_deleted:
+                  type: array
+                  items:
+                    type: string
+    """
     logger.debug("DELETE request received for all rules")
     success_list = []
     try:
@@ -116,9 +247,47 @@ def delete_all_rules():
         return {"message":"An error occurred while deleting the rules", "successfully_deleted" : success_list}, 500
 
 
-
 @rules_bp.route('/rules/<rule_id>', methods=['GET'])
 def get_rule(rule_id):
+    """
+    Get a specific rule by its ID
+    ---
+    tags:
+      - Rules
+    operationId: getRule
+    parameters:
+      - name: rule_id
+        in: path
+        description: The ID of the rule to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Successfully retrieved the rule
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rule'
+      404:
+        description: Rule not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
     logger.debug(f"GET request received for rule with id {rule_id}")
     if rule_id not in rule_ids:
         return {"message":f"Rule with id {rule_id} not found"}, 404
@@ -136,6 +305,31 @@ def get_rule(rule_id):
 
 @rules_bp.route('/rules', methods=['GET'])
 def get_all_rules():
+    """
+    Get all rules
+    ---
+    tags:
+      - Rules
+    operationId: getAllRules
+    responses:
+      200:
+        description: Successfully retrieved all rules
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Rule'
+      500:
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+    """
     try:
         rules_list = []
         for rule_id in rule_ids:
