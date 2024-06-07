@@ -51,14 +51,8 @@ def get_processor_config(processor_id):
     responses:
       200:
         description: Success
-        content:
-          application/json:
-            schema:
-            type: object
-            properties:
-              processor_data:
-                type: object
-                description: The configuration data for the processor
+        schema:
+          $ref: '#/components/schemas/ProcessorsConfig'
       404:
         description: Processor not found
         content:
@@ -447,7 +441,6 @@ def delete_all_processors_config():
               properties:
                 message:
                   type: string
-                  example: Processors config delete request completed
                 successfully_deleted:
                   type: array
                   items:
@@ -462,7 +455,6 @@ def delete_all_processors_config():
               properties:
                 message:
                   type: string
-                  example: An error occurred while deleting the processors
                 successfully_deleted:
                   type: array
                   items:
