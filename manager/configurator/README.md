@@ -1,36 +1,38 @@
-# Processor Management API
+# Manager
 
-## Overview
-This Flask application serves as an API for managing edge processors. It provides endpoints to create, retrieve, and delete individual processors, as well as to perform these operations in bulk.
+Manager: is deployed at the central cloud location and is responsible for managing observability data transformations at the edge locations. It is a user-facing component with a REST interface to create/update/delete the rules that define the transformation DAGs to be enabled on a certain edge site(s) when some condition is met. The user can also specify default transformation DAGs for edge sites. The Manager coordinates with the processors to enforce transformation DAGs based on user-defined rules when conditions are satisfied.
 
-## Getting Started
-To run the application, ensure you have Python installed. Install Flask and other dependencies by running:
+## Testing Locally
 
-```bash
-pip install -r requirements.txt
-```
+1. Specify the config file. A sample config YAML is present in [config/config.yaml](config/config.yaml). You need to specify the path to it using an environment variable. For example:
+   ```bash
+   export CONFIG_FILE=/path/to/your/config/config.yaml
+   ```
 
-## Configuration
+2. Install all dependencies using [requirements.txt](requirement.txt):
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-The application requires a configuration file named config.py containing the URLs of edge processors. Ensure that each processor URL follows the format PROCESSOR_<ID>_URL.
-
-
-## API Endpoints
-
-    GET /processors/<processor_id>: Retrieve details of a specific processor.
-    GET /processors: Retrieve details of all processors.
-    POST /processors/<processor_id>: Create a new processor or update an existing one.
-    POST /processors: Create or update multiple processors.
-    DELETE /processors/<processor_id>: Delete a specific processor.
-    DELETE /processors: Delete all processors.
+3. Run the application:
+   ```bash
+   python3 main.py
+   ```
 
 
-## Running the Application
+Once the application is running, it is accessible at `http://localhost:5010`.
 
-Execute the following command:
 
-``` bash
-python main.py
-```
+### Processor Configuration APIs
 
-The application will run on the host and port specified in the config.py. It will also save the logs and errors to a file specified in the config.py file.
+All processor configuration APIs are available at `http://localhost:5010/api/v1/processor_config`.
+
+
+### Rules APIs
+
+All rules APIs are available at `http://localhost:5010/api/v1/rules`.
+
+### Swagger UI
+
+The Swagger UI is accessible at `http://localhost::5010/apidocs/`.
+   
