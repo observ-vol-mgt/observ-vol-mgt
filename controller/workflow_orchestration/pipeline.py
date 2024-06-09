@@ -126,7 +126,7 @@ class Pipeline:
         elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
             output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
             self.classified_signals = output_data[0]
-        elif stage.base_stage.type == api.StageType.METADATA_EXTRACTION.value:
+        elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
             output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
             self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.INSIGHTS.value:
