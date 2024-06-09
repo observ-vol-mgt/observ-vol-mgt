@@ -46,7 +46,7 @@ from typing import Optional
 
 class StageType(Enum):
     """
-    Stage `type` (stage functionality):  
+    Stage `type` (stage functionality):
     Each `named stage configuration` includes one of the following `type` (string) options:
     """
     INGEST = "ingest"  # `ingest`: ingest data from various sources into the controller
@@ -62,6 +62,18 @@ class MetadataClassificationSubType(Enum):
     Enumerates subtypes for metadata classification.
     """
     PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT = "metadata_classification_zero_shot"
+    PIPELINE_METADATA_CLASSIFICATION_FEW_SHOT = "metadata_classification_few_shot"
+
+
+class MetadataClassificationFewShot(BaseModel):
+    """
+    Configuration for few-shot metadata classification.
+    """
+    model_config: ConfigDict  # Configuration for the model
+    model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"  # Pre-trained model to use
+    few_shot_classification_file: Optional[str] = (
+        "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
+    )  # File containing few-shot classification external data
 
 
 class MetadataClassificationZeroShot(BaseModel):
@@ -72,7 +84,7 @@ class MetadataClassificationZeroShot(BaseModel):
     model: Optional[str] = "roberta-large-mnli"  # Pre-trained model to use
     zero_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
-    )  # File containing zero-shot classification data
+    )  # File containing zero-shot classification external data
 
 
 class IngestSubType(Enum):

@@ -29,6 +29,11 @@ def metadata_classification(subtype, config, input_data):
         logger.info("using zero-shot metadata_classification")
         from metadata_classification.metadata_classification_zero_shot import metadata_classification
         classified_signals = metadata_classification(zero_shot_config, signals_list)
+    elif subtype == api.MetadataClassificationSubType.PIPELINE_METADATA_CLASSIFICATION_FEW_SHOT.value:
+        few_shot_config = api.MetadataClassificationFewShot(**config)
+        logger.info("using few-shot metadata_classification")
+        from metadata_classification.metadata_classification_few_shot import metadata_classification
+        classified_signals = metadata_classification(few_shot_config, signals_list)
     else:
         raise "unsupported metadata_classification configuration"
     return [classified_signals]
