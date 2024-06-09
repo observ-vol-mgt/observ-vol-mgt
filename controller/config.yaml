@@ -1,9 +1,9 @@
 pipeline:
 - name: ingest_file
-- name: metadata_classification_zero_shot
+- name: metadata_classification
   follows: [ingest_file]
 - name: feature_extraction_tsfel
-  follows: [metadata_classification_zero_shot]
+  follows: [metadata_classification]
 - name: generate_insights
   follows: [feature_extraction_tsfel]
 - name: config_generator_processor
@@ -17,14 +17,11 @@ parameters:
   config:
     filter_metadata: ""
     file_name: ./contrib/examples/generate-synthetic-metrics/time_series_data.json
-- name: metadata_classification_zero_shot
+- name: metadata_classification
   type: metadata_classification
-  subtype: metadata_classification_zero_shot
+  subtype: metadata_classification_few_shot
   input_data: [signals]
   output_data: [classified_signals]
-  config:
-    zero_shot_classification_file: ./metadata_classification/data/observability_metrics_classification_zero_shot.json
-    model: "Recognai/zeroshot_selectra_small"
 - name: feature_extraction_tsfel
   type: extract
   subtype: tsfel

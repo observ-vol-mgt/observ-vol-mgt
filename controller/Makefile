@@ -38,6 +38,9 @@ docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic 
 tests: install_requirements ## Execute tests
 	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
 
+lint: install_requirements ## Lint the code
+	pylint $(shell find . -name '*.py')
+
 .PHONY: run_dev
 run_dev: install_requirements  ## Execute the pipeline synchronously on synthetic data
 	python main.py -c config.yaml
@@ -53,7 +56,7 @@ feature_extraction_tsfresh: install_requirements ## Execute the feature extracti
 	python feature_extraction/feature_extraction_tsfresh.py
 
 docs: install_requirements ## Creates the project documentation
-	pydoc-markdown -I . -m common.configuration_api '{renderer: {type: markdown, classdef_code_block: false, descriptive_class_title: false, render_toc: true }}' > docs/configuration_parameters.md
+	pydoc-markdown -I . -m common.configuration_api '{renderer: {type: markdown, classdef_code_block: false, descriptive_class_title: false, render_toc: false }}' > docs/configuration_parameters.md
 
 ##@ CI
 
