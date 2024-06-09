@@ -69,7 +69,7 @@ class MetadataClassificationFewShot(BaseModel):
     """
     Configuration for few-shot metadata classification.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"  # Pre-trained model to use
     few_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
@@ -80,7 +80,7 @@ class MetadataClassificationZeroShot(BaseModel):
     """
     Configuration for zero-shot metadata classification.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     model: Optional[str] = "roberta-large-mnli"  # Pre-trained model to use
     zero_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
@@ -141,7 +141,7 @@ class IngestFile(BaseModel):
     """
     Configuration for file ingestion.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     file_name: str  # Name of the file to ingest
     filter_metadata: Optional[str] = ""  # Metadata filter
     ingest_name_template: Optional[str] = ""  # Template for ingest names
@@ -151,7 +151,7 @@ class IngestPromql(BaseModel):
     """
     Configuration for PromQL ingestion.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     url: str  # URL to fetch data from
     ingest_window: str  # Time interval for ingestion
     filter_metadata: Optional[str] = ""  # Metadata filter
@@ -162,15 +162,16 @@ class IngestDummy(BaseModel):
     """
     Configuration for dummy ingestion.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
 
 
 class FeatureExtractionTsfel(BaseModel):
     """
     Configuration for feature extraction using TSFEL.
     """
-    model_config: ConfigDict  # Configuration for the model
-    features_json_file: Optional[str] = "feature_extraction/tsfel_conf/limited_statistical.json"  # JSON file for features
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    features_json_file: Optional[str] = \
+        "feature_extraction/tsfel_conf/limited_statistical.json"  # JSON file for features
     resample_rate: Optional[str] = "30s"  # Resampling rate
     sampling_frequency: Optional[float] = (1/30)  # Sampling frequency
 
@@ -179,16 +180,17 @@ class FeatureExtractionTsfresh(BaseModel):
     """
     Configuration for feature extraction using TSFRESH.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
 
 
 class GenerateInsights(BaseModel):
     """
     Configuration for generating insights.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
-    pairwise_similarity_method: Optional[str] = GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value  # Method for pairwise similarity
+    pairwise_similarity_method: Optional[str] = (
+        GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value)  # Method for pairwise similarity
     compound_similarity_threshold: Optional[float] = 0.99  # Threshold for compound similarity
 
 
@@ -196,7 +198,7 @@ class ConfigGeneratorOtel(BaseModel):
     """
     Configuration for OpenTelemetry (OTel) configuration generation.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     directory: Optional[str] = "/tmp"  # Directory to store configuration
 
 
@@ -204,7 +206,7 @@ class ConfigGeneratorProcessor(BaseModel):
     """
     Configuration for processor-based configuration generation.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     processor_id_template: Optional[str] = ""  # Template for processor ID
     signal_name_template: Optional[str] = ""  # Template for signal name
     signal_condition_template: Optional[str] = ""  # Template for signal condition
@@ -217,14 +219,14 @@ class GeneratorNone(BaseModel):
     """
     Placeholder configuration for no specific generation task.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
 
 
 class MapSimple(BaseModel):
     """
     Configuration for simple map operations.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     number: int  # Number for mapping
 
 
@@ -232,7 +234,7 @@ class MapByName(BaseModel):
     """
     Configuration for map operations by name pattern.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
     name_pattern: str  # Pattern for mapping by name
 
 
@@ -240,4 +242,4 @@ class ReduceSimple(BaseModel):
     """
     Configuration for simple reduce operations.
     """
-    model_config: ConfigDict  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
