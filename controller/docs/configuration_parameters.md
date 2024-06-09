@@ -1,71 +1,3 @@
-# Table of Contents
-
-* [common.configuration\_api](#common.configuration_api)
-  * [StageType](#common.configuration_api.StageType)
-    * [INGEST](#common.configuration_api.StageType.INGEST)
-    * [FEATURES\_EXTRACTION](#common.configuration_api.StageType.FEATURES_EXTRACTION)
-    * [INSIGHTS](#common.configuration_api.StageType.INSIGHTS)
-    * [CONFIG\_GENERATOR](#common.configuration_api.StageType.CONFIG_GENERATOR)
-    * [METADATA\_CLASSIFICATION](#common.configuration_api.StageType.METADATA_CLASSIFICATION)
-    * [MAP\_REDUCE](#common.configuration_api.StageType.MAP_REDUCE)
-  * [MetadataClassificationSubType](#common.configuration_api.MetadataClassificationSubType)
-  * [MetadataClassificationZeroShot](#common.configuration_api.MetadataClassificationZeroShot)
-    * [model\_config](#common.configuration_api.MetadataClassificationZeroShot.model_config)
-    * [model](#common.configuration_api.MetadataClassificationZeroShot.model)
-    * [zero\_shot\_classification\_file](#common.configuration_api.MetadataClassificationZeroShot.zero_shot_classification_file)
-  * [IngestSubType](#common.configuration_api.IngestSubType)
-  * [ExtractSubType](#common.configuration_api.ExtractSubType)
-  * [ConfigGeneratorSubType](#common.configuration_api.ConfigGeneratorSubType)
-  * [GenerateInsightsType](#common.configuration_api.GenerateInsightsType)
-  * [MapSubType](#common.configuration_api.MapSubType)
-  * [ReduceSubType](#common.configuration_api.ReduceSubType)
-  * [IngestFile](#common.configuration_api.IngestFile)
-    * [model\_config](#common.configuration_api.IngestFile.model_config)
-    * [file\_name](#common.configuration_api.IngestFile.file_name)
-    * [filter\_metadata](#common.configuration_api.IngestFile.filter_metadata)
-    * [ingest\_name\_template](#common.configuration_api.IngestFile.ingest_name_template)
-  * [IngestPromql](#common.configuration_api.IngestPromql)
-    * [model\_config](#common.configuration_api.IngestPromql.model_config)
-    * [url](#common.configuration_api.IngestPromql.url)
-    * [ingest\_window](#common.configuration_api.IngestPromql.ingest_window)
-    * [filter\_metadata](#common.configuration_api.IngestPromql.filter_metadata)
-    * [ingest\_name\_template](#common.configuration_api.IngestPromql.ingest_name_template)
-  * [IngestDummy](#common.configuration_api.IngestDummy)
-    * [model\_config](#common.configuration_api.IngestDummy.model_config)
-  * [FeatureExtractionTsfel](#common.configuration_api.FeatureExtractionTsfel)
-    * [model\_config](#common.configuration_api.FeatureExtractionTsfel.model_config)
-    * [features\_json\_file](#common.configuration_api.FeatureExtractionTsfel.features_json_file)
-    * [resample\_rate](#common.configuration_api.FeatureExtractionTsfel.resample_rate)
-    * [sampling\_frequency](#common.configuration_api.FeatureExtractionTsfel.sampling_frequency)
-  * [FeatureExtractionTsfresh](#common.configuration_api.FeatureExtractionTsfresh)
-    * [model\_config](#common.configuration_api.FeatureExtractionTsfresh.model_config)
-  * [GenerateInsights](#common.configuration_api.GenerateInsights)
-    * [model\_config](#common.configuration_api.GenerateInsights.model_config)
-    * [pairwise\_similarity\_threshold](#common.configuration_api.GenerateInsights.pairwise_similarity_threshold)
-    * [pairwise\_similarity\_method](#common.configuration_api.GenerateInsights.pairwise_similarity_method)
-    * [compound\_similarity\_threshold](#common.configuration_api.GenerateInsights.compound_similarity_threshold)
-  * [ConfigGeneratorOtel](#common.configuration_api.ConfigGeneratorOtel)
-    * [model\_config](#common.configuration_api.ConfigGeneratorOtel.model_config)
-    * [directory](#common.configuration_api.ConfigGeneratorOtel.directory)
-  * [ConfigGeneratorProcessor](#common.configuration_api.ConfigGeneratorProcessor)
-    * [model\_config](#common.configuration_api.ConfigGeneratorProcessor.model_config)
-    * [processor\_id\_template](#common.configuration_api.ConfigGeneratorProcessor.processor_id_template)
-    * [signal\_name\_template](#common.configuration_api.ConfigGeneratorProcessor.signal_name_template)
-    * [signal\_condition\_template](#common.configuration_api.ConfigGeneratorProcessor.signal_condition_template)
-    * [signal\_filter\_template](#common.configuration_api.ConfigGeneratorProcessor.signal_filter_template)
-    * [directory](#common.configuration_api.ConfigGeneratorProcessor.directory)
-    * [url](#common.configuration_api.ConfigGeneratorProcessor.url)
-  * [GeneratorNone](#common.configuration_api.GeneratorNone)
-    * [model\_config](#common.configuration_api.GeneratorNone.model_config)
-  * [MapSimple](#common.configuration_api.MapSimple)
-    * [model\_config](#common.configuration_api.MapSimple.model_config)
-    * [number](#common.configuration_api.MapSimple.number)
-  * [MapByName](#common.configuration_api.MapByName)
-    * [model\_config](#common.configuration_api.MapByName.model_config)
-    * [name\_pattern](#common.configuration_api.MapByName.name_pattern)
-  * [ReduceSimple](#common.configuration_api.ReduceSimple)
-    * [model\_config](#common.configuration_api.ReduceSimple.model_config)
-
 <a id="common.configuration_api"></a>
 
 # common.configuration\_api
@@ -97,7 +29,7 @@ The configuration is organized into two areas.
 
 ## StageType
 
-Stage `type` (stage functionality):  
+Stage `type` (stage functionality):
 Each `named stage configuration` includes one of the following `type` (string) options:
 
 <a id="common.configuration_api.StageType.INGEST"></a>
@@ -142,6 +74,36 @@ Each `named stage configuration` includes one of the following `type` (string) o
 
 Enumerates subtypes for metadata classification.
 
+<a id="common.configuration_api.MetadataClassificationFewShot"></a>
+
+## MetadataClassificationFewShot
+
+Configuration for few-shot metadata classification.
+
+<a id="common.configuration_api.MetadataClassificationFewShot.model_config"></a>
+
+#### model\_config
+
+Configuration for the model
+
+<a id="common.configuration_api.MetadataClassificationFewShot.base_model"></a>
+
+#### base\_model
+
+Pre-trained model to use
+
+<a id="common.configuration_api.MetadataClassificationFewShot.few_shot_classification_file"></a>
+
+#### few\_shot\_classification\_file
+
+File containing few-shot classification external data
+
+<a id="common.configuration_api.MetadataClassificationFewShot.few_shot_pretrained_model_directory"></a>
+
+#### few\_shot\_pretrained\_model\_directory
+
+Directory containing a pretrained few-shot model
+
 <a id="common.configuration_api.MetadataClassificationZeroShot"></a>
 
 ## MetadataClassificationZeroShot
@@ -164,7 +126,7 @@ Pre-trained model to use
 
 #### zero\_shot\_classification\_file
 
-File containing zero-shot classification data
+File containing zero-shot classification external data
 
 <a id="common.configuration_api.IngestSubType"></a>
 
@@ -206,7 +168,11 @@ Enumerates different subtypes for reduce operations.
 
 ## IngestFile
 
-Configuration for file ingestion.
+__Configuration for file ingestion.__
+
+This configuration is applied when `stage`:
+  type: ingest
+  subtype: file
 
 <a id="common.configuration_api.IngestFile.model_config"></a>
 

@@ -142,9 +142,12 @@ class ReduceSubType(Enum):
 
 class IngestFile(BaseModel):
     """
-    Configuration for file ingestion.
+    ### Configuration for file ingestion.
+    This configuration is applied when `stage`:
+      type: ingest
+      subtype: file
     """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    model_config = ConfigDict(extra='forbid')
     file_name: str  # Name of the file to ingest
     filter_metadata: Optional[str] = ""  # Metadata filter
     ingest_name_template: Optional[str] = ""  # Template for ingest names
