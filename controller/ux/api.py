@@ -82,10 +82,10 @@ def _rerun():
         fill_insights(_pipeline.text_insights)
 
         response = {"message": "success"}
-        return jsonify(response), 200
+        return response, 200
 
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         response = {"error": str(e)}
-        return jsonify(response), 500
+        return response, 500
 
