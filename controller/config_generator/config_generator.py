@@ -39,16 +39,16 @@ def config_generator(subtype, config, input_data):
     # verify config parameters conform to structure
     if subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_NONE.value:
         api.GeneratorNone(**config)
-        logger.info("not generating configuration")
+        logger.debug("not generating configuration")
         r_value = "not generating configuration"
     elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_OTEL.value:
         typed_config = api.ConfigGeneratorOtel(**config)
-        logger.info("using otel config_generator")
+        logger.debug("using otel config_generator")
         from config_generator.config_generator_otel import generate
         r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
     elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PROCESSOR.value:
         typed_config = api.ConfigGeneratorProcessor(**config)
-        logger.info("using processor config_generator")
+        logger.debug("using processor config_generator")
         from config_generator.config_generator_processor import generate
         r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
     else:

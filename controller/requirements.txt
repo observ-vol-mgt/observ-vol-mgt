@@ -76,3 +76,4 @@ flasgger==0.9.7.1
 pydoc-markdown==4.8.2
 setfit==1.0.3
 pylint==3.2.3
+datasets==2.19.1

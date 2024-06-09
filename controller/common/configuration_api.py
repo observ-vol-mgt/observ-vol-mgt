@@ -70,10 +70,13 @@ class MetadataClassificationFewShot(BaseModel):
     Configuration for few-shot metadata classification.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"  # Pre-trained model to use
+    base_model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"  # Pre-trained model to use
     few_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
     )  # File containing few-shot classification external data
+    few_shot_pretrained_model_directory: Optional[str] = (
+        "./metadata_classification/data/few_shot_pretrained_model"
+    )  # Directory containing a pretrained few-shot model
 
 
 class MetadataClassificationZeroShot(BaseModel):
