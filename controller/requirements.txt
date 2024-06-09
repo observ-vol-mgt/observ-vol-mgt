@@ -77,3 +77,5 @@ pydoc-markdown==4.8.2
 setfit==1.0.3
 pylint==3.2.3
 datasets==2.19.1
+griffe-fieldz==0.1.2
+mkdocs-material==9.5.26
