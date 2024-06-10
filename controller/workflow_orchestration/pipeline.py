@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from common.conf import get_configuration
+from multiprocessing import Pool
 
 from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
 from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
@@ -29,6 +30,7 @@ from map_reduce.reduce import reduce
 import logging
 import copy
 import threading
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +39,8 @@ class Pipeline:
     def __init__(self):
         self.output_data_dict = {}
         self.stage_execution_order = []
+        self.pool = None
+        self.number_of_workers = 0
 
         # variables used for GUI of POC
         self.signals = None
@@ -47,6 +51,10 @@ class Pipeline:
         self.text_insights = None
         self.r_value = None
 
+    def __del__(self):
+        if self.pool != None:
+            self.pool.close()
+
     def build_pipeline(self):
         logger.debug("Building Pipeline")
         stages_params_dict = {}
@@ -54,10 +62,12 @@ class Pipeline:
         configuration = get_configuration()
         pipeline = configuration['pipeline']
         stages_parameters = configuration['parameters']
+        global_settings = configuration['global_settings']
+        map_reduce_stage_exists = False
 
         # verify that configuration is valid
         # if not valid, the following line will throw an exception
-        PipelineDefinition(**configuration)
+        pipeline_def = PipelineDefinition(**configuration)
 
         # create stage structs for each of the stages
         for stage_params in stages_parameters:
@@ -65,6 +75,8 @@ class Pipeline:
             if stg.base_stage.name in stages_params_dict:
                 raise Exception(f"duplicate stage parameters defined: {stg.base_stage.name}")
             stages_params_dict[stg.base_stage.name] = stg
+            if stg.base_stage.type == api.StageType.MAP_REDUCE.value:
+                map_reduce_stage_exists = True
         logger.info(f"stages = {stages_params_dict}")
 
         # Parse pipeline sections to create connections
@@ -108,6 +120,12 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
+        # allocate process pool for map_reduce
+        number_of_workers = pipeline_def.global_settings.number_of_workers
+        logger.info(f"number_of_workers =  {number_of_workers}")
+        if map_reduce_stage_exists and number_of_workers > 0:
+            self.pool = Pool(processes=number_of_workers)
+
     def add_stage_to_schedule(self, current_stage):
         logger.debug(f"adding stage = {current_stage} to schedule")
         if current_stage.scheduled:
@@ -120,7 +138,7 @@ class Pipeline:
         current_stage.set_scheduled()
 
     def run_stage(self, stage, input_data):
-        logger.debug(f"running stage: {stage}")
+        logger.info(f"running stage: {stage.base_stage.name}, len(input_data) = {len(input_data)}")
         if stage.base_stage.type == api.StageType.INGEST.value:
             output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
             self.signals = output_data[0]
@@ -142,6 +160,8 @@ class Pipeline:
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
+        logger.info(f"finished stage: {stage.base_stage.name}")
+        return output_data
 
     def run_iteration(self):
         for current_stage in self.stage_execution_order:
@@ -168,7 +188,9 @@ class Pipeline:
         logger.debug(f"after map")
         dummy_stage = create_dummy_compute_stage(params.compute_function)
         logger.debug(f"dummy stage: {dummy_stage}")
+        logger.info("**************** before run_map_reduce_compute")
         output_lists = self.run_map_reduce_compute(dummy_stage, input_lists)
+        logger.info("**************** after run_map_reduce_compute")
         logger.debug(f"before reduce")
         output_data = reduce(params.reduce_function.subtype, params.reduce_function.config, output_lists)
         logger.debug(f"after reduce")
@@ -180,10 +202,12 @@ class Pipeline:
         # provide each copy of stage with a single list
         # collect the output lists into a common output list
         # we run each copy of stage in a separate thread.
+        # if we have a pool of processes, we run each copy of stage on the pool of processes
         number_of_copies = len(input_data)
-        logger.info(f"************************ run_map_reduce_compute: stage = {stage}")
+        logger.info(f"************************ run_map_reduce_compute: stage = {stage.base_stage.name}")
         substages = []
         threads_list = []
+        run_stage_args = []
         logger.info(f"************************ number of parallel items in mapreduce = {number_of_copies}")
         for index in range(number_of_copies):
             logger.debug(f"stage name = {stage.base_stage.name}")
@@ -192,7 +216,21 @@ class Pipeline:
             logger.debug(f"************************ parallel stage name = {stage_copy.base_stage.name}")
             substages.append(stage_copy)
             new_input_data = [input_data[index]]
-            new_thread = threading.Thread(target=self.run_stage, args=(stage_copy, new_input_data))
+            args = (stage_copy, new_input_data)
+            run_stage_args.append(args)
+
+        if self.pool != None:
+            logger.info(f"************************ running map/reduce using pool of processes ")
+            output_data = self.pool.map(run_stage_for_pool, run_stage_args)
+            logger.debug("output_data = ", output_data)
+            stage.set_latest_output_data(output_data)
+            logger.info(f"************************ exiting run_map_reduce_compute: stage = {stage.base_stage.name}")
+            return output_data
+
+        # continue here using threads in case we do not have a pool of processes
+        logger.debug(f"************************ running using threads ")
+        for index in range(number_of_copies):
+            new_thread = threading.Thread(target=self.run_stage, args=run_stage_args[index])
             threads_list.append(new_thread)
             new_thread.start()
 
@@ -209,5 +247,24 @@ class Pipeline:
             output_data.append(substages[index].latest_output_data[0])
 
         stage.set_latest_output_data(output_data)
+        logger.info(f"************************ exiting run_map_reduce_compute: stage = {stage.base_stage.name}")
         return output_data
+
+def run_stage_for_pool(args):
+    stage = args[0]
+    input_data = args[1]
+    if stage.base_stage.type == api.StageType.INGEST.value:
+        output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
+    elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
+        output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.METADATA_EXTRACTION.value:
+        output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.INSIGHTS.value:
+        output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.CONFIG_GENERATOR.value:
+        output_data = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    else:
+        raise Exception(f"stage type not implemented: {stage.type}")
+    stage.set_latest_output_data(output_data)
+    return output_data
 

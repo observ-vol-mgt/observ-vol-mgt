@@ -31,8 +31,13 @@ class BaseStageParameters(BaseModel):
     output_data: Optional[List[str]] = []
     config: Optional[dict] = {}
 
+class GlobalSettings(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    number_of_workers: Optional[int] = 0
+
 
 class PipelineDefinition(BaseModel):
+    global_settings: GlobalSettings
     pipeline: List[BaseStageSchedule]
     parameters: List[BaseStageParameters]
 
