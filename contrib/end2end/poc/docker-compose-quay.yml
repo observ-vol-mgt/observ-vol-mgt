@@ -2,7 +2,7 @@ version: '3.2'
 services:
 
   metricgen1:
-    image: quay.io/ppnaik/observ-vol-mgt/metricgen
+    image: quay.io/observ-vol-mgt/metricgen
     container_name: metricgen1
     command:
      #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
@@ -22,7 +22,7 @@ services:
      - "8000:8000"
   
   metricgen2:
-    image: quay.io/ppnaik/observ-vol-mgt/metricgen
+    image: quay.io/observ-vol-mgt/metricgen
     container_name: metricgen2
     command:
      #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
@@ -42,7 +42,7 @@ services:
      - "8001:8001"
 
   manager:
-    image: quay.io/ppnaik/observ-vol-mgt/manager
+    image: quay.io/observ-vol-mgt/manager
     container_name: manager
     expose:
      - 5010
@@ -73,7 +73,7 @@ services:
         condition: service_healthy
 
   pmf_processor1:
-    image: quay.io/ppnaik/observ-vol-mgt/pmf_processor
+    image: quay.io/observ-vol-mgt/pmf_processor
     container_name: pmf_processor1
     command:
      # - 'go run'
@@ -89,7 +89,7 @@ services:
      - "8081:8081"
 
   pmf_processor2:
-    image: quay.io/ppnaik/observ-vol-mgt/pmf_processor
+    image: quay.io/observ-vol-mgt/pmf_processor
     container_name: pmf_processor2
     command:
      #- 'go run'
@@ -215,7 +215,7 @@ services:
       retries: 3
   
   ruler_config:
-    image: quay.io/ppnaik/observ-vol-mgt/ruler_config 
+    image: quay.io/observ-vol-mgt/ruler_config 
     container_name: ruler_config
     environment:
       - HOST=0.0.0.0
