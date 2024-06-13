@@ -88,7 +88,7 @@ def create_new_gutentag_metric(prefix, idx, labels,duplicate):
     return (g, ts, labels)
 
 def create_duplicate_gutentag_metric(prefix, idx, labels):
-    g = Gauge("{0}_metric_{1}".format(prefix, idx), prefix + " Metric", labels[0].keys())
+    g = Gauge("{0}".format(prefix), prefix + " Metric", labels[0].keys())
     ts = [create_fixed_gutentag_ts() for _ in labels]
     return (g, ts, labels)
 
@@ -144,9 +144,9 @@ def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
     global nw_metrics
     
     if duplicate == "true":
-        nw_metrics += [create_duplicate_gutentag_metric("cluster_network",
+        nw_metrics += [create_duplicate_gutentag_metric("k8s_pod_network_bytes",
                                     0,
-                                    [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "node": 0}])]
+                                    [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "namespace":"5G", "pod": "nwdaf-0", "node": 0}])]
 
     # Create application metrics
     num_apps = len(config['apps'])
@@ -159,7 +159,7 @@ def create_all_gutentag_metrics(conf_file, duplicate, opt_config=None):
         app_metrics += [create_new_gutentag_metric("app_" + str(app_name) + "_network", idx, [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "IP": id} for id in ["192.168.1.1", "192.168.1.2", "192.168.1.3"]],duplicate) for idx in range(network_metrics)]
         app_metrics += [create_new_gutentag_metric("app_" + str(app_name), idx, [{"cluster": cluster_name,"metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()), "app": app_name}],duplicate) for idx in range(num_app_metrics)]
     if duplicate == "true":
-            app_nw_metrics += [create_duplicate_gutentag_metric("app_A_network_utilization", 0 , [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": app_name, "address": "192.168.1.1"}])]
+            app_nw_metrics += [create_duplicate_gutentag_metric("nwdaf_5G_network_utilization", 0 , [{"cluster": cluster_name, "metadata": str(uuid.uuid1()), "uid": str(uuid.uuid1()),"app": "analytic_function", "namespace":"5G", "address": "192.168.1.1"}])]
     global metrics
     metrics = cluster_metrics + node_metrics + app_metrics + app_nw_metrics + nw_metrics
     logging.info("Generating {0} metrics excluding labels and {1} metrics including labels".format(len(metrics), len(metrics) * len(metrics[0][1])))
