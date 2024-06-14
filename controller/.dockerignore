@@ -1,3 +1,48 @@
-**/.git
-**/__pycache__
+# Git
+.git
+.gitignore
+.github
+.gitattributes
+
+# Byte-compiled / optimized / DLL files
+**/__pycache__/
+**/*.py[cod]
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+.env
+.myenv/
+.virtenv/
+.venv/
+venv/
+
+# Dev
+.vscode/
+.idea
+README.md
+Dockerfile
+.pytest_cache
+.devcontainer
+
+# Code
+docs
+site
+Dockerfile
+metadata_classification/data/few_shot_pretrained_model/
+
 
