@@ -15,7 +15,7 @@ parameters:
   config:
     url: 'http://thanos_query:19192'
     ingest_window: '15m'
-    filter_metadata: "app_|cluster_"
+    filter_metadata: "app_|cluster_|k8s_|nwdaf"
     ingest_name_template: "$count|$__name__($app,$cluster,$instance,$processor,$IP)"
 - name: feature_extraction_tsfel
   type: extract
