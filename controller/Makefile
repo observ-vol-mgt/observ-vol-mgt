@@ -19,10 +19,12 @@ install_requirements:
 ##@ Docker
 docker_build: ## build to container
 	echo "building docker images"
-	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --target execute-stage -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} .
+	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target builder-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:builder .
+	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target execute-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} .
 
 docker_push: ## push to docker registry
 	echo "pushing docker images"
+	docker push ${DOCKER_IMAGE_BASE}controller:builder
 	docker push ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG}
 
 .PHONY: docker_run_tests
