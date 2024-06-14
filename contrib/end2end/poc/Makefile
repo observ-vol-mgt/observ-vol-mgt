@@ -17,6 +17,9 @@ delete_configuration: ## Deletes the processors configurations
 	curl -X DELETE "127.0.0.1:5010/api/v1/processor_config/1" -H "Content-Type: application/json"
 	curl -X DELETE "127.0.0.1:5010/api/v1/processor_config/2" -H "Content-Type: application/json"
 
+end: ## Ends the POC
+	make compose_down
+
 ##@ POC Development
 compose_up: ## Docker compose up
 	docker compose -f docker-compose-quay.yml up -d
@@ -36,10 +39,10 @@ cleanup_artifacts: compose_down ## Cleanup compose artifacts ( prometheus, thano
 
 clean_docker_images: compose_down ## Delete local docker images
 	-docker rmi quay.io/observ-vol-mgt/controller
-	-docker rmi quay.io/ppnaik/observ-vol-mgt/metricgen
-	-docker rmi quay.io/ppnaik/observ-vol-mgt/manager
-	-docker rmi quay.io/ppnaik/observ-vol-mgt/ruler_config
-	-docker rmi quay.io/ppnaik/observ-vol-mgt/pmf_processor
+	-docker rmi quay.io/observ-vol-mgt/metricgen
+	-docker rmi quay.io/observ-vol-mgt/manager
+	-docker rmi quay.io/observ-vol-mgt/ruler_config
+	-docker rmi quay.io/observ-vol-mgt/pmf_processor
 
 ##@ visualize
 .PHONY: show_thanos
