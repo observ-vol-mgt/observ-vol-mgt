@@ -29,14 +29,14 @@ def trigger_analyze():
     tags:
       - Controller
     responses:
-      200:
+      201:
         description: Successfully triggered controller to run analysis
         content:
           application/json:
             schema:
               type: object
               properties:
-                data:
+                message:
                   type: string
                   description: Response data from the controller
       500:
@@ -49,11 +49,15 @@ def trigger_analyze():
                 message:
                   type: string
                   description: Error message
-    """    
+    """
     logger.debug("Analyze request submitted, calling the controller...")
     try:
         response = requests.post(CONTROLLER_URL)
-        return response
+        status_code = response.status_code
+        if status_code not in [200, 201]:
+            logger.error(f"Controller was not able to run the analysis pipeline", response)
+            return response.json(), status_code
+        return {"message":"success"}, 201
     except Exception as e:
         logger.error(f"Error occurred while calling controller: {str(e)}")
         return {"message" : f"An error occurred while calling controller: {str(e)}"}, 500
