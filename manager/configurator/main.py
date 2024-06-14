@@ -2,6 +2,7 @@ from flask import Flask
 from flasgger import Swagger
 import processors
 import rules
+import controller
 import alerthandler
 import logging
 import os
@@ -43,6 +44,7 @@ swagger_template = {
 if __name__ == '__main__':
     app.register_blueprint(processors.processor_bp, url_prefix=app.config.get('APP_URL_PREFIX'))
     app.register_blueprint(rules.rules_bp, url_prefix=app.config.get('APP_URL_PREFIX'))
+    app.register_blueprint(controller.controller_bp, url_prefix=app.config.get('APP_URL_PREFIX'))
     app.register_blueprint(alerthandler.alerthandler_bp)
 
 
