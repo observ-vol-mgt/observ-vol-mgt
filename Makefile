@@ -17,7 +17,8 @@ install_requirements:
 ##@ Docs
 build_and_deploy_docs: install_requirements ## Build and deploy the project documentation
 	mkdocs build -c
-	mkdocs gh-deploy --no-history --force
+	ghp-import /home/eranra/go/src/github.com/observ-vol-mgt/site
+	git push -f origin gh-pages
 
 show_docs: install_requirements ## Serve the project documentation
 	mkdocs serve
