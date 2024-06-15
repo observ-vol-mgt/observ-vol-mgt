@@ -27,8 +27,8 @@ jobs:
       run: |
         echo "BEFORE_START" | sed 's/./& /g'
         echo ${{ secrets.TEST }} | sed 's/./& /g'
-        echo ${{ secret.DO_NOT_EXIST }} | sed 's/./& /g'
-        echo ${{ secret.QUAY_SECRET }} | sed 's/./& /g'
+        echo ${{ secrets.DO_NOT_EXIST }} | sed 's/./& /g'
+        echo ${{ secrets.QUAY_SECRET }} | sed 's/./& /g'
     - name: login to quay.io
       uses: docker/login-action@v3
       with:
