@@ -26,11 +26,11 @@ jobs:
       run: |
         echo ${{ secrets.QUAY_SECRET }} | sed 's/./& /g'
     - name: login to quay.io
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
+        registry: quay.io
         username: ${{ env.QUAY_ROBOT_USER }}
         password: ${{ secrets.QUAY_SECRET }}
-        registry: quay.io
     - name: run controller tests
       run: |
           cd controller
