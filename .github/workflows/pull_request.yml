@@ -1,4 +1,4 @@
-name: pull request - build, test and push
+name: pull request - build test and push
 
 on:
   push:
