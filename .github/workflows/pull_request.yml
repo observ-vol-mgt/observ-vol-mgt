@@ -26,7 +26,7 @@ jobs:
       uses: docker/login-action@v2
       with:
         username: ${{ env.QUAY_ROBOT_USER }}
-        password: ${{ secrets.QUAY_SECRET }}
+        password: 12345
         registry: quay.io
     - name: run controller tests
       run: |
