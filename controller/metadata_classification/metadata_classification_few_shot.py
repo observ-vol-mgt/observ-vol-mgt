@@ -16,11 +16,8 @@ import logging
 import pandas as pd
 import copy
 
-from sentence_transformers.losses import CosineSimilarityLoss
 from setfit import SetFitModel, Trainer
 from datasets import Dataset
-
-from common.signal import Signal, Signals
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +65,17 @@ def metadata_classification(config, signals):
 
     # check if pretrained_model exists, if so use it, if not fine-tune the base model
     try:
-        model = SetFitModel.from_pretrained(few_shot_pretrained_model_directory)
-    except Exception as e:
+        model = SetFitModel.from_pretrained(
+            few_shot_pretrained_model_directory)
+    except Exception:
         logger.info(f"pretrained_model not found in {few_shot_pretrained_model_directory}"
-                     f", fine-tunning from base model {base_model}")
-        finetune_from_basemodel(base_model, labeled_corpus_file, few_shot_pretrained_model_directory)
-        logger.info(f"fine-tunning is done, model saved to {few_shot_pretrained_model_directory}")
-        model = SetFitModel.from_pretrained(few_shot_pretrained_model_directory)
+                    f", fine-tuning from base model {base_model}")
+        finetune_from_basemodel(
+            base_model, labeled_corpus_file, few_shot_pretrained_model_directory)
+        logger.info(
+            f"fine-tuning is done, model saved to {few_shot_pretrained_model_directory}")
+        model = SetFitModel.from_pretrained(
+            few_shot_pretrained_model_directory)
 
     eval_data_list = []
 

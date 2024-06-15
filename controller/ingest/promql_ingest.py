@@ -23,6 +23,7 @@ from common.signal import Signal, Signals
 
 logger = logging.getLogger(__name__)
 
+
 def ingest(ingest_config):
     ingest_url = ingest_config.url
     ingest_window = ingest_config.ingest_window
@@ -59,9 +60,11 @@ def ingest(ingest_config):
                     if "__name__" in signal["metric"]:
                         signal["metric"]["original_name"] = signal["metric"]["__name__"]
                     # build new name based on template
-                    signal["metric"]["__name__"] = Template(ingest_name_template).safe_substitute(signal["metric"])
+                    signal["metric"]["__name__"] = Template(
+                        ingest_name_template).safe_substitute(signal["metric"])
 
-                signals.append(Signal(type=signal_type, metadata=signal['metric'], time_series=signal['values']))
+                signals.append(Signal(
+                    type=signal_type, metadata=signal['metric'], time_series=signal['values']))
                 signal_count += 1
 
     except Exception as e:

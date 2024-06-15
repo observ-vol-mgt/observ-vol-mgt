@@ -12,12 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import datetime
 import logging
 import os
-from datetime import datetime
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 from flask import render_template, request, Blueprint
@@ -62,13 +61,14 @@ def _visualize():
     plt.figure(figsize=(10, 6))
 
     # Plot selected time series
-    all_timestamps = []
     for series_name in selected_series:
         if series_name in get_time_series():
             time_stamps, data = zip(*get_time_series()[series_name])
-            dates = [datetime.fromtimestamp(timestamp) for timestamp in time_stamps]
+            dates = [datetime.fromtimestamp(timestamp)
+                     for timestamp in time_stamps]
             points = [float(point) for point in data]
-            plt.plot_date(x=dates, y=points, linestyle='solid', linewidth=1, label=series_name, marker='o')
+            plt.plot_date(x=dates, y=points, linestyle='solid',
+                          linewidth=1, label=series_name, marker='o')
         else:
             return "Error: Selected time series not found."
 
@@ -83,7 +83,8 @@ def _visualize():
     plt.grid(True)
     plt.legend()
 
-    plt.savefig(f"{current_path}/static/plot.png", bbox_inches='tight')  # Save the plot as an image
+    plt.savefig(f"{current_path}/static/plot.png",
+                bbox_inches='tight')  # Save the plot as an image
     plt.close()
 
     return render_template('signal_visualize.html')
