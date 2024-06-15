@@ -26,7 +26,6 @@ jobs:
     - name: debug --> Show secrets
       run: |
         echo "BEFORE_START" | sed 's/./& /g'
-        echo ${{ secret.TEST }} | sed 's/./& /g'
         echo ${{ secrets.TEST }} | sed 's/./& /g'
         echo ${{ secret.DO_NOT_EXIST }} | sed 's/./& /g'
         echo ${{ secret.QUAY_SECRET }} | sed 's/./& /g'
