@@ -1,14 +1,17 @@
-name: pull request - build and tests
+name: pull request - build test and push
 
 on:
   push:
     branches: [ main ]
-  pull_request:
+  pull_request_target:
     branches: [ main ]
 
+env:
+  QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
+
 jobs:
-  build-and-tests:
-    name: build-and-tests
+  build-test-push:
+    name: build-test-push
     runs-on: ubuntu-latest
     steps:
     - name: Set up Python 3.10
@@ -19,6 +22,12 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
+    - name: login to quay.io
+      uses: docker/login-action@v3
+      with:
+        registry: quay.io
+        username: ${{ env.QUAY_ROBOT_USER }}
+        password: ${{ secrets.QUAY_SECRET }}
     - name: run controller tests
       run: |
           cd controller
