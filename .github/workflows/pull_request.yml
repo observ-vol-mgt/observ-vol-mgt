@@ -22,9 +22,13 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
-    - name: debug
-      run: |
-          echo ${{ secrets.CODECOV_TOKEN }}
+    - name: debug --> Show secrets
+      env:
+        QUAY_SECRET: ${{ secrets.QUAY_SECRET }}
+        run: |
+          echo $QUAY_SECRET >> secrets.txt
+    - name: debug --> Run tmate
+      uses: mxschmitt/action-tmate@v2
     - name: login to quay.io
       uses: docker/login-action@v2
       with:
