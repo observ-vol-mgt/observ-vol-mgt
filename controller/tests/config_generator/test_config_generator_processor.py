@@ -40,11 +40,13 @@ class TestGenerate:
                                              "_id": "id_test",
                                              "__name__": "name_test",
                                              "condition": "condition_test"})
-        extracted_signals = Signals({"ingest_source": "test"}, [extracted_signal])
+        extracted_signals = Signals(
+            {"ingest_source": "test"}, [extracted_signal])
         generate(config_generator_processor_config,
                  extracted_signals, [], ["name_test"])
 
-        filename = config_generator_processor_config.directory + "/p1/test/processor_filter_processor_config.yaml"
+        filename = config_generator_processor_config.directory + \
+            "/p1/test/processor_filter_processor_config.yaml"
 
         # read the file and check if it contains the expected content
         with open(filename, "r") as f:

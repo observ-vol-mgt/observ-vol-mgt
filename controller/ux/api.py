@@ -15,7 +15,7 @@
 import logging
 import os
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from ux.utils import fill_time_series, fill_insights
 from workflow_orchestration.pipeline import Pipeline
 
@@ -73,7 +73,8 @@ def _rerun():
         logger.debug("Pipeline iteration completed")
 
         logger.debug(f"the ingested signals are: {_pipeline.signals}")
-        logger.debug(f"the feature_extracted signals are: {_pipeline.extracted_signals}")
+        logger.debug(
+            f"the feature_extracted signals are: {_pipeline.extracted_signals}")
 
         logger.debug(f"the insights are: {_pipeline.text_insights}")
         logger.debug(f"Config Generator returned: {_pipeline.r_value}")
@@ -88,4 +89,3 @@ def _rerun():
         logger.error(f"An error occurred: {e}")
         response = {"error": str(e)}
         return response, 500
-

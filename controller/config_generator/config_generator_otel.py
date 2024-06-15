@@ -18,23 +18,25 @@ import re
 
 from jinja2 import Environment, FileSystemLoader
 
-from common.conf import get_args
 from common.utils import add_slash_to_dir
 
 logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
-    logger.debug(f"generating otel configuration using: {signals_to_keep} {signals_to_reduce}")
+    logger.debug(
+        f"generating otel configuration using: {signals_to_keep} {signals_to_reduce}")
     env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('config_generator/templates/otel_filter_processor_template.yaml')
+    template = env.get_template(
+        'config_generator/templates/otel_filter_processor_template.yaml')
     context = {
         'metrics': []
     }
     for signal in signals_to_keep:
         context['metrics'].append({'name': signal, 'action': 'include'})
 
-    source = re.sub('-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
+    source = re.sub(
+        '-+', '-', extracted_signals.metadata["ingest_source"].translate(str.maketrans("_/.", "---")))
     output = template.render(context)
     directory = config.directory
     output_dir = add_slash_to_dir(directory)
