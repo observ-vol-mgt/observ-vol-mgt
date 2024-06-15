@@ -11,6 +11,18 @@ DOCKER_TAG ?= ${VERSION}
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+install_requirements:
+	@pip install -q -r requirements.txt
+
+##@ Docs
+build_and_deploy_docs: install_requirements ## Build and deploy the project documentation
+	mkdocs build -c
+	ghp-import /home/eranra/go/src/github.com/observ-vol-mgt/site
+	git push -f origin gh-pages
+
+show_docs: install_requirements ## Serve the project documentation
+	mkdocs serve
+
 ##@ Docker
 build_docker_images: build_controller_docker_image ## Build docker images
 push_docker_images: push_controller_docker_image ## Push docker images

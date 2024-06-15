@@ -1,0 +1,56 @@
+site_name: Observability Volume Manager
+site_url: https://github.com/observ-vol-mgt/observ-vol-mgt
+docs_dir: .
+site_dir: ../site
+theme:
+  name: material
+nav:
+  - Home: README.md
+  - Controller:
+    - Home: controller/README.md
+    - Configuration:
+      - controller/docs/config.md
+      - controller/docs/configuration_parameters.md
+    - Architecture:
+      - controller/docs/architecture.md
+  - Manager:
+    - Home: manager/configurator/README.md
+    - Configuration:
+      - manager/configurator/docs/configuration_parameters.md
+    - AlertManager:
+      - manager/alertmanager/README.md
+  - Processor:
+    - Home: processor/README.md
+  - POC (Getting started):
+      - Home: contrib/end2end/poc/README.md
+      - Video: docs/videos/poc_video.mp4
+  - More:
+      - contrib/ec-metric-gen/README.md
+      - contrib/ec-metric-gen/doc/metrics.md
+      - contrib/end2end/README.md
+      - contrib/examples/generate-synthetic-metrics/README.md
+      - contrib/fetch-offline-data/instana/README.md
+
+plugins:
+  - same-dir
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - controller
+            - manager
+            - manager/configurator
+          options:
+            show_root_heading: true
+            show_source: true
+            extensions:
+            - griffe_fieldz: {include_inherited: true}
+markdown_extensions:
+  - pymdownx.snippets:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
