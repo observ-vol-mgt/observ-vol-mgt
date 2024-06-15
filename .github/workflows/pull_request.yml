@@ -1,6 +1,8 @@
 name: pull request - build test and push
 
 on:
+  push:
+    branches: [ main ]
   pull_request_target:
     branches: [ main ]
 
