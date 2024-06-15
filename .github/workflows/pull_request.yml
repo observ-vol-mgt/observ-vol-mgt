@@ -1,18 +1,17 @@
-name: pull request - build test and push
+name: pull request - build and tests
 
 on:
   push:
-    branches: [ main, release-* ]
-  pull_request:
-    branches: [ main, release-* ]
+    branches: [ main ]
+  pull_request_target:
+    branches: [ main ]
 
 env:
   QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
 
 jobs:
   build-and-tests:
-    secrets: inherit
-    name: build-test-push
+    name: build-and-tests
     runs-on: ubuntu-latest
     steps:
     - name: Set up Python 3.10
