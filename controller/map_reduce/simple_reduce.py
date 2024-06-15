@@ -14,6 +14,7 @@
 
 from common.signal import Signals
 
+
 def reduce(config, input_data):
     output_list = []
     for item in input_data:

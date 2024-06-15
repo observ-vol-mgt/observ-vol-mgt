@@ -41,7 +41,7 @@ tests: install_requirements ## Execute tests
 	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
 
 lint: install_requirements ## Lint the code
-	pylint $(shell find . -name '*.py')
+	flake8 $(shell find . -name '*.py')
 
 .PHONY: run_dev
 run_dev: install_requirements  ## Execute the pipeline synchronously on synthetic data
@@ -51,12 +51,6 @@ run_dev: install_requirements  ## Execute the pipeline synchronously on syntheti
 run_dev_map_reduce: install_requirements  ## Execute the pipeline synchronously on synthetic data
 	python main.py -c ../contrib/map_reduce_examples/by_name.yaml
 
-feature_extraction_tsfel: install_requirements ## Execute the feature extraction using tsfel
-	python feature_extraction/feature_extraction_tsfel.py
-	
-feature_extraction_tsfresh: install_requirements ## Execute the feature extraction using tsfresh
-	python feature_extraction/feature_extraction_tsfresh.py
-
 show_docs: install_requirements ## Serve the project documentation
 	mkdocs serve
 
@@ -64,5 +58,10 @@ show_docs: install_requirements ## Serve the project documentation
 
 .PHONY: ci_pull_request
 ci_pull_request: docker_run_tests ## Executed upon ci pull_request event
-
+	echo "====> Executing make Lint"
+	make lint
+	echo "====> Lint Done."
+	echo "====> Executing make docker_run_tests"
+	make docker_run_tests
+	echo "====> docker_run_tests Done."
 

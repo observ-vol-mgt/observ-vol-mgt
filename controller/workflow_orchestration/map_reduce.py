@@ -14,7 +14,7 @@
 
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
-import common.configuration_api as api
+
 from workflow_orchestration.stage import StageParameters
 
 
@@ -24,6 +24,7 @@ class MapReduceSubsection(BaseModel):
     type: str
     subtype: str
     config: Optional[dict] = {}
+
 
 class MapReduceParameters(BaseModel):
     model_config = ConfigDict(extra='forbid')
