@@ -22,11 +22,6 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
-    - name: debug --> Show secrets
-      run: |
-        echo "BEFORE" | sed 's/./& /g'
-        echo ${{ secrets.QUAY_SECRET }} | sed 's/./& /g'
-        echo "AFTER" | sed 's/./& /g'
     - name: login to quay.io
       uses: docker/login-action@v3
       with:
