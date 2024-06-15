@@ -51,8 +51,6 @@ run_dev: install_requirements  ## Execute the pipeline synchronously on syntheti
 run_dev_map_reduce: install_requirements  ## Execute the pipeline synchronously on synthetic data
 	python main.py -c ../contrib/map_reduce_examples/by_name.yaml
 
-show_docs: install_requirements ## Serve the project documentation
-	mkdocs serve
 
 ##@ CI
 
