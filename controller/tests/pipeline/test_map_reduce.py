@@ -13,14 +13,15 @@
 #  limitations under the License.
 
 
-import pytest
 import yaml
-from common.conf import set_configuration, set_configuration
+from common.conf import set_configuration
 from workflow_orchestration.pipeline import Pipeline
+
 
 def build_config(yaml_string):
     configuration = yaml.load(yaml_string, Loader=yaml.FullLoader)
     set_configuration(configuration)
+
 
 config1 = """
 pipeline:
@@ -64,14 +65,14 @@ parameters:
   config:
 """
 
+
 def test_basic_map_reduce():
     build_config(config1)
     p = Pipeline()
     p.build_pipeline()
-
-
     assert p.stage_execution_order[0].base_stage.name == "stage1"
     assert p.stage_execution_order[2].base_stage.name == "stage3"
+
 
 config_missing_param = """
 pipeline:
@@ -114,12 +115,12 @@ parameters:
   config:
 """
 
+
 def test_bad_map_reduce():
     build_config(config_missing_param)
 
     try:
         p = Pipeline()
         p.build_pipeline()
-        assert False
-    except:
-        assert True
+    except Exception as e:
+        raise e

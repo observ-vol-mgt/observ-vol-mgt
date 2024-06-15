@@ -18,7 +18,6 @@ from common.conf import parse_args, get_args
 from ux.api import _rerun
 from workflow_orchestration.pipeline import Pipeline
 from ux.ux import start_ux
-from ux.utils import fill_time_series, fill_insights
 
 logger = logging.getLogger(__name__)
 
@@ -43,4 +42,3 @@ if __name__ == '__main__':
     run()
     # starting the UX (UI and API)
     start_ux()
-

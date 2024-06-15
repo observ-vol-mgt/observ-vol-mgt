@@ -15,7 +15,8 @@
 import re
 from common.signal import Signals
 
-def map(config, signals):
+
+def _map(config, signals):
     clustered_signals = []
     clustered_signals_dict = {}
     name_pattern = config["name_pattern"] \

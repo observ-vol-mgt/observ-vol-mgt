@@ -29,6 +29,7 @@ import common.configuration_api as api
 
 logger = logging.getLogger(__name__)
 
+
 def config_generator(subtype, config, input_data):
     if len(input_data) != 3:
         raise "config_generator configuration should have 3 inputs"
@@ -45,12 +46,14 @@ def config_generator(subtype, config, input_data):
         typed_config = api.ConfigGeneratorOtel(**config)
         logger.debug("using otel config_generator")
         from config_generator.config_generator_otel import generate
-        r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
+        r_value = generate(typed_config, extracted_signals,
+                           signals_to_keep, signals_to_reduce)
     elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PROCESSOR.value:
         typed_config = api.ConfigGeneratorProcessor(**config)
         logger.debug("using processor config_generator")
         from config_generator.config_generator_processor import generate
-        r_value = generate(typed_config, extracted_signals, signals_to_keep, signals_to_reduce)
+        r_value = generate(typed_config, extracted_signals,
+                           signals_to_keep, signals_to_reduce)
     else:
         raise "unsupported feature_extraction configuration"
     return [r_value]
