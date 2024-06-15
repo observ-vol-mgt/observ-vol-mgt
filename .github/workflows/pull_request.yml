@@ -1,4 +1,4 @@
-name: pull request - build and tests
+name: pull request - build test and push
 
 on:
   push:
@@ -10,8 +10,8 @@ env:
   QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
 
 jobs:
-  build-and-tests:
-    name: build-and-tests
+  build-test-push:
+    name: build-test-push
     runs-on: ubuntu-latest
     steps:
     - name: Set up Python 3.10
