@@ -3,12 +3,15 @@ name: pull request - build test and push
 on:
   push:
     branches: [ main, release-* ]
+  pull_request:
+    branches: [ main, release-* ]
 
 env:
   QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
 
 jobs:
   build-and-tests:
+    secrets: inherit
     name: build-test-push
     runs-on: ubuntu-latest
     steps:
