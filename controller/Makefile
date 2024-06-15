@@ -57,11 +57,11 @@ show_docs: install_requirements ## Serve the project documentation
 ##@ CI
 
 .PHONY: ci_pull_request
-ci_pull_request: docker_run_tests ## Executed upon ci pull_request event
-	echo "====> Executing make Lint"
+ci_pull_request: ## Executed upon ci pull_request event
+	@echo "====> Executing make Lint"
 	make lint
-	echo "====> Lint Done."
-	echo "====> Executing make docker_run_tests"
+	@echo "====> Lint Done."
+	@echo "====> Executing make docker_run_tests"
 	make docker_run_tests
-	echo "====> docker_run_tests Done."
+	@echo "====> docker_run_tests Done."
 
