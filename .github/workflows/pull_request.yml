@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
+
 jobs:
   build-and-tests:
     name: build-and-tests
@@ -19,6 +22,12 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
+    - name: login to quay.io
+      uses: docker/login-action@v2
+      with:
+        username: ${{ env.QUAY_ROBOT_USER }}
+        password: ${{ secrets.QUAY_SECRET }}
+        registry: quay.io
     - name: run controller tests
       run: |
           cd controller
