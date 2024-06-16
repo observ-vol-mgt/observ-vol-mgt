@@ -48,8 +48,8 @@ run_dev: install_requirements  ## Execute the pipeline synchronously on syntheti
 	python main.py -c config.yaml
 
 .PHONY: run_dev_map_reduce
-run_dev_map_reduce: install_requirements  ## Execute the pipeline synchronously on synthetic data
-	python main.py -c ../contrib/map_reduce_examples/by_name.yaml
+run_dev_map_reduce: install_requirements  ## Execute the pipeline using map reduce (scalability)
+	python main.py -c contrib/examples/config_files/map_reduce_examples/by_name.yaml
 
 
 ##@ CI

@@ -19,10 +19,9 @@ from common.signal import Signals
 def _map(config, signals):
     clustered_signals = []
     clustered_signals_dict = {}
-    name_pattern = config["name_pattern"] \
-        if config and 'name_pattern' in config else None
+    name_pattern = config.name_pattern
 
-    if name_pattern is None:
+    if name_pattern == "" or name_pattern is None:
         return [signals]
 
     for signal in signals:
@@ -33,5 +32,8 @@ def _map(config, signals):
             clustered_signals_dict[match.group()].append(signal)
 
     clustered_signals = list(clustered_signals_dict.values())
-    new_signals = Signals(signals.metadata, clustered_signals)
-    return new_signals
+    clustered_signals_list = []
+    for clustered_signals_group in clustered_signals:
+        clustered_signals_list.append(Signals(signals.metadata, clustered_signals_group))
+
+    return clustered_signals_list
