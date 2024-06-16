@@ -21,7 +21,7 @@ def _map(config, signals):
     clustered_signals_dict = {}
     name_pattern = config.name_pattern
 
-    if name_pattern is "" or name_pattern is None:
+    if name_pattern == "" or name_pattern is None:
         return [signals]
 
     for signal in signals:
