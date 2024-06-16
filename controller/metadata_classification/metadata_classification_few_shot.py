@@ -44,7 +44,7 @@ def finetune_from_basemodel(base_model, labeled_corpus_file, few_shot_pretrained
     trainer = Trainer(
         model=fit_model,
         train_dataset=train_data_dataset,
-        eval_dataset=train_data_dataset,
+        eval_dataset=None,
         column_mapping={"sentence": "text", "label": "label"},
     )
 
