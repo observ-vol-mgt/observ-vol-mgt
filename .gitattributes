@@ -1,2 +1,2 @@
-docs/videos/poc_video.mp4 filter=lfs diff=lfs merge=lfs -text
 controller/metadata_classification/data/few_shot_pretrained_model/model.safetensors filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
