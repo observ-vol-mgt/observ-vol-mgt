@@ -40,7 +40,7 @@ parameters:
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
-    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0"
+    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization"
     signal_name_template: "$original_name"
     signal_condition_template: "cluster=$cluster and instance=$instance"
     processor_id_template: "$processor"
