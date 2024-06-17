@@ -13,7 +13,7 @@ parameters:
   input_data: []
   output_data: [signals]
   config:
-    filter_metadata: ""
+    filter_metadata: "synthetic"
     ingest_name_template: "$plugin|$__name__(job,$label,$instance,snapshot)"
     file_name: ../contrib/fetch-offline-data/instana/demo-eu/instana_metrics_1000_metrics.promql.json
 - name: feature_extraction_tsfel
@@ -40,6 +40,9 @@ parameters:
   subtype:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+      pairwise_similarity_threshold: 0.999
+      compound_similarity_threshold: 0.999
 - name: config_generator_otel
   type: config_generator
   subtype: otel

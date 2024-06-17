@@ -24,11 +24,14 @@
     <meta content="#000000" name="theme-color"/>
     <title>Time Series Analysis</title>
     <script>
-    function submitForm(value) {
+    function submitForm(values) {
         const newWindow = window.open('index.html', '_blank');
         newWindow.onload = function() {
             inputElement = newWindow.document.getElementById('timeSeries');
-            inputElement.value = value;
+            for (var i = 0; i < inputElement.options.length; i++) {
+                selected = values.includes(inputElement.options[i].value)
+                inputElement.options[i].selected = selected;
+            }
             const formElement = inputElement.form;
             formElement.submit();
         };

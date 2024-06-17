@@ -213,7 +213,9 @@ def analyze_pairwise_correlations(signals, method, pairwise_similarity_threshold
         insights += \
             (f'<a href="javascript:void(0);" onclick="submitForm(&apos;{signal}&apos;);">'
              f'{signal}</a> - it is highly correlated with '
-             f'{correlated_signals}\n\n')
+             f'<a href="javascript:void(0);" onclick="submitForm([&apos;{signal}&apos;, &apos;{correlated_signals}&apos;]);">'
+             f'{correlated_signals}</a>'
+             f'\n\n')
     insights += "-=-=--=\n\n"
 
     logging.debug(f"\n\n{insights}\n")
