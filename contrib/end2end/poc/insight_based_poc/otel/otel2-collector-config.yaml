@@ -5,7 +5,7 @@ receivers:
           - job_name: app
             scrape_interval: 5s
             static_configs:
-              - targets: ['metricgen1:8000']
+              - targets: ['metricgen2:8001']
             metrics_path: '/'
 
 processors:
@@ -19,9 +19,9 @@ processors:
                 experimental_scale: 1
 exporters:
   prometheusremotewrite:
-          endpoint: "http://pmf_processor1:8081/api/v1/receive"
+          endpoint: "http://pmf_processor2:8082/api/v1/receive"
           external_labels:
-            processor: "1"
+            processor: "west"
   logging:
 
 
