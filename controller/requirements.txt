@@ -21,3 +21,4 @@ transformers==4.38.0
 tsfel==0.1.7
 pytest-mock==3.14.0
 flake8==7.0.0
+scipy==1.13.1
