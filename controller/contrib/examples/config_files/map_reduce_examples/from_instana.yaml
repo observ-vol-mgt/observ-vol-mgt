@@ -42,8 +42,8 @@ parameters:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
   config:
-    close_to_zero_threshold: 0.5
-    pairwise_similarity_threshold: 0.1
+    close_to_zero_threshold: 0.1
+    pairwise_similarity_threshold: 0.01
     pairwise_similarity_method: distance
     pairwise_similarity_distance_method: euclidean
     compound_similarity_threshold: 1

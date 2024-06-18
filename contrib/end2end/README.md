@@ -1,5 +1,7 @@
 # End-To-End tests
 
+> GitHub reference: [contrib/end2end](https://github.com/observ-vol-mgt/observ-vol-mgt/tree/main/contrib/end2end) 
+
 This directory holds scripts and configuration for end-to-end tests of the observability volume controller.
 The end-to-end tests are based upon local set-ups of two use cases:
 
