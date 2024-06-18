@@ -1,5 +1,7 @@
 # generate-synthetic-metrics
 
+> GitHub reference: [contrib/examples/generate-synthetic-metrics](https://github.com/observ-vol-mgt/observ-vol-mgt/tree/main/contrib/examples/generate-synthetic-metrics) 
+
 This folder holds code that generates a fixed static set of metrics in prometheus API format.
 The code generates a json file holding the metrics.
 The file name is hard-coded `time_series_data.json`.

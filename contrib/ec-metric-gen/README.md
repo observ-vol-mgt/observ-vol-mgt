@@ -1,5 +1,7 @@
 # Metric Generation
 
+> GitHub reference: [contrib/ec-metric-gen](https://github.com/observ-vol-mgt/observ-vol-mgt/tree/main/contrib/ec-metric-gen) 
+
 For local testing of the system we use a metric generator. The current version generates metrics in the prometheus formats comprising of a time series for each metric. Each metric is represented as set of labels and values. 
 The generator can be used to generate fake metrics as well as custom  metrics with user provided labels names. 
 

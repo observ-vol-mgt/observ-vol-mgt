@@ -13,8 +13,9 @@ parameters:
   input_data: []
   output_data: [signals]
   config:
-    filter_metadata: ""
-    ingest_name_template: "$plugin|$__name__(job,$label,$instance,snapshot)"
+    filter_metadata: "cpu"
+    #filter_metadata: ".+__2315'|.+__2270'"
+    ingest_name_template: "$plugin|$__name__(job,$label,$instance,snapshot)__$count"
     file_name: ../contrib/fetch-offline-data/instana/demo-eu/instana_metrics_1000_metrics.promql.json
 - name: feature_extraction_tsfel
   type: map_reduce
@@ -40,6 +41,12 @@ parameters:
   subtype:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+    close_to_zero_threshold: 0.1
+    pairwise_similarity_threshold: 0.01
+    pairwise_similarity_method: distance
+    pairwise_similarity_distance_method: euclidean
+    compound_similarity_threshold: 1
 - name: config_generator_otel
   type: config_generator
   subtype: otel

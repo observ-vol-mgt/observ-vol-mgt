@@ -42,11 +42,8 @@ def ingest(ingest_config):
         raise RuntimeError(err) from e
     json_signals = data["data"]["result"]
     signal_count = 0
-    for json_signal in json_signals:
+    for signal_count, json_signal in enumerate(json_signals):
         if 'metric' in json_signal.keys():
-            if ingest_filter_metadata:
-                if not re.findall(ingest_filter_metadata, str(json_signal["metric"])):
-                    continue
             signal_type = "metric"
             if ingest_name_template != "":
                 # adding `count` to allow usage by template
@@ -59,12 +56,18 @@ def ingest(ingest_config):
                     ingest_name_template).safe_substitute(json_signal["metric"])
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
+
         else:
             raise Exception("Ingest: signal type - Not implemented")
+
+        # filter signals based on ingest_filter_metadata (if exists)
+        if ingest_filter_metadata:
+            match = re.search(ingest_filter_metadata, str(signal_metadata))
+            if match is None:
+                continue
 
         signals.append(Signal(type=signal_type,
                               metadata=signal_metadata,
                               time_series=signal_time_series))
-        signal_count += 1
 
     return signals

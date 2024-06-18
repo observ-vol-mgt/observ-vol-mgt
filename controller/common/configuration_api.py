@@ -127,6 +127,7 @@ class GenerateInsightsType(Enum):
     INSIGHTS_SIMILARITY_METHOD_PEARSON = "pearson"
     INSIGHTS_SIMILARITY_METHOD_SPEARMAN = "spearman"
     INSIGHTS_SIMILARITY_METHOD_KENDALL = "kendall"
+    INSIGHTS_SIMILARITY_METHOD_DISTANCE = "distance"
 
 
 class MapSubType(Enum):
@@ -191,10 +192,14 @@ class GenerateInsights(BaseModel):
     Configuration for generating insights.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    # Threshold for close to zero analysis
+    close_to_zero_threshold: Optional[float] = 0
     # Threshold for pairwise similarity
     pairwise_similarity_threshold: Optional[float] = 0.95
     pairwise_similarity_method: Optional[str] = (
         GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value)  # Method for pairwise similarity
+    # The distance algorithm to use (scipy.spacial.distance) when using distance method
+    pairwise_similarity_distance_method: Optional[str] = ""
     # Threshold for compound similarity
     compound_similarity_threshold: Optional[float] = 0.99
 

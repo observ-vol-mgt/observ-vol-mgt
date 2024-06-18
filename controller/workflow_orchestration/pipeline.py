@@ -195,15 +195,16 @@ class Pipeline:
         # collect the output lists into a common output list
         # TBD - these should be run in parallel
         number_of_copies = len(input_data)
-        logger.info(f"run_map_reduce_compute: stage = {stage}")
+        logger.info(f"Executing map-reduce on stage = {stage} . Mapping into {number_of_copies} stages")
         sub_stages = []
         for index in range(number_of_copies):
             stage_copy = copy.copy(stage)
             stage_copy.base_stage.name += f"_{index}"
-            logger.debug(f"parallel stage name = {stage_copy.base_stage.name}")
+            logger.info(f"=== #{index} ===> executing parallel stage {stage_copy.base_stage.name}")
             sub_stages.append(stage_copy)
             new_input_data = [input_data[index]]
             self.run_stage(stage_copy, new_input_data)
+            logger.info(f"=== #{index} ===> parallel stage Done.")
 
         # collect the output data
         output_data = []
@@ -211,4 +212,5 @@ class Pipeline:
             output_data.append(sub_stages[index].latest_output_data[0])
 
         stage.set_latest_output_data(output_data)
+        logger.info("Done. (Executing map-reduce)")
         return output_data
