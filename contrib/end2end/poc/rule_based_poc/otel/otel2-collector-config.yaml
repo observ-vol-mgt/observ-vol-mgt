@@ -21,7 +21,7 @@ exporters:
   prometheusremotewrite:
           endpoint: "http://pmf_processor2:8082/api/v1/receive"
           external_labels:
-            processor: "2"
+            processor: "west"
   logging:
 
 

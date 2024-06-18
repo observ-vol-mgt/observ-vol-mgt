@@ -1,14 +1,16 @@
 version: '3.2'
 services:
 
-  metricgen:
-    image: metricgen
-    container_name: metricgen
+  metricgen1:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen1
     command:
      #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
      - 'python3'
      - 'demo-metrics-gutentag.py'
      - '--conf=conf.yaml'
+     - '-p=8000'
+     - '-cp=5002'
      - '--nmetrics=100'
      - '--nlabels=10'
     expose:
@@ -17,9 +19,28 @@ services:
     ports:
      - "5002:5002"
      - "8000:8000"
+  
+  metricgen2:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen2
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '--port=8001'
+     - '--clientport=5003'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+    expose:
+     - 5003
+     - 8001
+    ports:
+     - "5003:5003"
+     - "8001:8001"
 
   manager:
-    image: manager
+    image: quay.io/observ-vol-mgt/manager
     container_name: manager
     expose:
      - 5010
@@ -31,11 +52,15 @@ services:
      - '$PWD/manager/config:/etc/config'
      - 'manager_volume:/manager/app'
 
-  pmf_processor:
-    image: pmf_processor
-    container_name: pmf_processor
-    #command:
-    # - './processor --target="http://thanos_receive:19291/api/v1/receive"'
+  pmf_processor1:
+    image: quay.io/observ-vol-mgt/pmf_processor
+    container_name: pmf_processor1
+    command:
+     # - 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=:8081'
+     - '--morpher=:8100'
     expose:
      - 8100
      - 8081
@@ -43,29 +68,35 @@ services:
      - "8100:8100"
      - "8081:8081"
 
-  prometheus:
-    image: prom/prometheus:v2.21.0
-    container_name: prometheus
-    user: root
-    volumes:
-      - ./prometheus:/etc/config/
-      - ./prometheus_data:/data
+  pmf_processor2:
+    image: quay.io/observ-vol-mgt/pmf_processor
+    container_name: pmf_processor2
     command:
-      - '--config.file=/etc/config/prometheus.yml'
-      - '--storage.tsdb.path=/data'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=2h'
-      - '--web.enable-lifecycle'
-      - '--web.enable-admin-api'
-      - '--web.listen-address=:9001'
-      - '--storage.tsdb.min-block-duration=5m'
-      - '--storage.tsdb.max-block-duration=5m'
-    restart: unless-stopped
+     #- 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=0.0.0.0:8082'
+     - '--morpher=0.0.0.0:8101'
     expose:
-      - 9001
+     - 8101
+     - 8082
     ports:
-      - "9001:9001"
+     - "8101:8101"
+     - "8082:8082"
+   
+  otel1:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otel1
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel/otel1-collector-config.yaml:/etc/otel-collector-config.yaml
+            
+  otel2:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otel2
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel/otel2-collector-config.yaml:/etc/otel-collector-config.yaml
 
   thanos_receive:
     image: thanosio/thanos:v0.29.0
@@ -130,7 +161,7 @@ services:
       retries: 3
   
   ruler_config:
-    image: ruler_config 
+    image: quay.io/observ-vol-mgt/ruler_config 
     container_name: ruler_config
     environment:
       - HOST=0.0.0.0
