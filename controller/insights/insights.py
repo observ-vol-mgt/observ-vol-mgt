@@ -21,8 +21,6 @@ import statsmodels.stats.outliers_influence as oi
 import common.configuration_api as api
 from scipy.spatial.distance import pdist, squareform
 
-from controller.common.configuration_api import GenerateInsightsType
-
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +38,7 @@ def generate_insights(subtype, config, input_data):
     close_to_zero_threshold = typed_config.close_to_zero_threshold
 
     # finding zero signals
-    zero_value_signals, zero_value_insights = analyze_zero_value(signals_list,close_to_zero_threshold)
+    zero_value_signals, zero_value_insights = analyze_zero_value(signals_list, close_to_zero_threshold)
     signals_to_keep_post_zero_value = signals_list.filter_by_names(zero_value_signals,
                                                                    filter_in=False)
 
@@ -186,7 +184,7 @@ def analyze_pairwise_correlations(signals, method, pairwise_similarity_distance_
     # Execute cross signal correlation
 
     # using pdist distance function
-    if method == GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_DISTANCE.value:
+    if method == api.GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_DISTANCE.value:
         df_transposed = df_features_matrix.T
         dist_matrix = pdist(df_transposed, metric=pairwise_similarity_distance_method)
         dist_matrix_square = squareform(dist_matrix)
@@ -216,7 +214,7 @@ def analyze_pairwise_correlations(signals, method, pairwise_similarity_distance_
     for column in upper.columns:
         keep_metric = True
         for index in upper.index:
-            if method == GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_DISTANCE.value:
+            if method == api.GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_DISTANCE.value:
                 if upper.loc[index, column] <= pairwise_similarity_threshold:
                     signals_to_reduce.append(
                         {"signal": column, "correlated_signals": index})
