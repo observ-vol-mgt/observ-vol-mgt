@@ -35,40 +35,5 @@ docker_run_tests: ## Execute tests using docker
 docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
 	docker run --name controller ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} 
 
-##@ Development
-.PHONY: tests
-tests: install_requirements ## Execute tests
-	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
-
-lint: install_requirements ## Lint the code
-	flake8 $(shell find . -name '*.py')
-
-.PHONY: run_dev
-run_dev: install_requirements  ## Execute the pipeline synchronously on synthetic data
-	python main.py -c config.yaml
-
-.PHONY: run_dev_map_reduce
-run_dev_map_reduce: install_requirements  ## Execute the pipeline using map reduce (scalability)
-	python main.py -c contrib/examples/config_files/map_reduce_examples/by_name.yaml
-
-
-##@ CI
-
-.PHONY: ci_pull_request
-ci_pull_request: ## Executed upon ci pull_request event
-	@echo "|||====> Executing make Lint"
-	make lint
-	@echo "|||====> Lint Done."
-	@echo "|||====> Executing make docker_run_tests"
-	make docker_run_tests
-	@echo "|||====> docker_run_tests Done."
-	@echo "|||====> Executing make docker_build"
-
-.PHONY: ci_push
-ci_push: ci_pull_request ## Executed upon ci push (merge) event
-	@echo "|||====> Executing make docker_build"
-	make docker_build
-	@echo "|||====> docker_build Done."
-	@echo "|||====> Executing make docker_push"
-	make docker_push
-	@echo "|||====> docker_push Done."
+include .mk/development.mk
+include .mk/ci.mk
