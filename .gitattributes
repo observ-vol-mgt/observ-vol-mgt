@@ -1,7 +1,2 @@
 controller/metadata_classification/data/few_shot_pretrained_model/model.safetensors filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
-contrib/fetch-offline-data/instana/demo-eu/ filter=lfs diff=lfs merge=lfs -text
-contrib/fetch-offline-data/instana/demo-eu/instana_metrics_10000_metrics.json filter=lfs diff=lfs merge=lfs -text
-contrib/fetch-offline-data/instana/demo-eu/instana_metrics_10000_metrics.promql.json filter=lfs diff=lfs merge=lfs -text
-contrib/fetch-offline-data/instana/demo-eu/instana_metrics_1000_metrics.json filter=lfs diff=lfs merge=lfs -text
-contrib/fetch-offline-data/instana/demo-eu/instana_metrics_1000_metrics.promql.json filter=lfs diff=lfs merge=lfs -text
