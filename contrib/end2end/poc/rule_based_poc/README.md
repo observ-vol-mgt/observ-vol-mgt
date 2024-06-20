@@ -1,5 +1,5 @@
 # PoC usecase
-![demofigure](../../../../docs/images/demo.png)
+![demofigure](../../../../docs/images/architecture-rulepoc.png)
 
 The PoC demonstrates two edges connected to a central cloud. Each edge comprises of metric generator whose metrics are scraped by prometheus. The prometheus does a remote write to thanos (running in the central cloud) for long term storage and analysis. The remote write is intercepted by our processor proxy running at each edge location. The processor applies various transformation to the collected metrics.
 
