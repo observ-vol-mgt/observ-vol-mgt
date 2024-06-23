@@ -11,9 +11,6 @@ FROM python:3.10.9-slim-buster as builder-stage
 ARG WORKDIR_PATH
 WORKDIR ${WORKDIR_PATH}
 COPY ./requirements.txt . 
-RUN apt-get -y update
-RUN apt-get -y install make llvm-dev gcc python3-dev musl-dev
-RUN pip install --upgrade pip
 RUN pip install --user -r requirements.txt
 
 ########
