@@ -16,7 +16,7 @@ install_requirements:
 
 ##@ Docs
 build_and_deploy_docs: install_requirements ## Build and deploy the project documentation
-	!git branch -D gh-pages
+	-git branch -D gh-pages
 	mkdocs build -c
 	ghp-import ../site
 	git push -f origin gh-pages
