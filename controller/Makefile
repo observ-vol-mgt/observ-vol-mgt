@@ -31,6 +31,7 @@ docker_push: ## push to docker registry
 
 .PHONY: docker_run_tests
 docker_run_tests: ## Execute tests using docker
+	DOCKER_BUILDKIT=1 docker pull quay.io/observ-vol-mgt/controller:builder
 	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --cache-from ${DOCKER_IMAGE_BASE}controller:builder --target tests-stage
 
 .PHONY: docker_run_dev
