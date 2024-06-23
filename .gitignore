@@ -16,3 +16,5 @@
 /controller/metadata_classification/data/few_shot_pretrained_model/
 # ignore static site
 site/
+# ignore offline data
+/contrib/fetch-offline-data/instana/demo-eu/

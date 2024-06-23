@@ -19,7 +19,9 @@ install_requirements:
 ##@ Docker
 docker_build: ## build to container
 	echo "building docker images"
+	echo "building the *builder* image"
 	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target builder-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:builder .
+	echo "building the *execute* image"
 	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target execute-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} .
 
 docker_push: ## push to docker registry
@@ -29,7 +31,7 @@ docker_push: ## push to docker registry
 
 .PHONY: docker_run_tests
 docker_run_tests: ## Execute tests using docker
-	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --target tests-stage
+	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --cache-from ${DOCKER_IMAGE_BASE}controller:builder --target tests-stage
 
 .PHONY: docker_run_dev
 docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
