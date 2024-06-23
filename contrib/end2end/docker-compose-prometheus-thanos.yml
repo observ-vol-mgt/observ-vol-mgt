@@ -1,0 +1,203 @@
+version: '3.2'
+services:
+  prometheus_one:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus_one
+    user: root
+    volumes:
+      - ./prometheus:/etc/config/
+      - ./data/prometheus/one:/data
+    command:
+      - '--config.file=/etc/config/prometheus_one.yml'
+      - '--storage.tsdb.path=/data'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=2h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.listen-address=:9001'
+      - '--storage.tsdb.min-block-duration=5m'
+      - '--storage.tsdb.max-block-duration=5m'
+    restart: unless-stopped
+    expose:
+      - 9001
+    ports:
+      - "9001:9001"
+
+  prometheus_two:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus_two
+    user: root
+    volumes:
+      - ./prometheus:/etc/config/
+      - ./data/prometheus/two:/data
+    command:
+      - '--config.file=/etc/config/prometheus_two.yml'
+      - '--storage.tsdb.path=/data'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=2h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.listen-address=:9002'
+      - '--storage.tsdb.min-block-duration=5m'
+      - '--storage.tsdb.max-block-duration=5m'
+    restart: unless-stopped
+    expose:
+      - 9002
+    ports:
+      - "9002:9002"
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    volumes:
+      - ./data/minio:/data
+    ports:
+      - "9000:9000"
+      - "9007:9007"
+    environment:
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+      MINIO_ACCESS_KEY: myaccesskey
+      MINIO_SECRET_KEY: mysecretkey
+    command: server /data --console-address=":9007"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  create_minio_bucket:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set thanos-minio http://minio:9000 myaccesskey mysecretkey &&
+      mc mb thanos-minio/thanos-data-bucket
+      "
+
+  thanos_sidecar_one:
+    image: thanosio/thanos:v0.23.0
+    container_name: thanos_sidecar_one
+    volumes:
+      - ./prometheus:/etc/config/
+      - ./data/prometheus/one:/data
+    command:
+      - "sidecar"
+      - "--log.level=debug"
+      - "--tsdb.path=/data"
+      - "--prometheus.url=http://prometheus_one:9001"
+      - "--reloader.config-file=/etc/config/prometheus_one.yml"
+      - |
+          --objstore.config=type: S3
+          config: 
+            bucket: thanos-data-bucket
+            access_key: myaccesskey
+            secret_key: mysecretkey
+            endpoint: minio:9000
+            insecure: true
+    expose:
+      - 10902
+      - 10901
+    depends_on:
+      - minio
+
+  thanos_sidecar_two:
+    image: thanosio/thanos:v0.23.0
+    container_name: thanos_sidecar_two
+    volumes:
+      - ./prometheus:/etc/config/
+      - ./data/prometheus/two:/data
+    command:
+      - "sidecar"
+      - "--log.level=debug"
+      - "--tsdb.path=/data"
+      - "--prometheus.url=http://prometheus_two:9002"
+      - "--reloader.config-file=/etc/config/prometheus_two.yml"
+      - |
+          --objstore.config=type: S3
+          config: 
+            bucket: thanos-data-bucket
+            access_key: myaccesskey
+            secret_key: mysecretkey
+            endpoint: minio:9000
+            insecure: true
+    expose:
+      - 10902
+      - 10901
+    depends_on:
+      - minio
+
+  thanos_querier:
+    image: thanosio/thanos:v0.23.0
+    container_name: thanos_querier
+    command:
+      - "query"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--store=thanos_sidecar_one:10901"
+      - "--store=thanos_sidecar_two:10901"
+      - "--store=thanos_store:10901"
+      # - "--store=thanos_rule:10901"
+      - "--store.sd-interval=5m"
+      - "--query.replica-label=monitor"
+    expose:
+      - 10902
+      - 10901
+    ports:
+      - "10902:10902"
+    depends_on:
+      - minio
+
+  thanos_query_frontend:
+    image: thanosio/thanos:v0.23.0
+    container_name: thanos_query_frontend
+    command:
+      - "query-frontend"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--http-address=0.0.0.0:19090"
+      - "--query-frontend.compress-responses"
+      - "--query-range.partial-response"
+      - "--query-frontend.downstream-url=http://thanos_querier:10902"
+      - "--query-range.split-interval=24h"
+      - "--query-range.max-retries-per-request=5"
+      - "--query-frontend.log-queries-longer-than=5s"
+      - "--cache-compression-type=snappy"
+    ports:
+      - "19090:19090"
+    depends_on:
+      - thanos_querier
+
+  thanos_store:
+    image: thanosio/thanos:v0.23.0
+    container_name: thanos_store
+    volumes:
+      - ./data/store:/data
+    command:
+      - "store"
+      - "--log.level=debug"
+      - |
+        --objstore.config=type: S3
+        config: 
+            bucket: thanos-data-bucket
+            access_key: myaccesskey
+            secret_key: mysecretkey
+            endpoint: minio:9000
+            insecure: true
+      - "--data-dir=/data"
+      - "--log.format=logfmt"
+      - "--index-cache-size=250MB"
+      - "--chunk-pool-size=1GB"
+      - "--store.grpc.series-max-concurrency=20"
+      - "--sync-block-duration=3m"
+      - "--block-sync-concurrency=20"
+    restart: unless-stopped
+    expose:
+      - 10902
+      - 10901
+    depends_on:
+      - minio
+    ports:
+      - '10912:10902'

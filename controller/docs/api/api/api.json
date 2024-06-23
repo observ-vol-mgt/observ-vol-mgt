@@ -1,0 +1,98 @@
+{
+  "definitions": {
+
+  },
+  "info": {
+    "description": "powered by Flasgger",
+    "termsOfService": "/tos",
+    "title": "A swagger API",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/api/v1/rerun": {
+      "get": {
+        "description": "This endpoint reruns the controller analytics pipeline.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "example": "Pipeline rerun successfully.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Pipeline rerun successfully."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "example": "An unexpected error occurred.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Rerun the pipeline",
+        "tags": [
+          "Pipeline"
+        ]
+      },
+      "post": {
+        "description": "This endpoint reruns the controller analytics pipeline.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "example": "Pipeline rerun successfully.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Pipeline rerun successfully."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "example": "An unexpected error occurred.",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Internal Server Error."
+          }
+        },
+        "summary": "Rerun the pipeline",
+        "tags": [
+          "Pipeline"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0"
+}
