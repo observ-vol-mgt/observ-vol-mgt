@@ -11,19 +11,17 @@ nav:
     - Configuration:
       - controller/docs/config.md
       - controller/docs/configuration_parameters.md
-    - Architecture:
-      - controller/docs/architecture.md
+    - API: controller/docs/api/api.md
+    - Architecture: controller/docs/architecture.md
   - Manager:
     - Home: manager/configurator/README.md
-    - Configuration:
-      - manager/configurator/docs/configuration_parameters.md
-    - AlertManager:
-      - manager/alertmanager/README.md
+    - Configuration: manager/configurator/docs/configuration_parameters.md
+    - AlertManager: manager/alertmanager/README.md
   - Processor:
     - Home: processor/README.md
   - POC (Getting started):
-      - Home: contrib/end2end/poc/README.md
-      - Video: docs/videos/poc_video.mp4
+      - Home: contrib/end2end/poc/insight_based_poc/README.md
+      - Video: docs/videos/poc_v2_video.mp4
   - More:
       - contrib/ec-metric-gen/README.md
       - contrib/ec-metric-gen/doc/metrics.md
@@ -34,6 +32,8 @@ nav:
 plugins:
   - same-dir
   - search
+  - render_swagger:
+      allow_arbitrary_locations : true
   - mkdocstrings:
       default_handler: python
       handlers:
