@@ -123,8 +123,7 @@ def fetch_instana_metrics_catalog(url, token, plugin):
 
 
 # fetch metrics from Instana API
-def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids, start_time, end_time,
-                                         granularity=1):
+def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids, start_time, end_time, rollup):
     # Instana API endpoint for fetching metrics
     instana_api_url = f"{url}/api/infrastructure-monitoring/metrics"
 
@@ -145,7 +144,7 @@ def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_i
         "metrics": metric_ids,
         "snapshotIds": snapshots,
         "plugin": plugin,
-        'rollup': granularity,
+        'rollup': rollup,
         "timeFrame": {"to": params["end"],
                       "windowSize": params["end"] - params["start"]}
     }
@@ -162,7 +161,7 @@ def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_i
         return None
 
 
-def fetch_instana_metrics(url, token, start_time, end_time, snapshots_query, plugins_filter, granularity=1, limit=1000):
+def fetch_instana_metrics(url, token, start_time, end_time, rollup, snapshots_query, plugins_filter, limit=1000):
     time_series_metrics = []
     metrics_count = 0
     plugins = fetch_instana_plugins_catalog(url, token, plugins_filter)
@@ -203,8 +202,7 @@ def fetch_instana_metrics(url, token, start_time, end_time, snapshots_query, plu
                              f"metrics: [{j}.. /{len(metric_ids)}]")
                 time_series_metrics_subset = fetch_instana_infrastructure_metrics(url, token, plugin,
                                                                                   snapshots_subset, metric_ids_subset,
-                                                                                  start_time, end_time,
-                                                                                  granularity)
+                                                                                  start_time, end_time, rollup)
                 if time_series_metrics_subset is None:
                     continue
                 if not snapshots:
@@ -235,6 +233,8 @@ def main():
                         help="Start time in YYYY-MM-DDTHH:MM:SS format (default: last 10 minutes)")
     parser.add_argument("--end", type=str, default=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                         help="End time in YYYY-MM-DDTHH:MM:SS format (default: current time)")
+    parser.add_argument("--rollup", type=int, default=1,
+                        help="Rollup interval in seconds (default: 1 sec)")
     parser.add_argument("--query", type=str, default="",
                         help="Query to filter snapshots by (default: Empty)")
     parser.add_argument("--plugins_filter", type=str, default="",
@@ -263,9 +263,9 @@ def main():
                                             token=args.token,
                                             start_time=start_time,
                                             end_time=end_time,
+                                            rollup=args.rollup,
                                             snapshots_query=args.query,
                                             plugins_filter=args.plugins_filter,
-                                            granularity=1,
                                             limit=args.limit)
     if instana_metrics:
         # Persist metrics to a file
