@@ -51,6 +51,7 @@ def convert_to_promql_format(src_json_file, dst_promql_file):
                         {time_series_milisec_timetamps}
                 }},''')
             # Write the Footer
+            dst_file.flush()
             file_size = os.path.getsize(dst_promql_file)
             dst_file.seek(file_size-1)
             dst_file.write('''

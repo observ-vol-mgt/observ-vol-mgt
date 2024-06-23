@@ -16,7 +16,7 @@ parameters:
     filter_metadata: "cpu"
     #filter_metadata: ".+__2315'|.+__2270'"
     ingest_name_template: "$plugin|$__name__(job,$label,$instance,snapshot)__$count"
-    file_name: ../contrib/fetch-offline-data/instana/demo-eu/instana_metrics_1000_metrics.promql.json
+    file_name: ../contrib/fetch-offline-data/instana/demo-eu/instana_metrics_rollup_600_23_6_2024.promql.json
 - name: feature_extraction_tsfel
   type: map_reduce
   input_data: [signals]
@@ -42,7 +42,7 @@ parameters:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
   config:
-    close_to_zero_threshold: 0.1
+    close_to_zero_threshold: 0.02
     pairwise_similarity_threshold: 0.01
     pairwise_similarity_method: distance
     pairwise_similarity_distance_method: euclidean
