@@ -14,35 +14,26 @@
 
 import copy
 import logging
+import os
 import threading
 
 import common.configuration_api as api
 from common.conf import get_configuration
-<<<<<<< HEAD
-=======
 from multiprocessing import Pool
 
 from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
 from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
 
->>>>>>> 018435e (multi-process map-reduce)
 from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
 from map_reduce.map import _map
 from map_reduce.reduce import reduce
-<<<<<<< HEAD
 from metadata_classification.metadata_classification import metadata_classification
 from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
 from workflow_orchestration.stage import StageParameters, PipelineDefinition
-=======
 
-import logging
-import copy
-import threading
-import os
->>>>>>> 018435e (multi-process map-reduce)
 
 logger = logging.getLogger(__name__)
 
@@ -251,7 +242,7 @@ class Pipeline:
         if self.pool != None:
             logger.info(f"************************ running map/reduce using pool of processes ")
             output_data = self.pool.map(run_stage_for_pool, run_stage_args)
-            logger.debug("output_data = ", output_data)
+            logger.debug(f"output_data = {output_data}")
             stage.set_latest_output_data(output_data)
             logger.info(f"************************ exiting run_map_reduce_compute: stage = {stage.base_stage.name}")
             return output_data
@@ -286,7 +277,7 @@ def run_stage_for_pool(args):
         output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
     elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
         output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
-    elif stage.base_stage.type == api.StageType.METADATA_EXTRACTION.value:
+    elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
         output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.INSIGHTS.value:
         output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
