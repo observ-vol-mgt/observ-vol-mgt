@@ -14,16 +14,22 @@
 
 import re
 from common.signal import Signals
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def _map(config, signals):
+def _map(config, input_data):
+    logger.debug(f"map config = {config}")
+    signals = input_data.signals
     clustered_signals = []
     clustered_signals_dict = {}
     name_pattern = config.name_pattern
 
+    logger.debug(f"**************************** number of signals to map = {len(signals)}")
+
     if name_pattern == "" or name_pattern is None:
         return [signals]
-
     for signal in signals:
         match = re.search(name_pattern, signal.metadata["__name__"])
         if match:
@@ -31,9 +37,14 @@ def _map(config, signals):
                 clustered_signals_dict[match.group()] = []
             clustered_signals_dict[match.group()].append(signal)
 
-    clustered_signals = list(clustered_signals_dict.values())
-    clustered_signals_list = []
-    for clustered_signals_group in clustered_signals:
-        clustered_signals_list.append(Signals(signals.metadata, clustered_signals_group))
+    logger.debug(f"**************************** number of  groups = {len(clustered_signals_dict)}")
 
-    return clustered_signals_list
+    for signal_group in clustered_signals_dict:
+        logger.debug(f"**************************** signal_group = {signal_group}")
+        list1 = clustered_signals_dict[signal_group]
+        logger.debug(f"**************************** number of signals in group = {len(list1)}")
+        new_signals = Signals(input_data.metadata, list1)
+        clustered_signals.append(new_signals)
+
+    logger.debug(f"**************************** len of  clustered_signals = {len(clustered_signals)}")
+    return clustered_signals
