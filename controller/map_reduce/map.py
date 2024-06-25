@@ -41,6 +41,6 @@ def _map(subtype, config, input_data):
         output_lists = _map(typed_config, signals)
     else:
         raise "unsupported map configuration"
-    logger.debug(f"**************************** after map")
+    logger.debug(f"**************************** after map, subtype = {subtype}")
     logger.debug(f"**************************** len(output_lists) = {len(output_lists)}")
     return output_lists

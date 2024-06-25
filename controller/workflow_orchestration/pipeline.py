@@ -14,15 +14,10 @@
 
 import copy
 import logging
-import os
-import threading
 
 import common.configuration_api as api
 from common.conf import get_configuration
 from multiprocessing import Pool
-
-from workflow_orchestration.stage import StageParameters, BaseStageParameters, PipelineDefinition
-from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
 
 from config_generator.config_generator import config_generator
 from feature_extraction.feature_extraction import feature_extraction
@@ -39,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 # TODO: refactor to get rid of this global variable
 process_pool = None
+
 
 class Pipeline:
     def __init__(self):
@@ -57,7 +53,7 @@ class Pipeline:
 
     def __del__(self):
         global process_pool
-        if process_pool != None:
+        if process_pool is not None:
             process_pool.close()
         process_pool = None
 
@@ -195,6 +191,7 @@ class Pipeline:
             args = [current_stage, input_data]
             self.run_stage_wrapper(args)
 
+
 def map_reduce(config, input_data):
     # verify config parameters structure
     logger.debug("running map_reduce")
@@ -214,6 +211,7 @@ def map_reduce(config, input_data):
     logger.debug("after reduce")
     return output_data
 
+
 def run_map_reduce_compute(stage, input_data):
     # make k copies of stage, where k is the number of input lists
     # provide each copy of stage with a single list
@@ -224,7 +222,6 @@ def run_map_reduce_compute(stage, input_data):
     logger.debug(f"************************ run_map_reduce_compute: stage = {stage}")
     logger.info(f"Executing map-reduce on stage = {stage} . Mapping into {number_of_copies} stages")
     sub_stages = []
-    threads_list = []
     run_stage_args = []
     for index in range(number_of_copies):
         logger.debug(f"stage name = {stage.base_stage.name}")
@@ -236,8 +233,8 @@ def run_map_reduce_compute(stage, input_data):
         args = [stage_copy, new_input_data]
         run_stage_args.append(args)
 
-    if process_pool!= None:
-        logger.info(f"************************ running map/reduce using pool of processes ")
+    if process_pool is not None:
+        logger.info("************************ running map/reduce using pool of processes ")
         output_data = process_pool.map(run_stage, run_stage_args)
         logger.debug(f"output_data = {output_data}")
         stage.set_latest_output_data(output_data)
@@ -246,7 +243,7 @@ def run_map_reduce_compute(stage, input_data):
 
     # continue here if not using workers processes
     # should use threads, but they don't run in parallel because of Global Lock
-    logger.debug(f"************************ running without worker processes ")
+    logger.debug("************************ running without worker processes ")
     for index in range(number_of_copies):
         run_stage(run_stage_args[index])
 
@@ -258,6 +255,7 @@ def run_map_reduce_compute(stage, input_data):
     stage.set_latest_output_data(output_data)
     logger.info("Done. (Executing map-reduce)")
     return output_data
+
 
 def run_stage(args):
     stage = args[0]
@@ -281,4 +279,3 @@ def run_stage(args):
     stage.set_latest_output_data(output_data)
     logger.info(f"finished stage: {stage.base_stage.name}")
     return output_data
-

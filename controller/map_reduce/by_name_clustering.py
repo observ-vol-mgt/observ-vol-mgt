@@ -18,6 +18,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def _map(config, input_data):
     logger.debug(f"map config = {config}")
     signals = input_data.signals

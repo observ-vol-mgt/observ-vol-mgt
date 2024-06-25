@@ -15,6 +15,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
+
 # TODO: Move these items to configuration_api so they get included in the documentation
 class BaseStageSchedule(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -30,6 +31,7 @@ class BaseStageParameters(BaseModel):
     input_data: Optional[List[str]] = []
     output_data: Optional[List[str]] = []
     config: Optional[dict] = {}
+
 
 class GlobalSettings(BaseModel):
     model_config = ConfigDict(extra='forbid')
