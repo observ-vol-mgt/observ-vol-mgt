@@ -15,7 +15,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
-
+# TODO: Move these items to configuration_api so they get included in the documentation
 class BaseStageSchedule(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str

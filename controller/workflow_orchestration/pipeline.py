@@ -37,6 +37,7 @@ from workflow_orchestration.stage import StageParameters, PipelineDefinition, Gl
 
 logger = logging.getLogger(__name__)
 
+# TODO: refactor to get rid of this global variable
 process_pool = None
 
 class Pipeline:
@@ -173,7 +174,6 @@ class Pipeline:
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
-        logger.info(f"finished stage: {stage.base_stage.name}")
         return output_data
 
     def run_iteration(self):
@@ -244,28 +244,16 @@ def run_map_reduce_compute(stage, input_data):
         logger.info(f"************************ exiting run_map_reduce_compute: stage = {stage.base_stage.name}")
         return output_data
 
-    # continue here using threads in case we do not have a pool of processes
-    logger.debug(f"************************ running using threads ")
+    # continue here if not using workers processes
+    # should use threads, but they don't run in parallel because of Global Lock
+    logger.debug(f"************************ running without worker processes ")
     for index in range(number_of_copies):
-        new_thread = threading.Thread(target=run_stage, args=[run_stage_args[index]])
-        threads_list.append(new_thread)
-        new_thread.start()
-
-    # wait for the threads to complete
-    for index in range(number_of_copies):
-        logger.info(f"************************ waiting for thread {index}")
-        threads_list[index].join()
-
-    logger.info("************************ finished waiting for threads")
+        run_stage(run_stage_args[index])
 
     # collect the output data
     output_data = []
     for index in range(number_of_copies):
-        thread_output_data = sub_stages[index].latest_output_data
-        logger.debug(f"index = {index}, output_data = {thread_output_data}")
-        if thread_output_data == None:
-            thread_output_data = []
-        output_data.append(thread_output_data)
+        output_data.append(sub_stages[index].latest_output_data)
 
     stage.set_latest_output_data(output_data)
     logger.info("Done. (Executing map-reduce)")
@@ -291,5 +279,6 @@ def run_stage(args):
     else:
         raise Exception(f"stage type not implemented: {stage.base_stage.type}")
     stage.set_latest_output_data(output_data)
+    logger.info(f"finished stage: {stage.base_stage.name}")
     return output_data
 
