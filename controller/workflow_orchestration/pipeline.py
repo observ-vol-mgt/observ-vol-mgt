@@ -32,7 +32,7 @@ from map_reduce.map import _map
 from map_reduce.reduce import reduce
 from metadata_classification.metadata_classification import metadata_classification
 from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
-from workflow_orchestration.stage import StageParameters, PipelineDefinition
+from workflow_orchestration.stage import StageParameters, PipelineDefinition, GlobalSettings
 
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,6 @@ class Pipeline:
         configuration = get_configuration()
         pipeline = configuration['pipeline']
         stages_parameters = configuration['parameters']
-        global_settings = configuration['global_settings']
         map_reduce_stage_exists = False
 
         # verify that configuration is valid
@@ -132,8 +131,10 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
+        global_settings = GlobalSettings(**pipeline_def.global_settings)
+
         # allocate process pool for map_reduce
-        number_of_workers = pipeline_def.global_settings.number_of_workers
+        number_of_workers = global_settings.number_of_workers
         logger.info(f"number_of_workers =  {number_of_workers}")
         if map_reduce_stage_exists and number_of_workers > 0:
             self.pool = Pool(processes=number_of_workers)
@@ -149,8 +150,11 @@ class Pipeline:
         self.stage_execution_order.append(current_stage)
         current_stage.set_scheduled()
 
-    def run_stage(self, stage, input_data):
+    def run_stage(self, args):
+        stage = args[0]
+        input_data = args[1]
         logger.info(f"running stage: {stage.base_stage.name}, len(input_data) = {len(input_data)}")
+        logger.debug(f"stage = {stage}, input = {input_data}")
         if stage.base_stage.type == api.StageType.INGEST.value:
             output_data = ingest(stage.base_stage.subtype,
                                  stage.base_stage.config)
@@ -196,7 +200,9 @@ class Pipeline:
                             output_field)
                         break
                 input_data.append(previous_stage.latest_output_data[index])
-            self.run_stage(current_stage, input_data)
+
+            args = [current_stage, input_data]
+            self.run_stage(args)
 
     def map_reduce(self, config, input_data):
         # verify config parameters structure
@@ -208,9 +214,9 @@ class Pipeline:
         logger.debug("after map")
         dummy_stage = create_dummy_compute_stage(params.compute_function)
         logger.debug(f"dummy stage: {dummy_stage}")
-        logger.info("**************** before run_map_reduce_compute")
+        logger.debug("**************** before run_map_reduce_compute")
         output_lists = self.run_map_reduce_compute(dummy_stage, input_lists)
-        logger.info("**************** after run_map_reduce_compute")
+        logger.debug("**************** after run_map_reduce_compute")
         logger.debug("before reduce")
         output_data = reduce(params.reduce_function.subtype,
                              params.reduce_function.config, output_lists)
@@ -224,7 +230,7 @@ class Pipeline:
         # we run each copy of stage in a separate thread.
         # if we have a pool of processes, we run each copy of stage on the pool of processes
         number_of_copies = len(input_data)
-        logger.info(f"************************ run_map_reduce_compute: stage = {stage}")
+        logger.debug(f"************************ run_map_reduce_compute: stage = {stage}")
         logger.info(f"Executing map-reduce on stage = {stage} . Mapping into {number_of_copies} stages")
         sub_stages = []
         threads_list = []
@@ -236,7 +242,7 @@ class Pipeline:
             logger.info(f"=== #{index} ===> executing parallel stage {stage_copy.base_stage.name}")
             sub_stages.append(stage_copy)
             new_input_data = [input_data[index]]
-            args = (stage_copy, new_input_data)
+            args = [stage_copy, new_input_data]
             run_stage_args.append(args)
 
         if self.pool != None:
@@ -250,7 +256,7 @@ class Pipeline:
         # continue here using threads in case we do not have a pool of processes
         logger.debug(f"************************ running using threads ")
         for index in range(number_of_copies):
-            new_thread = threading.Thread(target=self.run_stage, args=run_stage_args[index])
+            new_thread = threading.Thread(target=self.run_stage, args=[run_stage_args[index]])
             threads_list.append(new_thread)
             new_thread.start()
 
@@ -264,7 +270,11 @@ class Pipeline:
         # collect the output data
         output_data = []
         for index in range(number_of_copies):
-            output_data.append(sub_stages[index].latest_output_data[0])
+            thread_output_data = sub_stages[index].latest_output_data
+            logger.debug(f"index = {index}, output_data = {thread_output_data}")
+            if thread_output_data == None:
+                thread_output_data = []
+            output_data.append(thread_output_data)
 
         stage.set_latest_output_data(output_data)
         logger.info("Done. (Executing map-reduce)")

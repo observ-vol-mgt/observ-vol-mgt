@@ -37,7 +37,7 @@ class GlobalSettings(BaseModel):
 
 
 class PipelineDefinition(BaseModel):
-    global_settings: GlobalSettings
+    global_settings: Optional[dict] = {}
     pipeline: List[BaseStageSchedule]
     parameters: List[BaseStageParameters]
 
