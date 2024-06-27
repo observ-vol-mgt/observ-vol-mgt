@@ -1,6 +1,6 @@
 ##@ CI
 .PHONY: ci_push
-ci_push: ci_pull_request ## Executed upon ci push (merge) event
+ci_push: ## Executed upon ci push (merge) event
 	@echo "|||====> Executing make docker_build"
 	make docker_build
 	@echo "|||====> docker_build Done."
