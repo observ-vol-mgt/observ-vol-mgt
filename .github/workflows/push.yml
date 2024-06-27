@@ -26,6 +26,12 @@ jobs:
         registry: quay.io
         username: ${{ env.QUAY_ROBOT_USER }}
         password: ${{ secrets.QUAY_SECRET }}
+    - uses: Stockopedia/action-get-changed-files@v1
+      id: get_changed
+      with:
+        foldersOnly: true # to only include folders in the output
+    - name: Echo
+      run: echo ${{ steps.get_changed.outputs.changed }}
     - name: run controller tests
       run: |
           cd controller
