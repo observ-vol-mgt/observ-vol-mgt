@@ -30,3 +30,15 @@ jobs:
       run: |
           cd controller
           make ci_push
+    - name: push manager configurator image
+      run: |
+          cd manager/configurator
+          make ci_push
+    - name: push manager alermanager image
+      run: |
+          cd manager/alertmanager
+          make ci_push
+    - name: push processor image
+      run: |
+          cd processor
+          make ci_push
