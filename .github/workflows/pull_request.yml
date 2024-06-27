@@ -17,7 +17,14 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: controller_changes
+      with:
+        filters: |
+          src:
+            - 'controller/**'
     - name: run controller tests
+      if: steps.controller_changes.outputs.src == 'true'
       run: |
           cd controller
           make ci_pull_request

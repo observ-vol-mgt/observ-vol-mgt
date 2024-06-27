@@ -26,25 +26,47 @@ jobs:
         registry: quay.io
         username: ${{ env.QUAY_ROBOT_USER }}
         password: ${{ secrets.QUAY_SECRET }}
-    - uses: Stockopedia/action-get-changed-files@v1
-      id: get_changed
+    - uses: dorny/paths-filter@v3
+      id: controller_changes
       with:
-        foldersOnly: true # to only include folders in the output
-    - name: Echo
-      run: echo ${{ steps.get_changed.outputs.changed }}
+        filters: |
+          src:
+            - 'controller/**'
     - name: run controller tests
+      if: steps.controller_changes.outputs.src == 'true'
       run: |
           cd controller
           make ci_push
+    - uses: dorny/paths-filter@v3
+      id: manager_configurator_changes
+      with:
+        filters: |
+          src:
+            - 'manager/configurator/**'
     - name: push manager configurator image
+      if: steps.manager_configurator_changes.outputs.src == 'true'
       run: |
           cd manager/configurator
           make ci_push
+    - uses: dorny/paths-filter@v3
+      id: manager_alertmanager_changes
+      with:
+        filters: |
+          src:
+            - 'manager/alertmanager/**'
     - name: push manager alermanager image
+      if: steps.manager_alertmanager_changes.outputs.src == 'true'
       run: |
           cd manager/alertmanager
           make ci_push
+    - uses: dorny/paths-filter@v3
+      id: processor_changes
+      with:
+        filters: |
+          src:
+            - 'processor/**'
     - name: push processor image
+      if: steps.processor_changes.outputs.src == 'true'
       run: |
           cd processor
           make ci_push
