@@ -1,6 +1,6 @@
 # Description of Architecture
 
-There are 3 main components which make up the processor.
+There are 3 main components which make up the processor. 
 1. [`transformer`](./pkg/transformer)
 2. [`morpher`](./pkg/morpher)
 3. [`dbinterface`](./pkg/dbinterface)
