@@ -25,12 +25,12 @@ show_docs: install_requirements ## Serve the project documentation
 	mkdocs serve
 
 ##@ Docker
-build_docker_images: build_controller_docker_image ## Build docker images
-push_docker_images: push_controller_docker_image ## Push docker images
+build_docker_images: build_controller_docker_image build_manager_docker_image build_processor_docker_image ## Build docker images
+push_docker_images: push_controller_docker_image push_manager_docker_image push_processor_docker_image ## Push docker images
 
 
 build_controller_docker_image:
-	echo "building docker images"
+	echo "building controller docker images"
 	cd controller; \
 	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
 	DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
@@ -38,9 +38,45 @@ build_controller_docker_image:
 	make docker_build
 
 push_controller_docker_image:
-	echo "building docker images"
+	echo "pushing controller docker images"
 	cd controller; \
 	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
 	DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
 	DOCKER_TAG=${DOCKER_TAG}; \
 	make docker_push
+
+build_manager_docker_image:
+	echo "building the manager docker images"
+	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+        DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+        DOCKER_TAG=${DOCKER_TAG}; \
+	cd manager/configurator; \
+        make docker_build; \
+	cd ../alertmanager; \
+	make docker_build
+
+push_manager_docker_image:
+	echo "pushing the manager docker images"
+	DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+        DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+        DOCKER_TAG=${DOCKER_TAG}; \
+	cd manager/configurator; \
+        make docker_push; \
+	cd ../alertmanager; \
+	make docker_push
+
+build_processor_docker_image:
+	echo "building the processor docker image"
+	cd processor; \
+        DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+        DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+        DOCKER_TAG=${DOCKER_TAG}; \
+        make docker_build
+
+push_processor_docker_image:
+	echo "building the processor docker image"
+	cd processor; \
+        DOCKER_IMAGE_ORG=${DOCKER_IMAGE_BASE}; \
+        DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
+        DOCKER_TAG=${DOCKER_TAG}; \
+        make docker_push
