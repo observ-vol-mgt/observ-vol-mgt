@@ -17,6 +17,14 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
+    - uses: Stockopedia/action-get-changed-files@v1
+      id: get_changed
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        foldersOnly: true # to only include folders in the output
+        format: json
+    - name: Echo
+      run: echo ${{ steps.get_changed.outputs.changed }}
     - name: run controller tests
       run: |
           cd controller
