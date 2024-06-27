@@ -12,15 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import pytest
 import yaml
-from common.conf import set_configuration, set_configuration
+from common.conf import set_configuration
 from workflow_orchestration.pipeline import Pipeline
+
 
 def build_config(yaml_string):
     configuration = yaml.load(yaml_string, Loader=yaml.FullLoader)
     set_configuration(configuration)
+
 
 config1 = """
 pipeline:
@@ -60,14 +60,15 @@ parameters:
     file_name: dummy_file.txt
 """
 
+
 def test_build_pipeline():
     build_config(config1)
     p = Pipeline()
     p.build_pipeline()
 
-
     assert p.stage_execution_order[0].base_stage.name == "stage1"
     assert p.stage_execution_order[2].base_stage.name == "stage3"
+
 
 config_multiple_initial = """
 pipeline:
@@ -97,6 +98,7 @@ parameters:
     file_name: dummy_file.txt
 """
 
+
 def test_multiple_initial():
     build_config(config_multiple_initial)
 
@@ -104,8 +106,9 @@ def test_multiple_initial():
         p = Pipeline()
         p.build_pipeline()
         assert False
-    except:
+    except Exception:
         assert True
+
 
 config_follows_missing = """
 pipeline:
@@ -134,14 +137,16 @@ parameters:
     file_name: dummy_file.txt
 """
 
+
 def test_follows_missing():
     build_config(config_follows_missing)
     try:
         p = Pipeline()
         p.build_pipeline()
         assert False
-    except:
+    except Exception:
         assert True
+
 
 config_missing_params = """
 pipeline:
@@ -158,14 +163,16 @@ parameters:
     file_name: dummy_file.txt
 """
 
+
 def test_missing_params():
     build_config(config_missing_params)
     try:
         p = Pipeline()
         p.build_pipeline()
         assert False
-    except:
+    except Exception:
         assert True
+
 
 config_duplicate_stage = """
 pipeline:
@@ -202,6 +209,7 @@ parameters:
     file_name: dummy_file.txt
 """
 
+
 def test_duplicate_stage():
     build_config(config_multiple_initial)
 
@@ -209,5 +217,5 @@ def test_duplicate_stage():
         p = Pipeline()
         p.build_pipeline()
         assert False
-    except:
+    except Exception:
         assert True

@@ -14,7 +14,8 @@
 
 from common.signal import Signals
 
-def map(config, input_data):
+
+def _map(config, input_data):
     number_of_lists = config.number
     if number_of_lists <= 0:
         raise "illegal number of output lists for split"
@@ -25,7 +26,7 @@ def map(config, input_data):
     for index in range(number_of_lists-1):
         start = index * list_size
         end = (index+1) * list_size
-        list1 = [signals[j] for j in range(start,end)]
+        list1 = [signals[j] for j in range(start, end)]
         new_signals = Signals(input_data.metadata, list1)
         list_of_outputs.append(new_signals)
     start = (number_of_lists-1) * list_size

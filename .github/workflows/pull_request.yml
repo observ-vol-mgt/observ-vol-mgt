@@ -1,14 +1,12 @@
-name: pull request - build and tests
+name: pull request - build and test
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build-and-tests:
-    name: build-and-tests
+  build-test:
+    name: build-test
     runs-on: ubuntu-latest
     steps:
     - name: Set up Python 3.10

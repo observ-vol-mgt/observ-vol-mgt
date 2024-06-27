@@ -19,7 +19,9 @@ install_requirements:
 ##@ Docker
 docker_build: ## build to container
 	echo "building docker images"
+	echo "building the *builder* image"
 	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target builder-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:builder .
+	echo "building the *execute* image"
 	DOCKER_BUILDKIT=1 docker build --build-arg EXECUTE_TESTS=false --progress=plain --target execute-stage --cache-from ${DOCKER_IMAGE_BASE}controller:builder -t ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} .
 
 docker_push: ## push to docker registry
@@ -29,40 +31,12 @@ docker_push: ## push to docker registry
 
 .PHONY: docker_run_tests
 docker_run_tests: ## Execute tests using docker
-	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --target tests-stage
+	DOCKER_BUILDKIT=1 docker pull quay.io/observ-vol-mgt/controller:builder
+	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --cache-from ${DOCKER_IMAGE_BASE}controller:builder --target tests-stage
 
 .PHONY: docker_run_dev
 docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
 	docker run --name controller ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} 
 
-##@ Development
-.PHONY: tests
-tests: install_requirements ## Execute tests
-	export PYTHONPATH=$PYTHONPATH:$(pwd) && pytest .
-
-lint: install_requirements ## Lint the code
-	pylint $(shell find . -name '*.py')
-
-.PHONY: run_dev
-run_dev: install_requirements  ## Execute the pipeline synchronously on synthetic data
-	python main.py -c config.yaml
-
-.PHONY: run_dev_map_reduce
-run_dev_map_reduce: install_requirements  ## Execute the pipeline synchronously on synthetic data
-	python main.py -c ../contrib/map_reduce_examples/by_name.yaml
-
-feature_extraction_tsfel: install_requirements ## Execute the feature extraction using tsfel
-	python feature_extraction/feature_extraction_tsfel.py
-	
-feature_extraction_tsfresh: install_requirements ## Execute the feature extraction using tsfresh
-	python feature_extraction/feature_extraction_tsfresh.py
-
-show_docs: install_requirements ## Serve the project documentation
-	mkdocs serve
-
-##@ CI
-
-.PHONY: ci_pull_request
-ci_pull_request: docker_run_tests ## Executed upon ci pull_request event
-
-
+include .mk/development.mk
+include .mk/ci.mk

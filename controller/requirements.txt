@@ -14,9 +14,11 @@ pytest==8.2.2
 PyYAML==6.0.1
 Requests==2.32.3
 requests_mock==1.12.1
-sentence_transformers==3.0.1
-setfit==1.0.3
+sentence_transformers==2.4.0
+setfit==1.0.2
 statsmodels==0.14.2
-transformers==4.41.2
+transformers==4.38.0
 tsfel==0.1.7
 pytest-mock==3.14.0
+flake8==7.0.0
+scipy==1.13.1

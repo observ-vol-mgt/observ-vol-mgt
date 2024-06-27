@@ -11,5 +11,10 @@
 # poc data files
 /contrib/end2end/poc/prometheus_data1/
 /contrib/end2end/poc/prometheus_data2/
-# ignore controller temp plot data
+# ignore controller temp data
 /controller/ux/static/plot.png
+/controller/metadata_classification/data/few_shot_pretrained_model/
+# ignore static site
+site/
+# ignore offline data
+/contrib/fetch-offline-data/instana/demo-eu/

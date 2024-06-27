@@ -14,7 +14,7 @@
 import json
 import logging
 from transformers import pipeline
-from common.signal import Signal, Signals
+from common.signal import Signals
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +38,9 @@ def metadata_classification(config, signals):
     labels = [item[1] for item in data]
 
     # Perform zero-shot classification
-    logger.debug(f"Classifier is starting to work on the corpus of data")
+    logger.debug("Classifier is starting to work on the corpus of data")
     results = classifier(sentences, labels)
-    logger.debug(f"Classifier is done.")
+    logger.debug("Classifier is done.")
 
     # Print results for existing sentences
     for sentence, result in zip(sentences, results):
@@ -48,12 +48,13 @@ def metadata_classification(config, signals):
         logger.debug(f"True Label: {data[sentences.index(sentence)][1]}")
         logger.debug(f"Predicted Label: {result['labels'][0]}")
         logger.debug(f"Score: {result['scores'][0]}")
-        logger.debug(f"\n")
+        logger.debug("\n")
 
     # metadata classification for signals
     for signal in signals:
         # extract features from the signal
-        classification_result = metadata_classification_signal(classifier, labels, signal)
+        classification_result = metadata_classification_signal(
+            classifier, labels, signal)
         classified_signal = signal
         classified_signal.metadata['classification'] = classification_result['labels'][0]
         classified_signal.metadata['classification_score'] = classification_result['scores'][0]

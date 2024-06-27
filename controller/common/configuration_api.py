@@ -50,11 +50,15 @@ class StageType(Enum):
     Each `named stage configuration` includes one of the following `type` (string) options:
     """
     INGEST = "ingest"  # `ingest`: ingest data from various sources into the controller
-    FEATURES_EXTRACTION = "extract"  # `extract`: performs feature extraction on the signals
+    # `extract`: performs feature extraction on the signals
+    FEATURES_EXTRACTION = "extract"
     INSIGHTS = "insights"  # `insights`: generates insights (analytics)
-    CONFIG_GENERATOR = "config_generator"  # `config_generator`: Generates and apply processor configurations
-    METADATA_CLASSIFICATION = "metadata_classification"  # `metadata_classification`: Metadata classification
-    MAP_REDUCE = "map_reduce"  # `map_reduce`: apply map reduce operations (for stages scalability)
+    # `config_generator`: Generates and apply processor configurations
+    CONFIG_GENERATOR = "config_generator"
+    # `metadata_classification`: Metadata classification
+    METADATA_CLASSIFICATION = "metadata_classification"
+    # `map_reduce`: apply map reduce operations (for stages scalability)
+    MAP_REDUCE = "map_reduce"
 
 
 class MetadataClassificationSubType(Enum):
@@ -70,7 +74,8 @@ class MetadataClassificationFewShot(BaseModel):
     Configuration for few-shot metadata classification.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    base_model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"  # Pre-trained model to use
+    # Pre-trained model to use
+    base_model: Optional[str] = "sentence-transformers/paraphrase-mpnet-base-v2"
     few_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
     )  # File containing few-shot classification external data
@@ -104,7 +109,6 @@ class ExtractSubType(Enum):
     Enumerates different subtypes for metadata extraction.
     """
     PIPELINE_EXTRACT_TSFEL = "tsfel"
-    PIPELINE_EXTRACT_TSFRESH = "tsfresh"
 
 
 class ConfigGeneratorSubType(Enum):
@@ -123,6 +127,7 @@ class GenerateInsightsType(Enum):
     INSIGHTS_SIMILARITY_METHOD_PEARSON = "pearson"
     INSIGHTS_SIMILARITY_METHOD_SPEARMAN = "spearman"
     INSIGHTS_SIMILARITY_METHOD_KENDALL = "kendall"
+    INSIGHTS_SIMILARITY_METHOD_DISTANCE = "distance"
 
 
 class MapSubType(Enum):
@@ -182,22 +187,21 @@ class FeatureExtractionTsfel(BaseModel):
     sampling_frequency: Optional[float] = (1/30)  # Sampling frequency
 
 
-class FeatureExtractionTsfresh(BaseModel):
-    """
-    Configuration for feature extraction using TSFRESH.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-
-
 class GenerateInsights(BaseModel):
     """
     Configuration for generating insights.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
+    # Threshold for close to zero analysis
+    close_to_zero_threshold: Optional[float] = 0
+    # Threshold for pairwise similarity
+    pairwise_similarity_threshold: Optional[float] = 0.95
     pairwise_similarity_method: Optional[str] = (
         GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value)  # Method for pairwise similarity
-    compound_similarity_threshold: Optional[float] = 0.99  # Threshold for compound similarity
+    # The distance algorithm to use (scipy.spacial.distance) when using distance method
+    pairwise_similarity_distance_method: Optional[str] = ""
+    # Threshold for compound similarity
+    compound_similarity_threshold: Optional[float] = 0.99
 
 
 class ConfigGeneratorOtel(BaseModel):
@@ -215,7 +219,8 @@ class ConfigGeneratorProcessor(BaseModel):
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     processor_id_template: Optional[str] = ""  # Template for processor ID
     signal_name_template: Optional[str] = ""  # Template for signal name
-    signal_condition_template: Optional[str] = ""  # Template for signal condition
+    # Template for signal condition
+    signal_condition_template: Optional[str] = ""
     signal_filter_template: Optional[str] = ""  # Template for signal filter
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from

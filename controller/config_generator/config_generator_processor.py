@@ -33,11 +33,13 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
     # if signal filtering template is set, filter signals
     if signal_filter_template != "":
-        signals_to_reduce = [signal_name for signal_name in signals_to_reduce if re.search(signal_filter_template, signal_name)]
+        signals_to_reduce = [signal_name for signal_name in signals_to_reduce if re.search(
+            signal_filter_template, signal_name)]
 
-    logger.debug(f"generating processor configuration using: ")
+    logger.debug("generating processor configuration using: ")
     env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('config_generator/templates/processor_filter_processor_template.yaml')
+    template = env.get_template(
+        'config_generator/templates/processor_filter_processor_template.yaml')
     context_per_processor = {}
 
     # building context per each of the processors with signals to drop (for the jinja template)
@@ -47,7 +49,8 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
                           "name": Template(signal_name_template).safe_substitute(signal.metadata),
                           "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
                           }
-        processor_id = Template(processor_id_template).safe_substitute(signal.metadata)
+        processor_id = Template(
+            processor_id_template).safe_substitute(signal.metadata)
 
         if processor_id not in context_per_processor:
             context_per_processor[processor_id] = {"signals_to_drop": []}
@@ -60,7 +63,8 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
                 found = True
                 break
         if not found:
-            context_per_processor[processor_id]['signals_to_drop'].append(signal_to_drop)
+            context_per_processor[processor_id]['signals_to_drop'].append(
+                signal_to_drop)
 
     # writing and sending configuration to relevant processors based on configuration
     for processor_id, processor_context in context_per_processor.items():
@@ -68,7 +72,8 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
         # Write to file if directory exists in configuration
         if directory:
-            response = write_to_file(directory + f"/{processor_id}", extracted_signals, output)
+            response = write_to_file(
+                directory + f"/{processor_id}", extracted_signals, output)
             logger.debug(f"write_to_file returned: {response}")
 
         # Send to processor URL if url exists in configuration
@@ -83,10 +88,12 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 def send_to_processor(url, processor_configuration, processor_id):
     logger.debug(f"sending processor configuration to processor {processor_id} "
                  f" using: {url}")
-    response = requests.post(f"{url}/api/v1/processor_config/{processor_id}", processor_configuration)
+    response = requests.post(
+        f"{url}/api/v1/processor_config/{processor_id}", processor_configuration)
     logger.debug(f"response from processor: {response}")
     if response.status_code not in [200, 201]:
-        logger.error(f"Error sending configuration to processor: {url} response is: {response}")
+        logger.error(
+            f"Error sending configuration to processor: {url} response is: {response}")
 
     return response.status_code
 

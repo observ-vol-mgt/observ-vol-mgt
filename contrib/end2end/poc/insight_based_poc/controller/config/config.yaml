@@ -1,0 +1,48 @@
+pipeline:
+- name: ingest_promql
+- name: feature_extraction_tsfel
+  follows: [ingest_promql]
+- name: generate_insights
+  follows: [feature_extraction_tsfel]
+- name: config_generator_processor
+  follows: [feature_extraction_tsfel, generate_insights]
+parameters:
+- name: ingest_promql
+  type: ingest
+  subtype: promql
+  input_data: []
+  output_data: [signals]
+  config:
+    url: 'http://thanos_query:19192'
+    ingest_window: '15m'
+    filter_metadata: "app_|cluster_|k8s_|nwdaf"
+    ingest_name_template: "$count|$__name__($app,$cluster,$instance,$processor,$IP)"
+- name: feature_extraction_tsfel
+  type: extract
+  subtype: tsfel
+  input_data: [signals]
+  output_data: [extracted_signals]
+  config:
+    sampling_frequency: 0.0333
+    resample_rate: "5s"
+    features_json_file: "feature_extraction/tsfel_conf/limited_features.json"
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+    pairwise_similarity_threshold: 0.98
+    pairwise_similarity_method: pearson
+- name: config_generator_processor
+  type: config_generator
+  subtype: processor
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+  config:
+    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization"
+    signal_name_template: "$original_name"
+    signal_condition_template: "cluster=$cluster and instance=$instance"
+    processor_id_template: "$processor"
+    directory: /tmp
+    url: http://manager:5010

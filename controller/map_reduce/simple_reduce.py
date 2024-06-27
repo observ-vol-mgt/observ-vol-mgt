@@ -14,12 +14,13 @@
 
 from common.signal import Signals
 
+
 def reduce(config, input_data):
     output_list = []
     for item in input_data:
-        sublist = item.signals
+        sublist = item[0].signals
         output_list.extend(sublist)
 
-    new_signals = Signals(input_data[0].metadata, output_list)
+    new_signals = Signals(input_data[0][0].metadata, output_list)
 
     return [new_signals]
