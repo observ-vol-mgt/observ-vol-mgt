@@ -48,7 +48,7 @@ def trigger_analyze():
               properties:
                 message:
                   type: string
-                  description: Error message
+                  description: Error message 
     """
     logger.debug("Analyze request submitted, calling the controller...")
     try:
