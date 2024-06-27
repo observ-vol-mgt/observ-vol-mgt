@@ -18,13 +18,13 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     - uses: dorny/paths-filter@v3
-      id: controller_changes
+      id: changes
       with:
         filters: |
-          src:
+          controller:
             - 'controller/**'
     - name: run controller tests
-      if: steps.controller_changes.outputs.src == 'true'
+      if: steps.changes.outputs.controller == 'true'
       run: |
           cd controller
           make ci_pull_request
