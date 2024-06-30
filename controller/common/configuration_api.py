@@ -59,7 +59,7 @@ class StageType(Enum):
     METADATA_CLASSIFICATION = "metadata_classification"
     # `map_reduce`: apply map reduce operations (for stages scalability)
     MAP_REDUCE = "map_reduce"
-    ENCODE = "encode" # `encode`: encode data
+    ENCODE = "encode"  # `encode`: encode data
 
 
 class MetadataClassificationSubType(Enum):
