@@ -32,6 +32,11 @@ def ingest(subtype, config):
         typed_config = api.IngestFile(**config)
         from ingest.file_ingest import ingest
         signals = ingest(typed_config)
+    elif subtype == api.IngestSubType.PIPELINE_INGEST_SERIALIZED.value:
+        # verify config parameters conform to structure
+        typed_config = api.IngestSerialized(**config)
+        from ingest.pickle_ingest import ingest
+        signals = ingest(typed_config)
     elif subtype == api.IngestSubType.PIPELINE_INGEST_PROMQL.value:
         typed_config = api.IngestPromql(**config)
         from ingest.promql_ingest import ingest

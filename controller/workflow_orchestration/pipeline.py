@@ -20,6 +20,7 @@ from common.conf import get_configuration
 from multiprocessing import Pool
 
 from config_generator.config_generator import config_generator
+from encode.encode import encode
 from feature_extraction.feature_extraction import feature_extraction
 from ingest.ingest import ingest
 from insights.insights import generate_insights
@@ -156,6 +157,8 @@ class Pipeline:
 
         if stage.base_stage.type == api.StageType.INGEST.value:
             self.signals = output_data[0]
+            if stage.base_stage.subtype == api.IngestSubType.PIPELINE_INGEST_SERIALIZED.value:
+                self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
             self.classified_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
@@ -167,6 +170,9 @@ class Pipeline:
             self.r_value = output_data[0]
         elif stage.base_stage.type == api.StageType.MAP_REDUCE.value:
             self.extracted_signals = output_data[0]
+        elif stage.base_stage.type == api.StageType.ENCODE.value:
+            # do nothing
+            pass
         else:
             raise Exception(f"stage type not implemented: {stage.type}")
         stage.set_latest_output_data(output_data)
@@ -274,6 +280,8 @@ def run_stage(args):
         output_data = config_generator(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.MAP_REDUCE.value:
         output_data = map_reduce(stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.ENCODE.value:
+        output_data = encode(stage.base_stage.subtype, stage.base_stage.config, input_data)
     else:
         raise Exception(f"stage type not implemented: {stage.base_stage.type}")
     stage.set_latest_output_data(output_data)
