@@ -1,0 +1,6 @@
+{
+  "cpu": "cpu",
+  "mem": "[Mm]em(ory)?",
+  "gpu": "gpu",
+  "noise": "[Nn]oise"
+}

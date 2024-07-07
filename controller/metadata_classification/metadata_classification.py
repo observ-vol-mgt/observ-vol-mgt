@@ -24,7 +24,13 @@ def metadata_classification(subtype, config, input_data):
     signals_list = input_data[0]
     # switch based on the configuration metadata_classification type
     # verify config parameters conform to structure
-    if subtype == api.MetadataClassificationSubType.PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT.value:
+    if subtype == api.MetadataClassificationSubType.PIPELINE_METADATA_CLASSIFICATION_REGEX.value:
+        regex_config = api.MetadataClassificationRegEx(**config)
+        logger.debug("using regex metadata_classification")
+        from metadata_classification.metadata_classification_regex import metadata_classification
+        classified_signals = metadata_classification(
+            regex_config, signals_list)
+    elif subtype == api.MetadataClassificationSubType.PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT.value:
         zero_shot_config = api.MetadataClassificationZeroShot(**config)
         logger.debug("using zero-shot metadata_classification")
         from metadata_classification.metadata_classification_zero_shot import metadata_classification
