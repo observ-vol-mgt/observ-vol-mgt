@@ -19,7 +19,7 @@ parameters:
     file_name: ./contrib/examples/generate-synthetic-metrics/time_series_data.json
 - name: metadata_classification
   type: metadata_classification
-  subtype: metadata_classification_few_shot
+  subtype: metadata_classification_regex
   input_data: [signals]
   output_data: [classified_signals]
 - name: feature_extraction_tsfel

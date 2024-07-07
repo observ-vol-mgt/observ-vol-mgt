@@ -65,7 +65,11 @@ class MetadataClassificationSubType(Enum):
     """
     Enumerates subtypes for metadata classification.
     """
+    # `metadata_classification_regex`: uses regex to perform metadata classification
+    PIPELINE_METADATA_CLASSIFICATION_REGEX = "metadata_classification_regex"
+    # `metadata_classification_zero_shot`: uses zero-shot (AI) technique to perform metadata classification
     PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT = "metadata_classification_zero_shot"
+    # `metadata_classification_few_shot`: uses few-shot (AI) technique to perform metadata classification
     PIPELINE_METADATA_CLASSIFICATION_FEW_SHOT = "metadata_classification_few_shot"
 
 
@@ -93,6 +97,16 @@ class MetadataClassificationZeroShot(BaseModel):
     zero_shot_classification_file: Optional[str] = (
         "./metadata_classification/data/observability_metrics_classification_zero_shot.json"
     )  # File containing zero-shot classification external data
+
+
+class MetadataClassificationRegEx(BaseModel):
+    """
+    Configuration for regex metadata classification.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    regex_classification_file: Optional[str] = (
+        "./metadata_classification/data/observability_metrics_classification_regex.json"
+    )  # File containing regex classification external data
 
 
 class IngestSubType(Enum):
