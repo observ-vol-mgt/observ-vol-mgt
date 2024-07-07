@@ -41,4 +41,5 @@ def run():
 if __name__ == '__main__':
     run()
     # starting the UX (UI and API)
-    start_ux()
+    if not get_args().noui:
+        start_ux()

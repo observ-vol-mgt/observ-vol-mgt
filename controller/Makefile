@@ -34,6 +34,11 @@ docker_run_tests: ## Execute tests using docker
 	DOCKER_BUILDKIT=1 docker pull quay.io/observ-vol-mgt/controller:builder
 	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_TESTS=true --cache-from ${DOCKER_IMAGE_BASE}controller:builder --target tests-stage
 
+.PHONY: docker_run_end2end_tests
+docker_run_end2end_tests: ## Execute end2end tests using docker
+	DOCKER_BUILDKIT=1 docker pull quay.io/observ-vol-mgt/controller:builder
+	DOCKER_BUILDKIT=1 docker build . --progress=plain --build-arg EXECUTE_END2END_TESTS=true --cache-from ${DOCKER_IMAGE_BASE}controller:builder --target tests-end2end-stage
+
 .PHONY: docker_run_dev
 docker_run_dev: docker_build ## Execute the pipeline synchronously on synthetic data using docker
 	docker run --name controller ${DOCKER_IMAGE_BASE}controller:${DOCKER_TAG} 
