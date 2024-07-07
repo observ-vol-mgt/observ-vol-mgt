@@ -4,10 +4,15 @@ ci_pull_request: ## Executed upon ci pull_request event
 	@echo "|||====> Executing make Lint"
 	make lint
 	@echo "|||====> Lint Done."
+	@echo ""
 	@echo "|||====> Executing make docker_run_tests"
 	make docker_run_tests
 	@echo "|||====> docker_run_tests Done."
-	@echo "|||====> Executing make docker_build"
+	@echo ""
+	@echo "|||====> Executing make docker_run_end2end_tests"
+	make docker_run_end2end_tests
+	@echo "|||====> make docker_run_end2end_tests Done."
+	@echo ""
 
 .PHONY: ci_push
 ci_push: ci_pull_request ## Executed upon ci push (merge) event

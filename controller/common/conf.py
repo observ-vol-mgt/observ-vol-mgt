@@ -36,6 +36,8 @@ def parse_args():
     p = configargparse.ArgParser()
     p.add('-c', '--config-file', help='config file path',
           default='config.yaml', env_var='CONFIGFILE')
+    p.add('--noui', help='dont expose ui', action='store_true',
+          default=False, env_var='NOUI')
     p.add('-v', '--loglevel', help='logging level',
           default='info', env_var='LOGLEVEL')
 
