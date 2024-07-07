@@ -108,6 +108,7 @@ class MetadataClassificationRegEx(BaseModel):
         "./metadata_classification/data/observability_metrics_classification_regex.json"
     )  # File containing regex classification external data
 
+
 class IngestSubType(Enum):
     """
     Enumerates different subtypes for ingestion.
