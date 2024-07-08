@@ -1,3 +1,5 @@
+global_settings:
+  number_of_workers: 8
 pipeline:
 - name: ingest_file
 - name: feature_extraction_tsfel
