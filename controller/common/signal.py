@@ -37,7 +37,7 @@ class Signals:
             signals = []
         self.metadata = metadata
         self.signals = signals
- 
+
     def append(self, signal):
         self.signals.append(signal)
 

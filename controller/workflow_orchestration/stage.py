@@ -30,6 +30,7 @@ class BaseStageParameters(BaseModel):
     subtype: Optional[str] = None
     input_data: Optional[List[str]] = []
     output_data: Optional[List[str]] = []
+    cache_directory: Optional[str] = None
     config: Optional[dict] = {}
 
 

@@ -22,6 +22,7 @@ parameters:
   type: map_reduce
   input_data: [signals]
   output_data: [extracted_signals]
+  cache_directory: "/tmp/test"
   config:
     map_function:
       name: map1
