@@ -53,6 +53,7 @@ def extract_signal(signal, features_json_file, resample_rate=30, sampling_freque
 
 
 def extract(tsfel_config, signals):
+    print(f"************** extract; metadata = {signals.metadata}")
     extracted_signals = Signals(metadata=signals.metadata)
     resample_rate = tsfel_config.resample_rate
     sampling_frequency = tsfel_config.sampling_frequency
@@ -65,6 +66,7 @@ def extract(tsfel_config, signals):
         # extract features from the signal
         extracted_signal = extract_signal(
             signal, features_json_file, resample_rate, sampling_frequency, verbose)
+        print(f"************** extracted_signal; metadata = {extracted_signal.metadata}")
         extracted_signals.append(extracted_signal)
 
     return extracted_signals

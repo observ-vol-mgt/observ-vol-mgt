@@ -24,6 +24,12 @@ from common.configuration_api import IngestSubType
 logger = logging.getLogger(__name__)
 
 
+def enrich_metadata(json_signal):
+    json_signal["metric"]["first_time"] = json_signal["values"][0][0]
+    json_signal["metric"]["last_time"] = json_signal["values"][-1][0]
+    json_signal["metric"]["num_of_items"] = len(json_signal["values"])
+
+
 def ingest(ingest_config):
     signals = Signals()
     ingest_file = ingest_config.file_name
@@ -32,6 +38,7 @@ def ingest(ingest_config):
 
     signals.metadata["ingest_type"] = IngestSubType.PIPELINE_INGEST_FILE.value
     signals.metadata["ingest_source"] = ingest_file
+    metrics_metadata = []
 
     logger.info(f"Reading signals from {ingest_file}")
     try:
@@ -41,7 +48,6 @@ def ingest(ingest_config):
         err = f"The file {ingest_file} does not exist {e}"
         raise RuntimeError(err) from e
     json_signals = data["data"]["result"]
-    signal_count = 0
     for signal_count, json_signal in enumerate(json_signals):
         if 'metric' in json_signal.keys():
             signal_type = "metric"
@@ -54,8 +60,10 @@ def ingest(ingest_config):
                 # build new name based on template
                 json_signal["metric"]["__name__"] = Template(
                     ingest_name_template).safe_substitute(json_signal["metric"])
+            enrich_metadata(json_signal)
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
+            metrics_metadata.append(json_signal["metric"])
 
         else:
             raise Exception("Ingest: signal type - Not implemented")
@@ -69,5 +77,5 @@ def ingest(ingest_config):
         signals.append(Signal(type=signal_type,
                               metadata=signal_metadata,
                               time_series=signal_time_series))
-
+    signals.metadata["metrics_metadata"] = metrics_metadata
     return signals
