@@ -24,13 +24,13 @@ from common.configuration_api import IngestSubType
 logger = logging.getLogger(__name__)
 
 
-def extract_signature_info(json_signal):
+def enrich_metric_signature_info(json_signal):
     signature_info = {}
     signature_info["first_time"] = json_signal["values"][0][0]
     signature_info["last_time"] = json_signal["values"][-1][0]
     signature_info["num_of_items"] = len(json_signal["values"])
     signature_info["__name__"] = json_signal["metric"]["__name__"]
-    return signature_info
+    json_signal["metric"]["signature_info"] = signature_info
 
 
 def ingest(ingest_config):
@@ -54,7 +54,7 @@ def ingest(ingest_config):
     for signal_count, json_signal in enumerate(json_signals):
         if 'metric' in json_signal.keys():
             signal_type = "metric"
-            signature_info = extract_signature_info(json_signal)
+            enrich_metric_signature_info(json_signal)
             if ingest_name_template != "":
                 # adding `count` to allow usage by template
                 json_signal["metric"]["count"] = signal_count
@@ -64,10 +64,9 @@ def ingest(ingest_config):
                 # build new name based on template
                 json_signal["metric"]["__name__"] = Template(
                     ingest_name_template).safe_substitute(json_signal["metric"])
-            json_signal["metric"]["signature_info"] = signature_info
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
-            metrics_metadata.append(signature_info)
+            metrics_metadata.append(signal_metadata)
 
         else:
             raise Exception("Ingest: signal type - Not implemented")

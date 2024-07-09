@@ -272,11 +272,12 @@ def hash_metadata(metadata):
     json_string = json.dumps(metadata, sort_keys=True).encode()
     hash_value = hashlib.sha1(json_string).hexdigest()
     logger.debug(f"hash_value = {hash_value}")
-    return hash_value
+    logger.debug(f"json_string = {json_string}")
+    return hash_value, json_string
 
 
 def search_cache_directory(stage, signals_in):
-    hash_value = hash_metadata(signals_in.metadata["metrics_metadata"])
+    hash_value, json_string = hash_metadata(signals_in.metadata["metrics_metadata"])
     path = stage.base_stage.cache_directory + '/' + hash_value
     signals_file = path + '/' + 'signals_file'
     logger.info(f"in stage {stage.base_stage.name} reading data from {signals_file}")
@@ -291,7 +292,7 @@ def search_cache_directory(stage, signals_in):
 
 def cache_output_data(cache_directory, signals_in, signals_out):
     metrics_metadata = signals_in.metadata["metrics_metadata"]
-    hash_value = hash_metadata(metrics_metadata)
+    hash_value, json_string = hash_metadata(metrics_metadata)
     path = cache_directory + '/' + hash_value
     try:
         os.makedirs(path, exist_ok=True)
@@ -303,7 +304,7 @@ def cache_output_data(cache_directory, signals_in, signals_out):
     signals_file = path + '/' + 'signals_file'
     try:
         with open(metadata_file, 'wb') as file:
-            pickle.dump(metrics_metadata, file)
+            file.write(json_string)
     except Exception as e:
         err = f"Error on file {metadata_file}: {e}"
         raise RuntimeError(err) from e
@@ -323,10 +324,12 @@ def run_stage(args):
     if stage.base_stage.cache_directory is not None:
         # if input data is found in cache, return the results directly from the cache directory
         # TODO: verify types before operating on them
+        # verify that input consists of single element from which we make the hash
         signals_in = input_data[0]
-        found, signals_out = search_cache_directory(stage, signals_in)
-        if found:
-            return [signals_out]
+        if len(input_data) == 1:
+            found, signals_out = search_cache_directory(stage, signals_in)
+            if found:
+                return signals_out
     logger.info(f"running stage: {stage.base_stage.name}, len(input_data) = {len(input_data)}")
     logger.debug(f"stage = {stage}, input = {input_data}")
     if stage.base_stage.type == api.StageType.INGEST.value:
@@ -349,5 +352,5 @@ def run_stage(args):
     logger.info(f"finished stage: {stage.base_stage.name}")
     if stage.base_stage.cache_directory is not None:
         # save data in cache directory
-        cache_output_data(stage.base_stage.cache_directory, input_data[0], output_data[0])
+        cache_output_data(stage.base_stage.cache_directory, input_data[0], output_data)
     return output_data
