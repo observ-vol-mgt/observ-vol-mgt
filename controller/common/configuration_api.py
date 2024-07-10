@@ -41,7 +41,7 @@ The configuration is organized into two areas.
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
 
 
 class StageType(Enum):
@@ -299,3 +299,43 @@ class ReduceSimple(BaseModel):
     Configuration for simple reduce operations.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
+
+
+class BaseStageSchedule(BaseModel):
+    """
+    Configuration for order of stages that make up the pipeline.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    name: str  # Name of stage instance
+    follows: Optional[List[str]] = []  # List of stages that must precede currently defined sage in the pipeline
+
+
+class BaseStageParameters(BaseModel):
+    """
+    Configuration for Stage parameters.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    name: str  # Name of stage instance
+    type: str  # Type of stage instance (e.g. ingest, extract, insights, etc)
+    subtype: Optional[str] = None  # Subtype of stage instance (e.g. file_ingest vs promql ingest)
+    input_data: Optional[List[str]] = []  # List of input data names for the stage
+    output_data: Optional[List[str]] = []  # List of output data names for the stage
+    cache_directory: Optional[str] = None  # Directory to store output data
+    config: Optional[dict] = {}  # Stage-specific configuration parameters
+
+
+class GlobalSettings(BaseModel):
+    """
+    Configuration for global settings.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    number_of_workers: Optional[int] = 0  # Number of processes to create to perform map-reduce operations in parallel
+
+
+class PipelineDefinition(BaseModel):
+    """
+    Configuration for pipeline definition.
+    """
+    global_settings: Optional[dict] = {}
+    pipeline: List[BaseStageSchedule]  # Order of stages that make up the pipeline
+    parameters: List[BaseStageParameters]  # Specific parameters to configure each stage in the pipeline
