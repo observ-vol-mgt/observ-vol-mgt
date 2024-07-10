@@ -32,7 +32,7 @@ from map_reduce.map import _map
 from map_reduce.reduce import reduce
 from metadata_classification.metadata_classification import metadata_classification
 from workflow_orchestration.map_reduce import MapReduceParameters, create_dummy_compute_stage
-from workflow_orchestration.stage import StageParameters, PipelineDefinition, GlobalSettings
+from workflow_orchestration.stage import StageParameters
 
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ class Pipeline:
 
         # verify that configuration is valid
         # if not valid, the following line will throw an exception
-        pipeline_def = PipelineDefinition(**configuration)
+        pipeline_def = api.PipelineDefinition(**configuration)
 
         # create stage structs for each of the stages
         for stage_params in stages_parameters:
@@ -135,7 +135,7 @@ class Pipeline:
         for stage in stages_params_dict.values():
             self.add_stage_to_schedule(stage)
 
-        global_settings = GlobalSettings(**pipeline_def.global_settings)
+        global_settings = api.GlobalSettings(**pipeline_def.global_settings)
 
         # allocate process pool for map_reduce
         number_of_workers = global_settings.number_of_workers

@@ -12,37 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
-
-
-# TODO: Move these items to configuration_api so they get included in the documentation
-class BaseStageSchedule(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    name: str
-    follows: Optional[List[str]] = []
-
-
-class BaseStageParameters(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    name: str
-    type: str
-    subtype: Optional[str] = None
-    input_data: Optional[List[str]] = []
-    output_data: Optional[List[str]] = []
-    cache_directory: Optional[str] = None
-    config: Optional[dict] = {}
-
-
-class GlobalSettings(BaseModel):
-    model_config = ConfigDict(extra='forbid')
-    number_of_workers: Optional[int] = 0
-
-
-class PipelineDefinition(BaseModel):
-    global_settings: Optional[dict] = {}
-    pipeline: List[BaseStageSchedule]
-    parameters: List[BaseStageParameters]
+from common.configuration_api import BaseStageParameters
 
 
 class StageParameters:
