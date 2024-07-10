@@ -88,6 +88,15 @@ A single list as input and a single list as output.
 These must be preregistered in the code base as valid map_reduce `compute` operations.
 The `map` and `reduce` operations must likewise be preregistered in the code base as such operations.
 
+The map_reduce operation may be performed in parallel on multiple processes.
+This is achieved by specifying an additional configuration parameter under global_settings.
+
+```
+global_settings:
+  number_of_workers: 8
+```
+
+
 ## Ingest
 An `ingest` type stage usually takes no input data and outputs a single list.
 
