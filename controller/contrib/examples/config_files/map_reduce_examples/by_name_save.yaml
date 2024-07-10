@@ -1,11 +1,11 @@
+global_settings:
+  number_of_workers: 8
 pipeline:
 - name: ingest_file
 - name: feature_extraction_tsfel
   follows: [ingest_file]
-- name: generate_insights
+- name: encode1
   follows: [feature_extraction_tsfel]
-- name: config_generator_otel
-  follows: [feature_extraction_tsfel, generate_insights]
 parameters:
 - name: ingest_file
   type: ingest
@@ -14,7 +14,8 @@ parameters:
   output_data: [signals]
   config:
     filter_metadata: ""
-    file_name: ./contrib/examples/generate-synthetic-metrics/time_series_data.json
+    ingest_name_template: "$plugin-$instance-$label-$__name__"
+    file_name: ../contrib/fetch-offline-data/instana/promql_metrics_1000_metrics_with_labels.json
 - name: feature_extraction_tsfel
   type: map_reduce
   input_data: [signals]
@@ -23,9 +24,9 @@ parameters:
     map_function:
       name: map1
       type: map
-      subtype: simple
+      subtype: by_name
       config:
-        number: 3
+        name_pattern: "([0-9a-fA-F]{2}:){7}[0-9a-fA-F]{2}"
     compute_function:
       name: extract_in_parallel
       type: extract
@@ -34,15 +35,11 @@ parameters:
       name: reduce1
       type: reduce
       subtype: simple
-- name: generate_insights
-  type: insights
-  subtype:
+- name: encode1
+  type: encode
+  subtype: serialized
   input_data: [extracted_signals]
-  output_data: [signals_to_keep, signals_to_reduce, text_insights]
-- name: config_generator_otel
-  type: config_generator
-  subtype: otel
-  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
-  output_data: [r_value]
+  output_data: []
   config:
-    directory: /tmp
+    file_name: ../contrib/fetch-offline-data/instana/promql_metrics_1000_metrics_with_labels_intermediate
+

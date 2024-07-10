@@ -24,6 +24,15 @@ from common.configuration_api import IngestSubType
 logger = logging.getLogger(__name__)
 
 
+def enrich_metric_signature_info(json_signal):
+    signature_info = {}
+    signature_info["first_time"] = json_signal["values"][0][0]
+    signature_info["last_time"] = json_signal["values"][-1][0]
+    signature_info["num_of_items"] = len(json_signal["values"])
+    signature_info["__name__"] = json_signal["metric"]["__name__"]
+    json_signal["metric"]["signature_info"] = signature_info
+
+
 def ingest(ingest_config):
     signals = Signals()
     ingest_file = ingest_config.file_name
@@ -32,6 +41,7 @@ def ingest(ingest_config):
 
     signals.metadata["ingest_type"] = IngestSubType.PIPELINE_INGEST_FILE.value
     signals.metadata["ingest_source"] = ingest_file
+    metrics_metadata = []
 
     logger.info(f"Reading signals from {ingest_file}")
     try:
@@ -41,10 +51,10 @@ def ingest(ingest_config):
         err = f"The file {ingest_file} does not exist {e}"
         raise RuntimeError(err) from e
     json_signals = data["data"]["result"]
-    signal_count = 0
     for signal_count, json_signal in enumerate(json_signals):
         if 'metric' in json_signal.keys():
             signal_type = "metric"
+            enrich_metric_signature_info(json_signal)
             if ingest_name_template != "":
                 # adding `count` to allow usage by template
                 json_signal["metric"]["count"] = signal_count
@@ -56,6 +66,7 @@ def ingest(ingest_config):
                     ingest_name_template).safe_substitute(json_signal["metric"])
             signal_metadata = json_signal["metric"]
             signal_time_series = json_signal["values"]
+            metrics_metadata.append(signal_metadata)
 
         else:
             raise Exception("Ingest: signal type - Not implemented")
@@ -69,5 +80,5 @@ def ingest(ingest_config):
         signals.append(Signal(type=signal_type,
                               metadata=signal_metadata,
                               time_series=signal_time_series))
-
+    signals.metadata["metrics_metadata"] = metrics_metadata
     return signals

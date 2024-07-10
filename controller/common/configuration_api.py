@@ -59,6 +59,7 @@ class StageType(Enum):
     METADATA_CLASSIFICATION = "metadata_classification"
     # `map_reduce`: apply map reduce operations (for stages scalability)
     MAP_REDUCE = "map_reduce"
+    ENCODE = "encode"  # `encode`: encode data
 
 
 class MetadataClassificationSubType(Enum):
@@ -116,6 +117,14 @@ class IngestSubType(Enum):
     PIPELINE_INGEST_DUMMY = "dummy"
     PIPELINE_INGEST_FILE = "file"
     PIPELINE_INGEST_PROMQL = "promql"
+    PIPELINE_INGEST_SERIALIZED = "serialized"
+
+
+class EncodeSubType(Enum):
+    """
+    Enumerates different subtypes for encoding.
+    """
+    PIPELINE_ENCODE_SERIALIZED = "serialized"
 
 
 class ExtractSubType(Enum):
@@ -172,6 +181,17 @@ class IngestFile(BaseModel):
     ingest_name_template: Optional[str] = ""  # Template for ingest names
 
 
+class IngestSerialized(BaseModel):
+    """
+    ### Configuration for serialized file ingestion.
+    This configuration is applied when `stage`:
+      type: ingest
+      subtype: serialized
+    """
+    model_config = ConfigDict(extra='forbid')
+    file_name: str  # Name of the file to ingest
+
+
 class IngestPromql(BaseModel):
     """
     Configuration for PromQL ingestion.
@@ -188,6 +208,17 @@ class IngestDummy(BaseModel):
     Configuration for dummy ingestion.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
+
+
+class EncodeSerialized(BaseModel):
+    """
+    ### Configuration for serialized file encoding.
+    This configuration is applied when `stage`:
+      type: encode
+      subtype: serialized
+    """
+    model_config = ConfigDict(extra='forbid')
+    file_name: str  # Name of the file to ingest
 
 
 class FeatureExtractionTsfel(BaseModel):
