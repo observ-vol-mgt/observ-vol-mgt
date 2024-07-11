@@ -29,25 +29,20 @@ The diagram above illustrates the system architecture of **Observability Volume 
 **Manager:** is deployed at the central cloud location and is responsible for managing observability data transformations at the edge locations. It is a user-facing component with a REST interface to create/update/delete the rules that define the transformation DAGs to be enabled on a certain edge site(s) when some condition is met. The user can also specify default transformation DAGs for edge sites. The Manager coordinates with the processors to enforce transformation DAGs based on user-defined rules when conditions are satisfied. 
 
 **Controller:** is deployed at the central cloud location. It periodically analyzes the behavior of observability signals and correlating them with customer requirements and the usage of signals in the system. Utilizing this analysis, the Controller generates recommendations and can even automatically update rules in the manager to effectively manage and reduce observability data volume. 
-> [!NOTE]
-> The controller is currently under active development and is not integrated with the rest of the system in the current version. Therefore, it is not included in the Proof of Concept. However, future versions will integrate the controller with the rest of the system, and we will release an updated Proof of Concept accordingly.
 
 ### Use Case
 The main objective in the current version of **Observability Volume Manager** is to demonstrate centralized control and management of observability data across all connected edge environments from the core. Users can specify transformation DAGs for individual edge locations through rules, which define conditions based on metrics collected from these environments. 
 
-In upcoming versions, we plan to introduce a **brain** (controller) that will aid users by suggesting rules for managing observability data. This controller will possess the capability to communicate with the manager to automatically configure these rules, streamlining the process and enhancing user experience. 
-
-> [!NOTE]
 > The **contrib** folder holds various tools and scripts that helps to develop, build, and maintain the project. It also contains the docker compose to bring up all the components needed to run the proof of concept scenario locally.
 
 
 ## Proof of Concept Walkthrough
 
-**We have created a video demonstrating the Proof of Concept in action. It can be accessed [here](docs/videos/poc_video.mp4).**
+**We have created a video demonstrating the Proof of Concept in action. It can be accessed [here](docs/videos/poc_v2_video.mp4).**
 
-**Also, [here](contrib/end2end/poc//README.md) is the documentation to replicate the Proof of Concept locally.**
+**Also, [here](contrib/end2end/poc/insight_based_poc/README.md) is the documentation to replicate the Proof of Concept locally.**
 
-![](docs/images/poc.svg) 
+![](docs/images/pocv2.svg) 
 
 The diagram above illustrates our setup for the proof of concept. 
 
@@ -56,11 +51,16 @@ We have two edge locations each equipped with a metric genrator, metric collecto
 - **Rule 1:** Applies to Processor 1 and requests to filter (whitelist) only the app metrics when edge location 1 experiences network stress.
 - **Rule 2:** Applies to Processor 2 and requests to increase the frequency of cluster metrics when edge location 2 encounters erroneous conditions.
 
+Apart from triggering transformations based on user defined rules,  we also have a **brain** (controller) component that will aid users by suggesting rules for managing observability data. This controller will possess the capability to communicate with the manager to automatically configure these rules, streamlining the process and enhancing user experience. 
+
+> [!NOTE]
+
 The proof of concept is built to showcase two main capabilities of the Observability Volume Manager. 
 1. Automation: Users only define rules for managing observability data under different conditions and the Observability Volume Manager autonomously and dynamically monitors and enforces these transformations without requiring user intervention each time conditions are met. This eliminates the need for user intervention each time conditions are met, alleviating the burden of configuring individual processors at edge locations everytime.
 2. Specificity: The Observability Volume Manager can enforce a transformation DAG on a subset of Edge locations. Additionally, within these edge locations, specific transformations can be applied to designated metrics only. This fine-granied control provides a level of specificity lacking in current observability systems.
+3. Intelligent Pruning: The controller analyzes the metrics to provide insights on simlarity of metrics. This can be used as a recommendation or trigger pruning of metrics for intelligent metric transformation.
 
-More details on the proof of concept are explained [here](contrib/end2end/poc/README.md).
+More details on the proof of concept are explained [here](contrib/end2end/poc/insight_based_poc/README.md).
 
   
 
