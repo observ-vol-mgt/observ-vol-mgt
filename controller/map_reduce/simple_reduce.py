@@ -21,6 +21,7 @@ def reduce(config, input_data):
         sublist = item[0].signals
         output_list.extend(sublist)
 
+    # TODO: figure out what is the proper thing to do for the combined metadata
     new_signals = Signals(input_data[0][0].metadata, output_list)
 
     return [new_signals]
