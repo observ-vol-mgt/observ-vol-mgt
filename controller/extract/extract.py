@@ -30,9 +30,9 @@ def extract(subtype, config, input_data):
         from extract.feature_extraction_tsfel import extract
         extracted_signals = extract(tsfel_config, signals_list)
     elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TRIM.value:
-            logger.debug("using trim_time_series")
-            from extract.trim_time_series import extract
-            extracted_signals = extract(None, signals_list)
+        logger.debug("using trim_time_series")
+        from extract.trim_time_series import extract
+        extracted_signals = extract(None, signals_list)
     elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL_AND_TRIM.value:
         tsfel_config = api.FeatureExtractionTsfel(**config)
         logger.debug("using tsfel feature_extraction")

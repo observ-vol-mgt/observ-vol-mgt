@@ -27,5 +27,4 @@ def extract(config, signals):
         new_signal = Signal(signal.type, signal.metadata)
         extracted_signals.append(new_signal)
 
-
     return extracted_signals
