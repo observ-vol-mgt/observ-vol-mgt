@@ -14,13 +14,18 @@
 
 import logging
 
-from common.signal import Signals
+from common.signal import Signals, Signal
 
 logger = logging.getLogger(__name__)
 
 
-# Create new Signals object with only the exiting metadata but without the associated time-series data
+# Take each Signal in Signals, save its metadata, but discard the time-series data
 def extract(config, signals):
     extracted_signals = Signals(metadata=signals.metadata, signals=None)
+
+    for index, signal in enumerate(signals.signals):
+        new_signal = Signal(signal.type, signal.metadata)
+        extracted_signals.append(new_signal)
+
 
     return extracted_signals

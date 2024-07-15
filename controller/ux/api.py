@@ -86,7 +86,6 @@ def _rerun():
         return response, 200
 
     except Exception as e:
-        raise e
         logger.error(f"An error occurred: {e}")
         response = {"error": str(e)}
         return response, 500

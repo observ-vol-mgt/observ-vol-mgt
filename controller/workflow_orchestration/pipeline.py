@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import pickle
+import time
 
 import common.configuration_api as api
 from common.conf import get_configuration
@@ -331,6 +332,7 @@ def run_stage(args):
             if found:
                 return signals_out
     logger.info(f"running stage: {stage.base_stage.name}, len(input_data) = {len(input_data)}")
+    start_time = time.time()
     logger.debug(f"stage = {stage}, input = {input_data}")
     if stage.base_stage.type == api.StageType.INGEST.value:
         output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
@@ -349,7 +351,9 @@ def run_stage(args):
     else:
         raise Exception(f"stage type not implemented: {stage.base_stage.type}")
     stage.set_latest_output_data(output_data)
-    logger.info(f"finished stage: {stage.base_stage.name}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    logger.info(f"finished stage: {stage.base_stage.name}; elapsed time = {elapsed_time}")
     if stage.base_stage.cache_directory is not None:
         # save data in cache directory
         cache_output_data(stage.base_stage.cache_directory, input_data[0], output_data)

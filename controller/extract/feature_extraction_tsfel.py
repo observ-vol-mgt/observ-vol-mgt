@@ -61,7 +61,7 @@ def extract(tsfel_config, signals):
     verbose = 1 if logging.getLogger().getEffectiveLevel() == logging.DEBUG else 0
 
     # features extraction
-    for index, signal in enumerate(signals):
+    for index, signal in enumerate(signals.signals):
         # extract features from the signal
         extracted_signal = extract_signal(
             signal, features_json_file, resample_rate, sampling_frequency, verbose)
