@@ -29,6 +29,17 @@ def extract(subtype, config, input_data):
         logger.debug("using tsfel feature_extraction")
         from extract.feature_extraction_tsfel import extract
         extracted_signals = extract(tsfel_config, signals_list)
+    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TRIM.value:
+            logger.debug("using trim_time_series")
+            from extract.trim_time_series import extract
+            extracted_signals = extract(None, signals_list)
+    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL_AND_TRIM.value:
+        tsfel_config = api.FeatureExtractionTsfel(**config)
+        logger.debug("using tsfel feature_extraction")
+        from extract.feature_extraction_tsfel import extract
+        extracted_signals_tmp = extract(tsfel_config, signals_list)
+        from extract.trim_time_series import extract
+        extracted_signals = extract(None, extracted_signals_tmp)
     else:
         raise "unsupported extract configuration"
     return [extracted_signals]

@@ -33,7 +33,7 @@ parameters:
     compute_function:
       name: extract_in_parallel
       type: extract
-      subtype: tsfel
+      subtype: tsfel_trim
     reduce_function:
       name: reduce1
       type: reduce

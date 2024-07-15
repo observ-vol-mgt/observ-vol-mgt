@@ -132,6 +132,8 @@ class ExtractSubType(Enum):
     Enumerates different subtypes for metadata extraction.
     """
     PIPELINE_EXTRACT_TSFEL = "tsfel"
+    PIPELINE_EXTRACT_TRIM = "trim"  # trim time series
+    PIPELINE_EXTRACT_TSFEL_AND_TRIM = "tsfel_trim"
 
 
 class ConfigGeneratorSubType(Enum):
