@@ -93,10 +93,11 @@ It has some internally defined metadata plus a list of `Signal` structures.
 ## Ingest
 An `ingest`-type stage typically reads data from some external source.
 The details of the external source (file location, url, security parameters) are provided in the `config` section of the stage parameters.
-An ingest stage is expected to have no `input_data` (`input_data: []`).
+An `ingest` stage is expected to have no `input_data` (`input_data: []`).
+An `ingest` type stage outputs a list containing a single element (of type `Signals`).
 
 ## Extract
-An `extract`-type stage typically performs some kind of transformation on `Signals`.
+An `extract`-type stage typically performs some kind of transformation or metadata generation on `Signals`.
 The `input_data` should contain a single `Signals` element and the `output_data` should contain a single `Signals` element.
 For example:
 ```commandline
@@ -143,7 +144,7 @@ The config of a map_reduce stage looks like the following:
 ```
 
 All map_reduce `compute` operations are of the same structure.
-A single list as input and a single list as output.
+A single list as input (of type Signals) and a single list as output (of type Signals).
 These must be preregistered in the code base as valid map_reduce `compute` operations.
 The `map` and `reduce` operations must likewise be preregistered in the code base as such operations.
 
@@ -155,7 +156,4 @@ global_settings:
   number_of_workers: 8
 ```
 
-
-## Ingest
-An `ingest` type stage usually takes no input data and outputs a single list.
 
