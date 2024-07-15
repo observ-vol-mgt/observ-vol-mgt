@@ -46,7 +46,66 @@ parameters:
 
 A stage may follow multiple other stages, and may receive input from multiple earlier stages.
 
+# Data Types
+
+## Time Series
+Time Series data is typically provided using the prometheus model with the following fields:
+```
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+                {
+                    "metric": {
+                        "__name__": "commit_latency_ms",
+                        "instance": "02:00:06:ff:fe:4b:b5:ac",
+                        "plugin": "ceph",
+                        "label": "ceph",
+                        "snapshotId": "T9Arslj9-1Y3UYv6biDGDizVqzI",
+                        "job": "prometheus"
+                        },
+                    "values": [
+                        [1715252491.0, 0.0], 
+                        [1715252492.0, 0.0], 
+                        ....
+                        ]
+                }
+                .....
+              ]
+    }
+}
+```
+
+The `metric` field contains various metadata, including the `__name__` of the metric being reported; other fields are optional.
+The time series data are contained in the `values` field as a list of `<timestamp, value>` ordered pairs.
+
+## Signal
+`Signal` is an internal data type used to store time-series data. 
+It stores the metadata provided in the `metric` field and the time-series provided in the `values` field.
+
+## Signals
+`Signals` is an internal data type used to store multiple objects of type `Signal`.
+It has some internally defined metadata plus a list of `Signal` structures.
+
 # Details about some types of stages
+
+## Ingest
+An `ingest`-type stage typically reads data from some external source.
+The details of the external source (file location, url, security parameters) are provided in the `config` section of the stage parameters.
+An ingest stage is expected to have no `input_data` (`input_data: []`).
+
+## Extract
+An `extract`-type stage typically performs some kind of transformation on `Signals`.
+The `input_data` should contain a single `Signals` element and the `output_data` should contain a single `Signals` element.
+For example:
+```commandline
+- name: feature_extraction_tsfel
+  type: extract
+  subtype: tsfel
+  input_data: [classified_signals]
+  output_data: [extracted_signals]
+```
 
 ## Map Reduce
 A map_reduce stage takes some input, breaks it up into some number of pieces,

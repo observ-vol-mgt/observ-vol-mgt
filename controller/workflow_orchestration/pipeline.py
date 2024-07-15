@@ -25,7 +25,7 @@ from multiprocessing import Pool
 
 from config_generator.config_generator import config_generator
 from encode.encode import encode
-from feature_extraction.feature_extraction import feature_extraction
+from extract.extract import extract
 from ingest.ingest import ingest
 from insights.insights import generate_insights
 from map_reduce.map import _map
@@ -165,7 +165,7 @@ class Pipeline:
                 self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
             self.classified_signals = output_data[0]
-        elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
+        elif stage.base_stage.type == api.StageType.EXTRACT.value:
             self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.INSIGHTS.value:
             self.signals_to_keep, self.signals_to_reduce, self.text_insights = output_data[
@@ -336,8 +336,8 @@ def run_stage(args):
         output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
     elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
         output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
-    elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
-        output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.EXTRACT.value:
+        output_data = extract(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.INSIGHTS.value:
         output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.CONFIG_GENERATOR.value:

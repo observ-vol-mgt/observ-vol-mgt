@@ -25,7 +25,7 @@ parameters:
   config:
     sampling_frequency: 0.0333
     resample_rate: "5s"
-    features_json_file: "feature_extraction/tsfel_conf/limited_features.json"
+    features_json_file: "extract/tsfel_conf/limited_features.json"
 - name: generate_insights
   type: insights
   subtype:
