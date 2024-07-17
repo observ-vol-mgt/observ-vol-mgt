@@ -133,7 +133,6 @@ class ExtractSubType(Enum):
     """
     PIPELINE_EXTRACT_TSFEL = "tsfel"
     PIPELINE_EXTRACT_TRIM = "trim"  # trim time series
-    PIPELINE_EXTRACT_TSFEL_AND_TRIM = "tsfel_trim"
 
 
 class ConfigGeneratorSubType(Enum):
@@ -232,6 +231,7 @@ class FeatureExtractionTsfel(BaseModel):
         "extract/tsfel_conf/limited_statistical.json"  # JSON file for features
     resample_rate: Optional[str] = "30s"  # Resampling rate
     sampling_frequency: Optional[float] = (1/30)  # Sampling frequency
+    trim: Optional[bool] = False
 
 
 class GenerateInsights(BaseModel):

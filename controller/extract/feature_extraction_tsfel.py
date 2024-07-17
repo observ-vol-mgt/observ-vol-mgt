@@ -67,4 +67,8 @@ def extract(tsfel_config, signals):
             signal, features_json_file, resample_rate, sampling_frequency, verbose)
         extracted_signals.append(extracted_signal)
 
+    if tsfel_config.trim:
+        from extract.trim_time_series import extract as extract_trim
+        extracted_signals = extract_trim(None, extracted_signals)
+
     return extracted_signals
