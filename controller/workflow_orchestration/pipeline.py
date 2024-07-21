@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import pickle
+import time
 
 import common.configuration_api as api
 from common.conf import get_configuration
@@ -25,7 +26,7 @@ from multiprocessing import Pool
 
 from config_generator.config_generator import config_generator
 from encode.encode import encode
-from feature_extraction.feature_extraction import feature_extraction
+from extract.extract import extract
 from ingest.ingest import ingest
 from insights.insights import generate_insights
 from map_reduce.map import _map
@@ -165,7 +166,7 @@ class Pipeline:
                 self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
             self.classified_signals = output_data[0]
-        elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
+        elif stage.base_stage.type == api.StageType.EXTRACT.value:
             self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.INSIGHTS.value:
             self.signals_to_keep, self.signals_to_reduce, self.text_insights = output_data[
@@ -331,13 +332,14 @@ def run_stage(args):
             if found:
                 return signals_out
     logger.info(f"running stage: {stage.base_stage.name}, len(input_data) = {len(input_data)}")
+    start_time = time.time()
     logger.debug(f"stage = {stage}, input = {input_data}")
     if stage.base_stage.type == api.StageType.INGEST.value:
         output_data = ingest(stage.base_stage.subtype, stage.base_stage.config)
     elif stage.base_stage.type == api.StageType.METADATA_CLASSIFICATION.value:
         output_data = metadata_classification(stage.base_stage.subtype, stage.base_stage.config, input_data)
-    elif stage.base_stage.type == api.StageType.FEATURES_EXTRACTION.value:
-        output_data = feature_extraction(stage.base_stage.subtype, stage.base_stage.config, input_data)
+    elif stage.base_stage.type == api.StageType.EXTRACT.value:
+        output_data = extract(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.INSIGHTS.value:
         output_data = generate_insights(stage.base_stage.subtype, stage.base_stage.config, input_data)
     elif stage.base_stage.type == api.StageType.CONFIG_GENERATOR.value:
@@ -349,7 +351,9 @@ def run_stage(args):
     else:
         raise Exception(f"stage type not implemented: {stage.base_stage.type}")
     stage.set_latest_output_data(output_data)
-    logger.info(f"finished stage: {stage.base_stage.name}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    logger.info(f"finished stage: {stage.base_stage.name}; elapsed time = {elapsed_time}")
     if stage.base_stage.cache_directory is not None:
         # save data in cache directory
         cache_output_data(stage.base_stage.cache_directory, input_data[0], output_data)

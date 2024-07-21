@@ -24,7 +24,7 @@ def _map(subtype, config, input_data):
     logger.debug(f"map config = {config}")
     logger.debug(f"len(input_data) = {len(input_data)}")
     if len(input_data) != 1:
-        raise "feature_extraction configuration should have one input"
+        raise "extract configuration should have one input"
 
     signals = input_data[0]
     # switch based on the configuration ingest type

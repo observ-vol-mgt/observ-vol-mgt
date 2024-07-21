@@ -51,7 +51,7 @@ class StageType(Enum):
     """
     INGEST = "ingest"  # `ingest`: ingest data from various sources into the controller
     # `extract`: performs feature extraction on the signals
-    FEATURES_EXTRACTION = "extract"
+    EXTRACT = "extract"
     INSIGHTS = "insights"  # `insights`: generates insights (analytics)
     # `config_generator`: Generates and apply processor configurations
     CONFIG_GENERATOR = "config_generator"
@@ -132,6 +132,7 @@ class ExtractSubType(Enum):
     Enumerates different subtypes for metadata extraction.
     """
     PIPELINE_EXTRACT_TSFEL = "tsfel"
+    PIPELINE_EXTRACT_TRIM = "trim"  # trim time series
 
 
 class ConfigGeneratorSubType(Enum):
@@ -227,9 +228,10 @@ class FeatureExtractionTsfel(BaseModel):
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     features_json_file: Optional[str] = \
-        "feature_extraction/tsfel_conf/limited_statistical.json"  # JSON file for features
+        "extract/tsfel_conf/limited_statistical.json"  # JSON file for features
     resample_rate: Optional[str] = "30s"  # Resampling rate
     sampling_frequency: Optional[float] = (1/30)  # Sampling frequency
+    trim: Optional[bool] = False
 
 
 class GenerateInsights(BaseModel):

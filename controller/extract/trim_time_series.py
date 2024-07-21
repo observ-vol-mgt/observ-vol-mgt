@@ -12,16 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from common.signal import Signals
+import logging
+
+from common.signal import Signals, Signal
+
+logger = logging.getLogger(__name__)
 
 
-def reduce(config, input_data):
-    output_list = []
-    for item in input_data:
-        sublist = item[0].signals
-        output_list.extend(sublist)
+# Take each Signal in Signals, save its metadata, but discard the time-series data
+def extract(config, signals):
+    extracted_signals = Signals(metadata=signals.metadata, signals=None)
 
-    # TODO: figure out what is the proper thing to do for the combined metadata
-    new_signals = Signals(input_data[0][0].metadata, output_list)
+    for index, signal in enumerate(signals.signals):
+        new_signal = Signal(signal.type, signal.metadata)
+        extracted_signals.append(new_signal)
 
-    return [new_signals]
+    return extracted_signals

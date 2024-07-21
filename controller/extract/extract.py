@@ -18,17 +18,21 @@ import common.configuration_api as api
 logger = logging.getLogger(__name__)
 
 
-def feature_extraction(subtype, config, input_data):
+def extract(subtype, config, input_data):
     if len(input_data) != 1:
-        raise "feature_extraction configuration should have one input"
+        raise "extract configuration should have one input"
     signals_list = input_data[0]
-    # switch based on the configuration feature_extraction type
+    # switch based on the configuration extract type
     # verify config parameters conform to structure
     if subtype == api.ExtractSubType.PIPELINE_EXTRACT_TSFEL.value:
         tsfel_config = api.FeatureExtractionTsfel(**config)
         logger.debug("using tsfel feature_extraction")
-        from feature_extraction.feature_extraction_tsfel import extract
+        from extract.feature_extraction_tsfel import extract
         extracted_signals = extract(tsfel_config, signals_list)
+    elif subtype == api.ExtractSubType.PIPELINE_EXTRACT_TRIM.value:
+        logger.debug("using trim_time_series")
+        from extract.trim_time_series import extract
+        extracted_signals = extract(None, signals_list)
     else:
-        raise "unsupported feature_extraction configuration"
+        raise "unsupported extract configuration"
     return [extracted_signals]
