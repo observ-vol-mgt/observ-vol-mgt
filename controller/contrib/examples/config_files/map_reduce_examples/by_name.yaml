@@ -35,7 +35,7 @@ parameters:
       type: extract
       subtype: tsfel
       config:
-        trim: True
+        trim: False
     reduce_function:
       name: reduce1
       type: reduce
