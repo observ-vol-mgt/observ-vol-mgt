@@ -120,6 +120,14 @@ class IngestSubType(Enum):
     PIPELINE_INGEST_SERIALIZED = "serialized"
 
 
+class IngestFormat(Enum):
+    """
+    Enumerates different subtypes for ingestion.
+    """
+    PIPELINE_INGEST_FORMAT_PROM = "prometheus"
+    PIPELINE_INGEST_FORMAT_INSTANA = "instana"
+
+
 class EncodeSubType(Enum):
     """
     Enumerates different subtypes for encoding.
@@ -169,6 +177,14 @@ class ReduceSubType(Enum):
     PIPELINE_REDUCE_SIMPLE = "simple"
 
 
+class IngestTimeUnit(Enum):
+    """
+    Enumerates different time units supported for time series data
+    """
+    PIPELINE_TIME_UNIT_SECOND = "s"
+    PIPELINE_TIME_UNIT_MILLISECOND = "ms"
+    PIPELINE_TIME_UNIT_MICROSECOND = "us"
+
 class IngestFile(BaseModel):
     """
     ### Configuration for file ingestion.
@@ -180,6 +196,8 @@ class IngestFile(BaseModel):
     file_name: str  # Name of the file to ingest
     filter_metadata: Optional[str] = ""  # Metadata filter
     ingest_name_template: Optional[str] = ""  # Template for ingest names
+    format: Optional[str] = IngestFormat.PIPELINE_INGEST_FORMAT_PROM.value
+    time_unit: Optional[str] = IngestTimeUnit.PIPELINE_TIME_UNIT_SECOND.value
 
 
 class IngestSerialized(BaseModel):
