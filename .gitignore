@@ -18,3 +18,4 @@
 site/
 # ignore offline data
 /contrib/fetch-offline-data/instana/demo-eu/
+.DS_Store
