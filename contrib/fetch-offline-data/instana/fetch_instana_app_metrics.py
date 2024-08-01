@@ -47,7 +47,8 @@ def fetch_instana_application_metrics(url, token, metric_ids, start_time, end_ti
         body = {
             "metrics": metrics,
             "order":{"by": "timestamp", "direction": "DESC"},
-            "timeFrame": {"to": params["end"], "windowSize": params["end"] - params["start"]}
+            "timeFrame": {"to": params["end"], "windowSize": params["end"] - params["start"],
+            "pagination": {"page":1, "pageSize" : 200}},
         }
         parameters = {'offline': True}
         response = requests.post(instana_api_url, params=parameters, headers=headers, json=body, verify=False)
@@ -57,7 +58,7 @@ def fetch_instana_application_metrics(url, token, metric_ids, start_time, end_ti
             if total_hits > 1:
                 logging.info(f"\tFound data in {total_hits} pages")
                 for page in range(2, total_hits):
-                    body['pagination'] = {"page":page, "pageSize" : 1}
+                    body['pagination'] = {"page":page, "pageSize" : 200}
                     response = requests.post(instana_api_url, params=parameters, headers=headers, json=body, verify=False)
                     if response.status_code == 200:
                         result.append(response.json()["items"])

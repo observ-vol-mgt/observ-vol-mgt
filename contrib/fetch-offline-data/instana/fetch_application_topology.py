@@ -55,7 +55,7 @@ def fetch_Application_list(url, token, start_time, end_time):
                 temp = requests.get(instana_api_url, params=parameters, headers=headers, verify=False)
                 if temp.status_code == 200:
                     if len(temp.json()['items']) > 0:
-                        result.append()
+                        result.append(temp.json()['items'])
                 else:
                     logging.error("Error fetching topology:", temp.text)
                     break
@@ -93,8 +93,8 @@ def main():
         return
 
     folder = args.output_dir
-    print(fetch_Application_list(args.url, args.token, start_time, end_time))
-    # fetch_instana_topology(args.url, args.token, start_time, end_time, folder = folder)
+    # print(fetch_Application_list(args.url, args.token, start_time, end_time))
+    fetch_instana_topology(args.url, args.token, start_time, end_time, folder = folder)
 
 if __name__ == "__main__":
     main()
