@@ -22,13 +22,13 @@ end: ## Ends the POC
 
 ##@ POC Development
 compose_up: ## Docker compose up
-	docker compose -f docker-compose-quay.yml up -d
+	docker compose -f docker-compose-otel.yml up -d
 
 compose_down: ## Docker compose down
-	docker compose -f docker-compose-quay.yml down
+	docker compose -f docker-compose-otel.yml down
 
 stop_controller: ## Stop controller container
-	docker compose -f docker-compose-quay.yml stop controller
+	docker compose -f docker-compose-otel.yml stop controller
 
 cleanup_artifacts: compose_down ## Cleanup compose artifacts ( prometheus, thanos and manager data)
 	-sudo rm -R prometheus_data1
