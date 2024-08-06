@@ -8,7 +8,7 @@ receivers:
               - targets: ['metricgen_east:8000']
             metrics_path: '/'
 processors:
-  metricstransform/1:
+  metricstransform:
         transforms:
           - include: .*
             match_type: regexp
@@ -33,5 +33,5 @@ service:
   pipelines:
     metrics/1:
       receivers:  [ prometheus ]
-      processors: [ metricstransform/1 ]
+      processors: [ metricstransform ]
       exporters:  [ prometheusremotewrite , logging]

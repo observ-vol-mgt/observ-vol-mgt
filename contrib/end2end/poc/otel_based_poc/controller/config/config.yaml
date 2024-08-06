@@ -4,7 +4,7 @@ pipeline:
   follows: [ingest_promql]
 - name: generate_insights
   follows: [feature_extraction_tsfel]
-- name: config_generator_processor
+- name: config_generator_otel_processor
   follows: [feature_extraction_tsfel, generate_insights]
 parameters:
 - name: ingest_promql
@@ -34,15 +34,15 @@ parameters:
   config:
     pairwise_similarity_threshold: 0.98
     pairwise_similarity_method: pearson
-- name: config_generator_processor
+- name: config_generator_otel_processor
   type: config_generator
-  subtype: processor
+  subtype: otel_processor
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
     signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization"
     signal_name_template: "$original_name"
-    signal_condition_template: "cluster=$cluster and instance=$instance"
+    signal_condition_template: "resource.attributes[\"cluster\"] == \"$cluster\" and resource.attributes[\"instance\"] == \"$instance\""
     processor_id_template: "$processor"
     directory: /tmp
     url: http://manager:5010

@@ -1,0 +1,18 @@
+processors:
+  metricstransform:
+    transforms:
+      - include: .*
+        match_type: regexp
+        action: update
+        operations:
+          - action: experimental_scale_value
+            experimental_scale: 1
+  metricsfilter:
+    error_mode: ignore
+    metrics:
+{%- for signal_to_drop in signals_to_drop %}
+      metric_{{ signal_to_drop.id }}_drop:
+        - 'name == "{{ signal_to_drop.name }}"'
+        - '{{ signal_to_drop.condition }}'
+{%- endfor %}
+

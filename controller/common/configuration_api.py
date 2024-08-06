@@ -141,6 +141,7 @@ class ConfigGeneratorSubType(Enum):
     """
     PIPELINE_CONFIG_GENERATOR_NONE = "none"
     PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
+    PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR = "otel_processor"
     PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
 
 
@@ -262,6 +263,20 @@ class ConfigGeneratorOtel(BaseModel):
 class ConfigGeneratorProcessor(BaseModel):
     """
     Configuration for processor-based configuration generation.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    processor_id_template: Optional[str] = ""  # Template for processor ID
+    signal_name_template: Optional[str] = ""  # Template for signal name
+    # Template for signal condition
+    signal_condition_template: Optional[str] = ""
+    signal_filter_template: Optional[str] = ""  # Template for signal filter
+    directory: Optional[str] = None  # Directory to store configuration
+    url: Optional[str] = None  # URL to fetch data from
+
+
+class ConfigGeneratorOtelProcessor(BaseModel):
+    """
+    Configuration for otel processor-based configuration generation.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     processor_id_template: Optional[str] = ""  # Template for processor ID

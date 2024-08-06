@@ -16,7 +16,11 @@ def update_processors(main_config_path, update_config_path, output_path):
 
         # Replace the processors section
         logging.info('Updating processors section in the main configuration')
-        main_config['processors'] = {processor['id']: processor for processor in update_config['processors']}
+        main_config['processors'] = update_config['processors']
+
+        # Update the processors pipline section
+        logging.info('Updating pipline')
+        main_config['service']['pipelines']['metrics/1']['processors'] = list(main_config['processors'].keys())
 
         logging.info(f'Writing updated configuration to {output_path}')
         with open(output_path, 'w') as output_file:
@@ -27,4 +31,3 @@ def update_processors(main_config_path, update_config_path, output_path):
     except Exception as e:
         logging.error(f'An error occurred: {e}')
         raise
-

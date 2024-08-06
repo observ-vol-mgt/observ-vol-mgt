@@ -9,7 +9,7 @@ import yaml
 app = Flask(__name__)
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 

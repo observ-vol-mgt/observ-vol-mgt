@@ -28,7 +28,7 @@ try:
         os.makedirs(log_dir, exist_ok=True)
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=app.config.get('LOG_FILE'), filemode='w', level=logging.INFO)
 except Exception as e:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
