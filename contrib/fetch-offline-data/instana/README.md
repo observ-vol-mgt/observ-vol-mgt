@@ -68,4 +68,55 @@ python instana_fetcher.py
 python main.py --ingest_type=file --ingest_file=../contrib/fetch-offline-data/instana/promql_metrics.json --feature_extraction_type=tsfel --config_generator_type=otel --config_generator_directory=/tmp
 ```
 
+# INSTANA Infrastructure metrics
+## Args
+1. `--log-level` - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+2. `--start` - start date in YYYY-MM-DDTHH:MM:SS format
+3. `--end` - end date in YYYY-MM-DDTHH:MM:SS format
+4. `--url` - Instana instance bse url
+5. `--token` - List of tokens (tokens will be rotated in api calls to prevent api limit error)
+6. `--output_dir` - Folder to store retrieved data
+7. `--plugin` - Filter data by plugin. Eg: prometheus
+8. `--query` - Filter data by query. Eg: namespace=kube
+
+## Example
+* Trying to fetch past 1 day data.
+   `python fetch_instana_data.py --url https://wmlpreprod-ibmdataaiap.instana.io --token EN6NUPBATJit5SJI_**** --query namespace=watsonx-huggingface --plugin prometheus --start 2024-05-28T00:00:00 --end 2024-05-29T00:00:00 --output_dir data`
+
+* Trying to fetch past 20 minute:
+   `python fetch_instana_data.py --url https://wmlpreprod-ibmdataaiap.instana.io --token EN6NUPBATJit5SJI_**** --query namespace=watsonx-huggingface --plugin prometheus --start 2024-05-28T23:40:00 --end 2024-05-29T00:00:00 --output_dir data`
+
+* Default start time and end time with multiple tokens
+   `python fetch-instana-data.py --url https://wmlpreprod-ibmdataaiap.instana.io --token EN6NUPBATJit5SJI_**** JSY9IUWvQEapPBZ4yC**** --output_dir data`
+
+* Command with nohup:
+   `nohup python3 fetch_instana_data.py --url https://wmlpreprod-ibmdataaiap.instana.io --token EN6NUPBATJit5SJI_**** --query namespace=watsonx-huggingface --plugin prometheus --start 2024-05-28T23:40:00 --end 2024-05-29T00:00:00 & 2>&1 --output_dir data`
+
+# INSTANA Application metrics
+## Args
+1. `--log-level` - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+2. `--start` - start date in YYYY-MM-DDTHH:MM:SS format
+3. `--end` - end date in YYYY-MM-DDTHH:MM:SS format
+4. `--url` - Instana instance bse url
+5. `--token` - List of tokens (tokens will be rotated in api calls to prevent api limit error)
+6. `--output_dir` - Folder to store retrieved data
+
+## Example
+* Getting apllication metrics
+   `python fetch_instana_app_metrics.py --url https://instana1.tivlab.raleigh.ibm.com --token tmdOVgSMS7ucB2r**** y7l5tD1wR9G581LY**** tMd8pw4WS6SdLkx**  --start 2024-07-02T00:00:00 --end 2024-07-03T00:00:00 --output_dir data`
+
+# INSTANA Application topology
+## Args
+1. `--log-level` - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+2. `--start` - start date in YYYY-MM-DDTHH:MM:SS format
+3. `--end` - end date in YYYY-MM-DDTHH:MM:SS format
+4. `--url` - Instana instance bse url
+5. `--token` - Instana api token (string)
+6. `--output_dir` - Folder to store retrieved data
+
+## Example
+* Getting application topology from instana
+   `python fetch_application_topology.py --url https://instana1.tivlab.raleigh.ibm.com --token y7l5tD1wR9G581LYO**** --output_dir data`
+
+
  
