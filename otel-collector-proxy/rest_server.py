@@ -13,6 +13,28 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+@app.route('/delete', methods=['POST'])
+def reset_yaml():
+    try:
+        data = "processors:\n\n"
+
+        with open(args.save_update_path, 'w') as file:
+            yaml.dump(data, file)
+
+        logger.info(f"YAML file saved to {args.save_update_path} - DELETED file")
+
+        update_processors(args.processor_file_to_update, args.save_update_path, args.processor_file_to_update)
+        logger.info(f"Processors section in YAML file {args.processor_file_to_update} updated")
+
+        return jsonify({"message": "YAML file saved successfully"}), 200
+    except yaml.YAMLError as e:
+        logger.error(f"Failed to parse YAML file: {e}")
+        return jsonify({"error": f"Failed to parse YAML file: {e}"}), 400
+    except Exception as e:
+        logger.error(f"Failed to save YAML file: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/create', methods=['POST'])
 @app.route('/upload', methods=['POST'])
 def upload_yaml():

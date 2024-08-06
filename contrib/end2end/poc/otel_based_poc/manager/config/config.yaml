@@ -1,7 +1,6 @@
 HOST: '0.0.0.0'
 PORT: 5010
 APP_URL_PREFIX: "/api/v1"
-LOG_FILE: "./app/logs/manager.log"
 PROCESSORS_FOLDER: "./app/processors"
 RULES_FOLDER: "./app/rules"
 PROCESSOR_east_URL: "http://otel_collector_proxy_east:5000"

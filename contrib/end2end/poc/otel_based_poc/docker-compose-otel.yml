@@ -199,20 +199,20 @@ services:
   otel_collector_proxy_east:
     image: quay.io/observ-vol-mgt/otel_collector_proxy
     container_name: otel_collector_proxy_east
-    command: ["--save-update-path=/etc/otel-collector-config_update.yaml", "--processor-file-to-update=/etc/otel-collector-config.yaml"]
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /etc/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/etc/otel-collector-config_update.yaml --processor-file-to-update=/etc/otel-collector-config.yaml" ]
     ports:
      - "8100:5000"
     volumes:
-      - ./otel/otel-east-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./otel/otel-east-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
 
   otel_collector_proxy_west:
     image: quay.io/observ-vol-mgt/otel_collector_proxy
     container_name: otel_collector_proxy_west
-    command: ["--save-update-path=/etc/otel-collector-config_update.yaml", "--processor-file-to-update=/etc/otel-collector-config.yaml"]
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /etc/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/etc/otel-collector-config_update.yaml --processor-file-to-update=/etc/otel-collector-config.yaml" ]
     ports:
      - "8101:5000"
     volumes:
-      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
 
   otel_collector_east:
     image: otel/opentelemetry-collector-contrib
