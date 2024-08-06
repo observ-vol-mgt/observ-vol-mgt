@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 def enrich_metric_signature_info(json_signal):
     signature_info = {}
+    # first_time and last_time assume that the time-series data is provided in ascending order.
     signature_info["first_time"] = json_signal["values"][0][0]
     signature_info["last_time"] = json_signal["values"][-1][0]
     signature_info["num_of_items"] = len(json_signal["values"])
@@ -112,7 +113,14 @@ def ingest_instana_object(ingest_config, signals, object):
     if 'metrics' in object.keys():
         json_signals = object["metrics"]
         for metric_name, signal_time_series in json_signals.items():
-            json_signal = {"metric": {"__name__": metric_name}, "values": signal_time_series}
+            json_signal = {"metric": {"__name__": metric_name,
+                                      "instance": object["host"],
+                                      "plugin": object["plugin"],
+                                      "label": object["label"],
+                                      "snapshotId": object["snapshotId"],
+                                      "job": "prometheus"
+                                      },
+                           "values": signal_time_series}
             signal_type = "metric"
             enrich_metric_signature_info(json_signal)
             signal_metadata = json_signal["metric"]
@@ -203,9 +211,11 @@ def combine_multiple_metrics_entries(signals):
             signal0 = signals_dict[signal_name]
             if signal.metadata["signature_info"]["first_time"] < signal0.metadata["signature_info"]["first_time"]:
                 signal0.metadata["signature_info"]["first_time"] = signal.metadata["signature_info"]["first_time"]
+                new_signals_list = signal.time_series + signal0.time_series
             if signal.metadata["signature_info"]["last_time"] > signal0.metadata["signature_info"]["last_time"]:
                 signal0.metadata["signature_info"]["last_time"] = signal.metadata["signature_info"]["last_time"]
-            signal0.time_series.extend(signal.time_series)
+                new_signals_list = signal0.time_series + signal.time_series
+            signal0.time_series = new_signals_list
             signal0.metadata["signature_info"]["num_of_items"] = len(signal0.time_series)
             # TODO What about other metadata?
             metrics_metadata.append(signal0.metadata)
