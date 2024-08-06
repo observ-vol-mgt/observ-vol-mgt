@@ -209,6 +209,7 @@ def combine_multiple_metrics_entries(signals):
         if signal_name in signals_dict:
             merge_performed = True
             signal0 = signals_dict[signal_name]
+            new_signals_list = signal0.time_series
             if signal.metadata["signature_info"]["first_time"] < signal0.metadata["signature_info"]["first_time"]:
                 signal0.metadata["signature_info"]["first_time"] = signal.metadata["signature_info"]["first_time"]
                 new_signals_list = signal.time_series + signal0.time_series
