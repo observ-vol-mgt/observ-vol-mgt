@@ -50,7 +50,6 @@ def ingest(ingest_config):
     else:
         raise "unsupported ingest format"
 
-
     logger.info(f"number of signals = {len(signals.signals)}")
     signals2 = combine_multiple_metrics_entries(signals)
     logger.info(f"number of combined signals = {len(signals2.signals)}")
@@ -103,7 +102,6 @@ def ingest_prometheus_format(ingest_config, signals):
     signals.metadata["metrics_metadata"] = metrics_metadata
 
 
-
 def ingest_instana_object(ingest_config, signals, object):
     # object is expected to be of type dict with a field named "metrics", also of type dict
     logger.info(f"instana ingest config = {ingest_config}")
@@ -121,21 +119,21 @@ def ingest_instana_object(ingest_config, signals, object):
                 continue
             if ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_INFRA.value:
                 json_signal = {"metric": {"__name__": metric_name,
-                                      "instance": object["host"],
-                                      "plugin": object["plugin"],
-                                      "label": object["label"],
-                                      "snapshotId": object["snapshotId"],
-                                      "job": "instana"
-                                      },
-                                "values": signal_time_series}
+                                          "instance": object["host"],
+                                          "plugin": object["plugin"],
+                                          "label": object["label"],
+                                          "snapshotId": object["snapshotId"],
+                                          "job": "instana"
+                                          },
+                               "values": signal_time_series}
             elif ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_APP.value:
                 json_signal = {"metric": {"__name__": metric_name,
-                                      "id": object["application"]["id"],
-                                      "entityType": object["application"]["entityType"],
-                                      "label": object["application"]["label"],
-                                      "job": "instana"
-                                      },
-                                "values": signal_time_series}
+                                          "id": object["application"]["id"],
+                                          "entityType": object["application"]["entityType"],
+                                          "label": object["application"]["label"],
+                                          "job": "instana"
+                                          },
+                               "values": signal_time_series}
             else:
                 raise Exception("Ingest: signal format not recognized")
 
@@ -165,8 +163,6 @@ def ingest_instana_object(ingest_config, signals, object):
             signal_count += 1
     else:
         raise Exception("Ingest: signal type - Not implemented")
-
-
 
 
 def ingest_instana_helper(ingest_config, signals, list_of_objects):
@@ -207,6 +203,7 @@ def ingest_instana_format_directory(ingest_config, signals, ingest_dir):
 
     return metrics_metadata
 
+
 def ingest_instana_format_file(ingest_config, signals, ingest_file):
     metrics_metadata = []
 
@@ -222,7 +219,7 @@ def ingest_instana_format_file(ingest_config, signals, ingest_file):
     ingest_instana_helper(ingest_config, signals, data)
 
     for signal_count, signal in enumerate(signals.signals):
-            metrics_metadata.append(signal.metadata)
+        metrics_metadata.append(signal.metadata)
 
     return metrics_metadata
 
@@ -257,4 +254,3 @@ def combine_multiple_metrics_entries(signals):
     signals_list = list(signals_dict.values())
     new_signals = Signals(metadata=metrics_metadata, signals=signals_list)
     return new_signals
-
