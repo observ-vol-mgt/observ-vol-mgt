@@ -43,7 +43,9 @@ def ingest(ingest_config):
 
     if ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_PROM.value:
         ingest_prometheus_format(ingest_config, signals)
-    elif ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA.value:
+    elif ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_INFRA.value:
+        ingest_instana_format(ingest_config, signals)
+    elif ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_APP.value:
         ingest_instana_format(ingest_config, signals)
     else:
         raise "unsupported ingest format"
@@ -95,7 +97,6 @@ def ingest_prometheus_format(ingest_config, signals):
             match = re.search(ingest_filter_metadata, str(signal_metadata))
             if match is None:
                 continue
-
         signals.append(Signal(type=signal_type,
                               metadata=signal_metadata,
                               time_series=signal_time_series))
@@ -105,22 +106,48 @@ def ingest_prometheus_format(ingest_config, signals):
 
 def ingest_instana_object(ingest_config, signals, object):
     # object is expected to be of type dict with a field named "metrics", also of type dict
+    logger.info(f"instana ingest config = {ingest_config}")
     multiplier = 1.0
+    ingest_name_template = ingest_config.ingest_name_template
     if ingest_config.time_unit == IngestTimeUnit.PIPELINE_TIME_UNIT_MILLISECOND.value:
         multiplier = 0.001
     elif ingest_config.time_unit == IngestTimeUnit.PIPELINE_TIME_UNIT_MICROSECOND.value:
         multiplier = 0.000001
     if 'metrics' in object.keys():
         json_signals = object["metrics"]
+        signal_count = 0
         for metric_name, signal_time_series in json_signals.items():
-            json_signal = {"metric": {"__name__": metric_name,
+            if len(signal_time_series) == 0:
+                continue
+            if ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_INFRA.value:
+                json_signal = {"metric": {"__name__": metric_name,
                                       "instance": object["host"],
                                       "plugin": object["plugin"],
                                       "label": object["label"],
                                       "snapshotId": object["snapshotId"],
-                                      "job": "prometheus"
+                                      "job": "instana"
                                       },
-                           "values": signal_time_series}
+                                "values": signal_time_series}
+            elif ingest_config.format == IngestFormat.PIPELINE_INGEST_FORMAT_INSTANA_APP.value:
+                json_signal = {"metric": {"__name__": metric_name,
+                                      "id": object["application"]["id"],
+                                      "entityType": object["application"]["entityType"],
+                                      "label": object["application"]["label"],
+                                      "job": "instana"
+                                      },
+                                "values": signal_time_series}
+            else:
+                raise Exception("Ingest: signal format not recognized")
+
+            if ingest_name_template != "":
+                # adding `count` to allow usage by template
+                json_signal["metric"]["count"] = signal_count
+                # save original signal name into `original_name` if needed
+                if "__name__" in json_signal["metric"]:
+                    json_signal["metric"]["original_name"] = json_signal["metric"]["__name__"]
+                # build new name based on template
+                json_signal["metric"]["__name__"] = Template(
+                    ingest_name_template).safe_substitute(json_signal["metric"])
             signal_type = "metric"
             enrich_metric_signature_info(json_signal)
             signal_metadata = json_signal["metric"]
@@ -135,6 +162,7 @@ def ingest_instana_object(ingest_config, signals, object):
             signals.append(Signal(type=signal_type,
                                   metadata=signal_metadata,
                                   time_series=signal_time_series))
+            signal_count += 1
     else:
         raise Exception("Ingest: signal type - Not implemented")
 

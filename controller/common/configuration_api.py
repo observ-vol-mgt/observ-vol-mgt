@@ -125,7 +125,8 @@ class IngestFormat(Enum):
     Enumerates different subtypes for ingestion.
     """
     PIPELINE_INGEST_FORMAT_PROM = "prometheus"
-    PIPELINE_INGEST_FORMAT_INSTANA = "instana"
+    PIPELINE_INGEST_FORMAT_INSTANA_INFRA = "instana_infra"
+    PIPELINE_INGEST_FORMAT_INSTANA_APP = "instana_app"
 
 
 class EncodeSubType(Enum):
