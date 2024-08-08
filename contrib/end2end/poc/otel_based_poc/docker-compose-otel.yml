@@ -1,0 +1,239 @@
+version: '3.2'
+
+volumes:
+  ruler-shared-data:
+  manager_volume:
+  east_collector_shared_volume:
+  west_collector_shared_volume:
+
+services:
+  
+#################
+# Central containers
+
+  manager:
+    image: quay.io/observ-vol-mgt/manager
+    container_name: manager
+    expose:
+     - 5010
+    ports:
+     - "5010:5010"
+    environment:
+     - CONFIG_FILE=/etc/config/config.yaml
+    volumes:
+     - '$PWD/manager/config:/etc/config'
+     - 'manager_volume:/manager/app'
+
+  controller:
+    image: quay.io/observ-vol-mgt/controller
+    container_name: controller
+    command:
+      - python
+      - main.py
+      - -c
+      - '/etc/controller/config/config.yaml'
+    expose:
+     - 5000
+    ports:
+     - "5000:5000"
+    volumes:
+     - '$PWD/controller/config:/etc/controller/config'
+    depends_on:
+      thanos_query:
+        condition: service_healthy
+
+  thanos_receive:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_receive
+    volumes:
+      - ./thanos_data:/data
+    command:
+      - receive
+      - --grpc-address=0.0.0.0:10901
+      - --http-address=0.0.0.0:10902
+      - --remote-write.address=0.0.0.0:19291
+      - --receive.replication-factor=1
+      - --label=receive="true"
+      - --tsdb.path=/data/receive
+      - --tsdb.retention=15d
+      - --receive.local-endpoint=thanos-receive:10901
+    healthcheck:
+      test: wget -q -O- localhost:10902/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    expose:
+      - 19291
+    ports:
+      - "19291:19291"
+
+  thanos_query:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_query
+    command:
+      - "query"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--grpc-address=:20901"
+      - "--http-address=:19192"
+      - "--store=thanos_receive:10901"
+      # - "--store=thanos_rule:10901"
+      - "--store.sd-interval=5m"
+      - "--query.replica-label=monitor"
+    expose:
+      - 20901
+      - 19192
+    healthcheck:
+      test: wget -q -O- localhost:19192/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "19192:19192"
+
+  alertmanager:
+    image: "quay.io/prometheus/alertmanager:v0.25.0"
+    container_name: alertmanager
+    volumes:
+      - ${PWD}/alertmanager:/etc/alertmanager
+    ports:
+      - 9093:9093
+    healthcheck:
+      test: wget -q -O- localhost:9093/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  ruler_config:
+    image: quay.io/observ-vol-mgt/ruler_config
+    container_name: ruler_config
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8090
+      - RULES_FOLDER=/shared
+      - THANOS_RULE_URL=http://thanos_ruler:10903
+      - LOG_FILE=ruleTranslator.log
+    volumes:
+      - ruler-shared-data:/shared
+    expose:
+      - 8090
+    ports:
+      - "8090:8090"
+
+  thanos_ruler:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_ruler
+    command:
+      - "rule"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--grpc-address=:30901"
+      - "--http-address=:10903"
+      - "--query=thanos_query:19192"
+      - "--rule-file=/shared/rules.yml"
+      - "--alertmanagers.url=http://alertmanager:9093"
+    volumes:
+      - ruler-shared-data:/shared
+    expose:
+      - 30901
+      - 10903
+    healthcheck:
+      test: wget -q -O- localhost:10903/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "10903:10903"
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    user: '0'
+    ports:
+     - '3000:3000'
+    volumes:
+      - '$PWD/grafana/provisioning:/etc/grafana/provisioning'
+
+#################
+# Edge containers
+
+  metricgen_east:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen_east
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '-p=8000'
+     - '-cp=5002'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+     - '--duplicate=true'
+    expose:
+     - 5002
+     - 8000
+    ports:
+     - "5002:5002"
+     - "8000:8000"
+
+  metricgen_west:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen_west
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '--port=8001'
+     - '--clientport=5003'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+     - '--duplicate=true'
+    expose:
+     - 5003
+     - 8001
+    ports:
+     - "5003:5003"
+     - "8001:8001"
+
+  otel_collector_proxy_east:
+    image: quay.io/observ-vol-mgt/otel_collector_proxy
+    container_name: otel_collector_proxy_east
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_east" ]
+    ports:
+     - "8100:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./otel/otel-east-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
+      - east_collector_shared_volume:/shared
+
+  otel_collector_east:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otel_collector_east
+    command: ["--config=/shared/otel-collector-config.yaml"]
+    volumes:
+      - east_collector_shared_volume:/shared
+    depends_on:
+      - otel_collector_proxy_east
+
+  otel_collector_proxy_west:
+    image: quay.io/observ-vol-mgt/otel_collector_proxy
+    container_name: otel_collector_proxy_west
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_west" ]
+    ports:
+     - "8101:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
+      - west_collector_shared_volume:/shared
+
+  otel_collector_west:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otel_collector_west
+    command: ["--config=/shared/otel-collector-config.yaml"]
+    volumes:
+      - west_collector_shared_volume:/shared
+    depends_on:
+      - otel_collector_proxy_west

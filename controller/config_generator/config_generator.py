@@ -54,6 +54,12 @@ def config_generator(subtype, config, input_data):
         from config_generator.config_generator_processor import generate
         r_value = generate(typed_config, extracted_signals,
                            signals_to_keep, signals_to_reduce)
+    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR.value:
+        typed_config = api.ConfigGeneratorOtelProcessor(**config)
+        logger.debug("using oTel processor config_generator")
+        from config_generator.config_generator_otel_processor import generate
+        r_value = generate(typed_config, extracted_signals,
+                           signals_to_keep, signals_to_reduce)
     else:
         raise "unsupported feature_extraction configuration"
     return [r_value]

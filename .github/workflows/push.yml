@@ -38,6 +38,8 @@ jobs:
             - 'manager/alertmanager/**'
           processor:
             - 'processor/**'
+          otel_collector_proxy:
+            - 'otel-collector-proxy/**'
     - name: run controller tests
       if: steps.changes.outputs.controller == 'true'
       run: |
@@ -57,4 +59,9 @@ jobs:
       if: steps.changes.outputs.processor == 'true'
       run: |
           cd processor
+          make ci_push
+    - name: push otel-collector-proxy image
+      if: steps.changes.outputs.otel_collector_proxy == 'true'
+      run: |
+          cd otel-collector-proxy
           make ci_push

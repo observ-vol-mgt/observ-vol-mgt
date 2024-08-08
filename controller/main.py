@@ -35,7 +35,8 @@ def run():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=level)
 
     # Executing the first iteration of the pipline
-    _rerun()
+    if get_args().noui:
+        _rerun()
 
 
 if __name__ == '__main__':
