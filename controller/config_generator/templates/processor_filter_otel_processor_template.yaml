@@ -7,11 +7,11 @@ processors:
         operations:
           - action: experimental_scale_value
             experimental_scale: 1
-  metricsfilter:
+{%- for signal_to_drop in signals_to_drop %}
+  filter/drop_{{ signal_to_drop.id }}:
     error_mode: ignore
     metrics:
-{%- for signal_to_drop in signals_to_drop %}
-      metric_{{ signal_to_drop.id }}_drop:
+      metric:
         - 'name == "{{ signal_to_drop.name }}"'
         - '{{ signal_to_drop.condition }}'
 {%- endfor %}

@@ -24,36 +24,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import yaml
+import docker
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-def update_processors(main_config_path, update_config_path, output_path):
+def restart_docker_container(container_name):
+    # Initialize the Docker client
+    client = docker.from_env()
+
     try:
-        logging.info(f'Reading main configuration from {main_config_path}')
-        with open(main_config_path, 'r') as main_file:
-            main_config = yaml.safe_load(main_file)
+        # Get the container
+        container = client.containers.get(container_name)
 
-        logging.info(f'Reading update configuration from {update_config_path}')
-        with open(update_config_path, 'r') as update_file:
-            update_config = yaml.safe_load(update_file)
+        # Restart the container
+        container.restart()
 
-        # Replace the processors section
-        logging.info('Updating processors section in the main configuration')
-        main_config['processors'] = update_config['processors']
-
-        # Update the processors pipline section
-        logging.info('Updating pipline')
-        main_config['service']['pipelines']['metrics/1']['processors'] = list(main_config['processors'].keys())
-
-        logging.info(f'Writing updated configuration to {output_path}')
-        with open(output_path, 'w') as output_file:
-            yaml.safe_dump(main_config, output_file)
-
-        logging.info('Configuration update completed successfully')
-
+        logger.info(f"Container '{container_name}' restarted successfully.")
+    except docker.errors.NotFound:
+        logger.error(f"Container '{container_name}' not found.")
+    except docker.errors.APIError as e:
+        logger.error(f"Failed to restart container '{container_name}': {e}")
     except Exception as e:
-        logging.error(f'An error occurred: {e}')
-        raise
+        logger.exception(f"An unexpected error occurred: {e}")

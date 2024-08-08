@@ -3,7 +3,9 @@ version: '3.2'
 volumes:
   ruler-shared-data:
   manager_volume:
-    
+  east_collector_shared_volume:
+  west_collector_shared_volume:
+
 services:
   
 #################
@@ -199,31 +201,39 @@ services:
   otel_collector_proxy_east:
     image: quay.io/observ-vol-mgt/otel_collector_proxy
     container_name: otel_collector_proxy_east
-    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /etc/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/etc/otel-collector-config_update.yaml --processor-file-to-update=/etc/otel-collector-config.yaml" ]
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_east" ]
     ports:
      - "8100:5000"
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - ./otel/otel-east-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
-
-  otel_collector_proxy_west:
-    image: quay.io/observ-vol-mgt/otel_collector_proxy
-    container_name: otel_collector_proxy_west
-    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /etc/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/etc/otel-collector-config_update.yaml --processor-file-to-update=/etc/otel-collector-config.yaml" ]
-    ports:
-     - "8101:5000"
-    volumes:
-      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
+      - east_collector_shared_volume:/shared
 
   otel_collector_east:
     image: otel/opentelemetry-collector-contrib
     container_name: otel_collector_east
-    command: ["--config=/etc/otel-collector-config.yaml"]
+    command: ["--config=/shared/otel-collector-config.yaml"]
     volumes:
-      - ./otel/otel-east-collector-config.yaml:/etc/otel-collector-config.yaml
+      - east_collector_shared_volume:/shared
+    depends_on:
+      - otel_collector_proxy_east
+
+  otel_collector_proxy_west:
+    image: quay.io/observ-vol-mgt/otel_collector_proxy
+    container_name: otel_collector_proxy_west
+    entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_west" ]
+    ports:
+     - "8101:5000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config-from-host.yaml
+      - west_collector_shared_volume:/shared
 
   otel_collector_west:
     image: otel/opentelemetry-collector-contrib
     container_name: otel_collector_west
-    command: ["--config=/etc/otel-collector-config.yaml"]
+    command: ["--config=/shared/otel-collector-config.yaml"]
     volumes:
-      - ./otel/otel-west-collector-config.yaml:/etc/otel-collector-config.yaml
+      - west_collector_shared_volume:/shared
+    depends_on:
+      - otel_collector_proxy_west

@@ -35,6 +35,8 @@ cleanup_artifacts: compose_down ## Cleanup compose artifacts ( prometheus, thano
 
 	-docker volume rm otel_based_poc_manager_volume
 	-docker volume rm otel_based_poc_ruler-shared-data
+	-docker volume rm otel_based_poc_east_collector_shared_volume
+	-docker volume rm otel_based_poc_west_collector_shared_volume
 
 clean_docker_images: compose_down ## Delete local docker images
 	-docker rmi quay.io/observ-vol-mgt/controller
