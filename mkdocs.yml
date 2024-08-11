@@ -22,9 +22,9 @@ nav:
   - otel-collector-proxy:
     - Home: otel-collector-proxy/README.md
   - POC (Getting started):
-      - Insights: contrib/end2end/poc/insight_based_poc/README.md
-      - oTel: contrib/end2end/poc/otel_based_poc/README.md
+      - Insights POC: contrib/end2end/poc/insight_based_poc/README.md
       - Video: https://drive.google.com/file/d/1-rTCcJpnHUDHP-Cre3HotnRnzyWIatNi/view?usp=sharing
+      - oTel POC: contrib/end2end/poc/otel_based_poc/README.md
   - More:
       - contrib/ec-metric-gen/README.md
       - contrib/ec-metric-gen/doc/metrics.md
