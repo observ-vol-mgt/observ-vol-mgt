@@ -104,7 +104,7 @@ def ingest_prometheus_format(ingest_config, signals):
 
 def ingest_instana_object(ingest_config, signals, object):
     # object is expected to be of type dict with a field named "metrics", also of type dict
-    logger.info(f"instana ingest config = {ingest_config}")
+    logger.debug(f"instana ingest config = {ingest_config}")
     multiplier = 1.0
     ingest_name_template = ingest_config.ingest_name_template
     if ingest_config.time_unit == IngestTimeUnit.PIPELINE_TIME_UNIT_MILLISECOND.value:
