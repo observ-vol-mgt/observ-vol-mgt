@@ -1,13 +1,20 @@
 # PoC usecase
-![demofigure](../../../../docs/images/pocv2.svg)
+![demofigure](../../../../docs/images/poc_otel.svg)
 
-The PoC demonstrates two edges connected to a central cloud. Each edge comprises of metric generator whose metrics are scraped by prometheus. The prometheus does a remote write to thanos (running in the central cloud) for long term storage and analysis. The remote write is intercepted by our processor proxy running at each edge location. The processor applies various transformation to the collected metrics.
+The PoC demonstrates two edges connected to a central cloud. 
+Each edge comprises metric generator whose metrics are scraped by an oTel collector. 
+The collector does a remote write to thanos (running in the central cloud) for long term storage and analysis. 
+The remote write is intercepted as part of the oTel processor pipeline workflow. 
+A "configuration proxy" is used to apply various transformations from the central cloud 
+to the processors inside the oTel collectors. 
 
 In this PoC we showcase how our controller generate insights that trigger pruning of metrics based on similarity across east and west edge/clouds.
 
 ## Environment Setup
 
-The PoC requires docker installed on the machine to test the scenario. The following containers get installed when the PoC environment is bought up.\
+The PoC requires docker installed on the machine to test the scenario. 
+The following containers get installed when the PoC environment is bought up.
+
 Central containers:
 - `thanos-receive`
 - `thanos-query`
@@ -15,11 +22,12 @@ Central containers:
 - `ruler-config`
 - `alertmanager`
 - `controller`
-- `manager`\
+- `manager`
+
 Edge containers:
-- `metricgen1,2`
-- `prometheus1,2`
-- `pmf_processsor1,2`
+- `metricgen_[east,west]`
+- `otel_proxy_collector_[east,west]`
+- `otel_collector_[east,west]`
 
 ## Running the PoC story
 
@@ -29,7 +37,7 @@ make start
 ```
 or 
 ```commandline
-docker-compose -f docker-compose-quay.yml up -d
+docker-compose -f docker-compose-otel.yml up -d
 ```
 2. Confirm that the metrics are flowing correctly in the `thanos query` UI: `http://127.0.0.1:19192`  
 Confirm metrics `k8s_pod_network_bytes` or `nwdaf_5G_network_utilization` are available.  
@@ -58,5 +66,5 @@ make end
 ```
 or 
 ```commandline
-docker compose_down
+docker compose -f docker-compose-otel.yml down
 ```

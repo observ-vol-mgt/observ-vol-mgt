@@ -22,9 +22,14 @@ if config_file:
     app.config.update(load_config(config_file))
 
 # Set up logging
-log_dir = os.path.dirname(app.config.get('LOG_FILE'))
-os.makedirs(log_dir, exist_ok=True)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=app.config.get('LOG_FILE'), filemode='w', level=logging.INFO)
+try:
+    log_dir = os.path.dirname(app.config.get('LOG_FILE'))
+    if log_dir != "":
+        os.makedirs(log_dir, exist_ok=True)
+        logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename=app.config.get('LOG_FILE'), filemode='w', level=logging.INFO)
+except Exception as e:
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 swagger_template = {
