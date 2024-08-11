@@ -17,8 +17,11 @@ install_requirements:
 ##@ Docs
 build_and_deploy_docs: install_requirements ## Build and deploy the project documentation
 	-git branch -D gh-pages
-	mkdocs build -c
-	ghp-import ../site
+	-rm -r ../site
+	mkdocs build --clean
+	-rm -r ../site/contrib/fetch-offline-data/instana/demo-eu/
+	-rm -r ../site/controller/metadata_classification/data/few_shot_pretrained_model
+	ghp-import --no-history ../site
 	git push -f origin gh-pages
 
 show_docs: install_requirements ## Serve the project documentation
