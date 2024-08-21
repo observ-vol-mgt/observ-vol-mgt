@@ -169,8 +169,8 @@ class Pipeline:
         elif stage.base_stage.type == api.StageType.EXTRACT.value:
             self.extracted_signals = output_data[0]
         elif stage.base_stage.type == api.StageType.INSIGHTS.value:
-            self.signals_to_keep, self.signals_to_reduce, self.text_insights = output_data[
-                0], output_data[1], output_data[2]
+            self.signals_to_keep, self.signals_to_reduce, self.text_insights = (
+                output_data[0], output_data[1], output_data[2])
         elif stage.base_stage.type == api.StageType.CONFIG_GENERATOR.value:
             self.r_value = output_data[0]
         elif stage.base_stage.type == api.StageType.MAP_REDUCE.value:

@@ -27,6 +27,20 @@ class Signal:
 
         self.time_series = time_series
 
+    def tag(self, tag):
+        if "tags" not in self.metadata.keys():
+            self.metadata["tags"] = []
+        if tag not in self.metadata["tags"]:
+            self.metadata["tags"].append(tag)
+
+    def is_tagged(self, tags, _any):
+        if "tags" not in self.metadata.keys():
+            return False
+        if _any:
+            return any(tag in self.metadata["tags"] for tag in tags)
+        else:
+            return all(tag in self.metadata["tags"] for tag in tags)
+
     def __str__(self):
         return f"Signal: type: {self.type}, metadata: {self.metadata}, time_series:{self.time_series}"
 
@@ -41,8 +55,23 @@ class Signals:
     def append(self, signal):
         self.signals.append(signal)
 
-    def filter_by_type(self, type):
-        return [signal for signal in self.signals if signal.type == type]
+    def filter_by_type(self, _type):
+        return [signal for signal in self.signals if signal.type == _type]
+
+    def tag_by_names(self, names, tag, filter_in=True):
+        for signal in self.signals:
+            if signal.metadata["__name__"] in names:
+                if filter_in:
+                    signal.tag(tag)
+            else:
+                if not filter_in:
+                    signal.tag(tag)
+
+    def filter_by_tags(self, tags, filter_in=True, _any=True):
+        if filter_in:
+            return [signal for signal in self.signals if signal.is_tagged(tags, _any)]
+        else:
+            return [signal for signal in self.signals if not signal.is_tagged(tags, _any)]
 
     def filter_by_names(self, names, filter_in=True):
         filtered_signals = []
