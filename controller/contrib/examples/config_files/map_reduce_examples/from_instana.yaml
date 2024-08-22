@@ -44,11 +44,17 @@ parameters:
   input_data: [extracted_signals]
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
   config:
-    close_to_zero_threshold: 0.02
-    pairwise_similarity_threshold: 0.01
-    pairwise_similarity_method: distance
-    pairwise_similarity_distance_method: euclidean
-    compound_similarity_threshold: 1
+    analysis_chain:
+    - type: zero_values
+      close_to_zero_threshold: 0.02
+    - type: fixed_values
+    - type: pairwise_correlations
+      pairwise_similarity_threshold: 0.01
+      pairwise_similarity_method: distance
+      pairwise_similarity_distance_method: euclidean
+    - type: compound_correlations
+      compound_similarity_threshold: 1
+    - type: metadata_classification
 - name: config_generator_otel
   type: config_generator
   subtype: otel
