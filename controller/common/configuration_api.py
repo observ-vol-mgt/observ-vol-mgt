@@ -1,3 +1,17 @@
+#   Copyright 2024 IBM, Inc.
+#  #
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#  #
+#       http://www.apache.org/licenses/LICENSE-2.0
+#  #
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 """
 
 ## Controller configuration
@@ -24,20 +38,6 @@ The configuration is organized into two areas.
   Additional specific configuration parameters according to the functionality.
 
 """
-
-#   Copyright 2024 IBM, Inc.
-#  #
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#  #
-#       http://www.apache.org/licenses/LICENSE-2.0
-#  #
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
@@ -255,21 +255,57 @@ class FeatureExtractionTsfel(BaseModel):
     trim: Optional[bool] = False
 
 
+class InsightsAnalysisChainType(Enum):
+    """
+    Enumerates analysis processes (used by insights analysis_chain)
+    """
+    INSIGHTS_ANALYSIS_ZERO_VALUES = "zero_values"
+    INSIGHTS_ANALYSIS_FIXED_VALUES = "fixed_values"
+    INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS = "pairwise_correlations"
+    INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS = "compound_correlations"
+    INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION = "metadata_classification"
+
+
+class AnalysisChainProcess(BaseModel):
+    """
+    Configuration for each of the analysis processes.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    type: InsightsAnalysisChainType  # The type of analysis process
+    filter_signals_by_tags: Optional[List[str]] = ""  # Filter signals to analyze by list of tags
+    close_to_zero_threshold: Optional[float] = 0  # Threshold for close to zero analysis
+    pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
+    pairwise_similarity_method: Optional[str] = (
+        GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value)  # Method for pairwise similarity
+    # The distance algorithm to use (scipy.spacial.distance) when using distance method
+    pairwise_similarity_distance_method: Optional[str] = ""
+    compound_similarity_threshold: Optional[float] = 0.99  # Threshold for compound similarity
+
+
 class GenerateInsights(BaseModel):
     """
     Configuration for generating insights.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    # Threshold for close to zero analysis
-    close_to_zero_threshold: Optional[float] = 0
-    # Threshold for pairwise similarity
-    pairwise_similarity_threshold: Optional[float] = 0.95
-    pairwise_similarity_method: Optional[str] = (
-        GenerateInsightsType.INSIGHTS_SIMILARITY_METHOD_PEARSON.value)  # Method for pairwise similarity
-    # The distance algorithm to use (scipy.spacial.distance) when using distance method
-    pairwise_similarity_distance_method: Optional[str] = ""
-    # Threshold for compound similarity
-    compound_similarity_threshold: Optional[float] = 0.99
+    # chain of analysis processes to be executed to generate insights
+    analysis_chain: List[AnalysisChainProcess] = [
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION.value),
+    ]
 
 
 class ConfigGeneratorOtel(BaseModel):
