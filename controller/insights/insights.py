@@ -41,7 +41,11 @@ def generate_insights(subtype, config, input_data):
         if analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES:
             # finding zero signals
             zero_values_analyzer = ZeroValuesAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
             close_to_zero_threshold = analysis_process.close_to_zero_threshold
+
+            zero_values_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 zero_values_analyzer.analyze(close_to_zero_threshold=close_to_zero_threshold))
             insights.append(result_insights)
@@ -49,8 +53,10 @@ def generate_insights(subtype, config, input_data):
         elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES:
             # finding fixed signals
             fixed_values_analyzer = FixedValuesAnalyzer(signals)
-            fixed_values_analyzer.filter_signals_by_tags(
-                [api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES], out=True)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
+
+            fixed_values_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 fixed_values_analyzer.analyze())
             insights.append(result_insights)
@@ -58,12 +64,13 @@ def generate_insights(subtype, config, input_data):
         elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS:
             # finding pairwise correlated signals
             pairwise_correlation_analyzer = PairwiseCorrelationAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
             pairwise_similarity_threshold = analysis_process.pairwise_similarity_threshold
             pairwise_similarity_method = analysis_process.pairwise_similarity_method
             pairwise_similarity_distance_method = analysis_process.pairwise_similarity_distance_method
-            pairwise_correlation_analyzer.filter_signals_by_tags(
-                [api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES,
-                 api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES], out=True)
+
+            pairwise_correlation_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 pairwise_correlation_analyzer.analyze(
                     pairwise_similarity_threshold=pairwise_similarity_threshold,
@@ -74,17 +81,21 @@ def generate_insights(subtype, config, input_data):
         elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS:
             # finding pairwise correlated signals
             compound_correlation_analyzer = CompoundCorrelationAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
             compound_similarity_threshold = analysis_process.compound_similarity_threshold
-            compound_correlation_analyzer.filter_signals_by_tags(
-                [api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
-                 api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value,
-                 api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value], out=True, _any=True)
+
+            compound_correlation_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 compound_correlation_analyzer.analyze(compound_similarity_threshold=compound_similarity_threshold))
             insights.append(result_insights)
         elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION:
             # finding pairwise correlated signals
             metadata_classification_analyzer = MetadataClassificationAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
+
+            metadata_classification_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 metadata_classification_analyzer.analyze())
             insights.append(result_insights)

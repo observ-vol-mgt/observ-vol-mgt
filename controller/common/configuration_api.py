@@ -272,6 +272,7 @@ class AnalysisChainProcess(BaseModel):
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     type: InsightsAnalysisChainType  # The type of analysis process
+    filter_signals_by_tags: Optional[List[str]] = ""  # Filter signals to analyze by list of tags
     close_to_zero_threshold: Optional[float] = 0  # Threshold for close to zero analysis
     pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
     pairwise_similarity_method: Optional[str] = (
@@ -288,11 +289,22 @@ class GenerateInsights(BaseModel):
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     # chain of analysis processes to be executed to generate insights
     analysis_chain: List[AnalysisChainProcess] = [
-        AnalysisChainProcess(type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value),
-        AnalysisChainProcess(type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value),
-        AnalysisChainProcess(type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value),
-        AnalysisChainProcess(type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS.value),
-        AnalysisChainProcess(type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION.value),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value]),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION.value),
     ]
 
 
