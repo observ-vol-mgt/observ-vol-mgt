@@ -94,4 +94,3 @@ class CompoundCorrelationAnalyzer(Analyzer, ABC):
         self.tag_signals_by_names([signal["signal"] for signal in signals_to_reduce],
                                   InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS.value)
         return self.get_signals(), compound_insights
-
