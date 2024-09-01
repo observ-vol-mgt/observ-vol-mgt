@@ -14,8 +14,6 @@
 
 import logging
 import os
-import time
-
 import requests
 import json
 import argparse
@@ -24,7 +22,6 @@ from datetime import datetime, timedelta
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = logging.getLogger(__name__)
 
 
@@ -80,7 +77,7 @@ def main():
     parser.add_argument("--token", type=str, required=True, help="Instana API token")
     parser.add_argument("--service_name_filter", default=None, type=str, help="Service name filter for traces")
     parser.add_argument("--traces_limit", default=None, type=int, help="Maximum number of traces to dump")
-    parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for metrics and events")
+    parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for traces")
 
     args = parser.parse_args()
 

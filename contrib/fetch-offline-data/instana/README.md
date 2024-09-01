@@ -119,7 +119,7 @@ python fetch_instana_traces.py --url https://instana1.tivlab.raleigh.ibm.com --t
 
 > [!NOTE]  
 > It is possible to execute the script `convert-dump-metrics-file-to-promql-format.py` 
-> as a post-processing stage, and convert the output file into
+> as a post-processing stage, and convert output metrics files into
 > promQL format dump file. This file can be used with the 
 > as input to the volume manager controller.  
 > 
@@ -132,4 +132,12 @@ python fetch_instana_traces.py --url https://instana1.tivlab.raleigh.ibm.com --t
 python main.py --ingest_type=file --ingest_file=../contrib/fetch-offline-data/instana/promql_metrics.json --feature_extraction_type=tsfel --config_generator_type=otel --config_generator_directory=/tmp
 ```
 
- 
+> [!NOTE]  
+> It is possible to execute the script `parse-instana-traces-queries-into-access-log.py`
+> as a ost-processing stage, and convert output traces files into
+> access_log format as input to the volume manager controller.
+> 
+> Example usage:
+```bash
+python parse-instana-traces-queries-into-access-log.py --input_file demo-eu/traces.json --output_dir demo-eu
+```
