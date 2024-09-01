@@ -33,59 +33,42 @@ def persist_data_to_file(data, filename):
         json.dump(data, file, indent=4)
 
 
-def fetch_instana_topology(url, token, start_time, end_time, folder):
-    instana_api_url = f"{url}/api/application-monitoring/topology/services"
+def fetch_instana_traces(url, token, start_time, end_time, service_name_filter, output_dir, traces_limit=None):
+
+    # 1. We will first get the list of traces (without details)
+    instana_api_url = f"{url}/api/application-monitoring/analyze/traces"
     result = None
     headers = {"Authorization": f"apiToken {token}", "Content-Type": "application/json"}
     params = {
         "start": int(start_time.timestamp()) * 1000,  # Convert to milliseconds
         "end": int(end_time.timestamp()) * 1000,  # Convert to milliseconds
     }
-    parameters = {"applicationBoundaryScope": "ALL", 'to': params["end"], 'windowSize': params["end"] - params["start"]}
-    response = requests.get(instana_api_url, params=parameters, headers=headers, verify=False)
+    data = {"tagFilterExpression": {"type": "TAG_FILTER", "name": "service.name", "operator": "EQUALS",
+                                    "entity": "DESTINATION", "value": service_name_filter},
+            'timeFrame': {'to': params["end"], 'windowSize': params["end"] - params["start"]}}
+    response = requests.post(instana_api_url, data=json.dumps(data), headers=headers, verify=False)
     if response.status_code == 200:
         result = response.json()
     else:
-        logging.error("Error fetching topology:", response.text)
+        logging.error("Error fetching traces:", response.text)
         return
-    if result != None:
-        filename = f"{folder}/topology.json"
-        persist_data_to_file(result, filename)
-        logging.info(f"Topology saved to {folder}")
 
+    traces = result['items'][:traces_limit] if traces_limit is not None else result['items']
+    # 2. For each item in the result list, we will get additional details
+    for trace in traces:
+        instana_api_url = f"{url}/api/application-monitoring/v2/analyze/traces/{trace['trace']['id']}"
+        response = requests.get(instana_api_url, headers=headers, verify=False)
+        if response.status_code == 200:
+            trace['details'] = response.json()
 
-def fetch_Application_list(url, token, start_time, end_time):
-    instana_api_url = f"{url}/api/application-monitoring/applications"
-    result = []
-    headers = {"Authorization": f"apiToken {token}", "Content-Type": "application/json"}
-    params = {
-        "start": int(start_time.timestamp()) * 1000,  # Convert to milliseconds
-        "end": int(end_time.timestamp()) * 1000,  # Convert to milliseconds
-    }
-    parameters = {"applicationBoundaryScope": "ALL", 'to': params["end"], 'windowSize': params["end"] - params["start"]}
-    response = requests.get(instana_api_url, params=parameters, headers=headers, verify=False)
-    if response.status_code == 200:
-        result = [response.json()['items']]
-        total_hits = response.json()['totalHits']
-        if total_hits > 1:
-            for hit in range(2, total_hits):
-                parameters['page'] = hit
-                temp = requests.get(instana_api_url, params=parameters, headers=headers, verify=False)
-                if temp.status_code == 200:
-                    if len(temp.json()['items']) > 0:
-                        result.append(temp.json()['items'])
-                else:
-                    logging.error("Error fetching topology:", temp.text)
-                    break
-    else:
-        logging.error("Error fetching topology:", response.text)
-        return
-    if result != None:
-        return result
+    if result is not None:
+        filename = f"{output_dir}/traces.json"
+        persist_data_to_file(traces, filename)
+        logging.info(f"Traces saved to {output_dir}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Fetch Instana metrics and events for a specified time window")
+    parser = argparse.ArgumentParser(description="Fetch Instana traces for a specified time window")
     parser.add_argument("--log-level", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
                         default="INFO", help="Logging level (default: INFO)")
     parser.add_argument("--start", type=str, default=(datetime.now() - timedelta(minutes=10))
@@ -95,6 +78,8 @@ def main():
                         help="End time in YYYY-MM-DDTHH:MM:SS format (default: current time)")
     parser.add_argument("--url", type=str, required=True, help="Instana API base URL")
     parser.add_argument("--token", type=str, required=True, help="Instana API token")
+    parser.add_argument("--service_name_filter", default=None, type=str, help="Service name filter for traces")
+    parser.add_argument("--traces_limit", default=None, type=int, help="Maximum number of traces to dump")
     parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for metrics and events")
 
     args = parser.parse_args()
@@ -111,9 +96,12 @@ def main():
         logging.error("Invalid time format. Please use YYYY-MM-DDTHH:MM:SS format.")
         return
 
-    folder = args.output_dir
-    # print(fetch_Application_list(args.url, args.token, start_time, end_time))
-    fetch_instana_topology(args.url, args.token, start_time, end_time, folder=folder)
+    output_dir = args.output_dir
+    service_name_filter = args.service_name_filter
+    traces_limit = args.traces_limit
+    fetch_instana_traces(args.url, args.token, start_time, end_time,
+                         service_name_filter=service_name_filter, output_dir=output_dir,
+                         traces_limit=traces_limit)
 
 
 if __name__ == "__main__":

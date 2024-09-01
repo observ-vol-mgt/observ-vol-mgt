@@ -8,9 +8,11 @@ import argparse
 from datetime import datetime, timedelta
 
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
+
 
 def format_metric_id(metric):
     j = {}
@@ -35,6 +37,7 @@ def format_metric_id(metric):
     except:
         return None
 
+
 def select(metric, query):
     metric_details = format_metric_id(metric)
 
@@ -55,6 +58,7 @@ def filter_metric_ids(metric_ids, query):
         if select(metric, query):
             selected_metric.append(metric)
     return selected_metric
+
 
 def fetch_instana_plugins_catalog(url, token):
     # Instana API endpoint for fetching plugins
@@ -127,6 +131,7 @@ def fetch_instana_metrics_catalog(url, token, plugin):
         logging.error("Error fetching plugins:", response.text)
         return None
 
+
 def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_ids, start_time, end_time,
                                          granularity=1):
     # Instana API endpoint for fetching metrics
@@ -165,10 +170,10 @@ def fetch_instana_infrastructure_metrics(url, token, plugin, snapshots, metric_i
             continue
         s_time = e_time
 
-    return result   
+    return result
 
 
-def fetch_instana_metrics(url, token, start_time, end_time, plugin, granularity=1, filter_query={}, folder = "data"):
+def fetch_instana_metrics(url, token, start_time, end_time, plugin, granularity=1, filter_query={}, folder="data"):
     time_series_metrics = []
     metrics_count = 0
     plugins_catalog = fetch_instana_plugins_catalog(url, token[0])
@@ -245,6 +250,7 @@ def persist_data_to_file(data, filename):
     with open(filename, "w") as file:
         json.dump(data, file, indent=4)
 
+
 def parse_args_to_dict(query_string):
     if query_string == None or query_string == "":
         return {}
@@ -258,6 +264,7 @@ def parse_args_to_dict(query_string):
     except Exception as e:
         logging.error("Error while parsing input query to json :", e)
     return query
+
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch Instana metrics and events for a specified time window")
@@ -291,7 +298,8 @@ def main():
 
     folder = args.output_dir
 
-    instana_metrics = fetch_instana_metrics(args.url, args.token, start_time, end_time, args.plugin, filter_query=filter_query, granularity = 60, folder = folder)
+    instana_metrics = fetch_instana_metrics(args.url, args.token, start_time, end_time, args.plugin,
+                                            filter_query=filter_query, granularity=60, folder=folder)
     if instana_metrics:
         file_name = f"{folder}/instana_metrics_final.json"
         persist_data_to_file(instana_metrics, file_name)
