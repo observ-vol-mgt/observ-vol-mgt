@@ -1,4 +1,4 @@
-name: pull request - build test and push
+name: push - build test and push
 
 on:
   push:
@@ -26,6 +26,9 @@ jobs:
         registry: quay.io
         username: ${{ env.QUAY_ROBOT_USER }}
         password: ${{ secrets.QUAY_SECRET }}
+    - name: Update project level docs
+      run: |
+          make ci_push
     - uses: dorny/paths-filter@v3
       id: changes
       with:

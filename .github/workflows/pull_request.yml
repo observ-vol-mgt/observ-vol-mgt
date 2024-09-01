@@ -28,6 +28,3 @@ jobs:
       run: |
           cd controller
           make ci_pull_request
-    - name: build and deploy the project docs
-      run: |
-          make build_and_deploy_docs
