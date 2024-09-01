@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import json
-from . import utils
 
 
 class AccessLogEntry:
