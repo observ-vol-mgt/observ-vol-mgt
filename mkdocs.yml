@@ -4,6 +4,7 @@ docs_dir: .
 site_dir: ../site
 theme:
   name: material
+  logo: docs/images/OVM.png
 nav:
   - Home: README.md
   - Controller:
