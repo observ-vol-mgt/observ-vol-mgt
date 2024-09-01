@@ -30,7 +30,8 @@ def persist_data_to_file(data, filename):
         json.dump(data, file, indent=4)
 
 
-def fetch_instana_traces(url, token, start_time, end_time, service_name_filter, output_dir, traces_limit=None):
+def fetch_instana_traces(url, token, start_time, end_time, service_name_filter, output_dir,
+                         traces_limit=None, include_internal=False, include_synthetic=False):
 
     # 1. We will first get the list of traces (without details)
     instana_api_url = f"{url}/api/application-monitoring/analyze/traces"
@@ -42,7 +43,8 @@ def fetch_instana_traces(url, token, start_time, end_time, service_name_filter, 
     }
     data = {"tagFilterExpression": {"type": "TAG_FILTER", "name": "service.name", "operator": "EQUALS",
                                     "entity": "DESTINATION", "value": service_name_filter},
-            'timeFrame': {'to': params["end"], 'windowSize': params["end"] - params["start"]}}
+            'timeFrame': {'to': params["end"], 'windowSize': params["end"] - params["start"]},
+            "includeInternal": include_internal, "includeSynthetic": include_synthetic}
     response = requests.post(instana_api_url, data=json.dumps(data), headers=headers, verify=False)
     if response.status_code == 200:
         result = response.json()
@@ -76,6 +78,8 @@ def main():
     parser.add_argument("--url", type=str, required=True, help="Instana API base URL")
     parser.add_argument("--token", type=str, required=True, help="Instana API token")
     parser.add_argument("--service_name_filter", default=None, type=str, help="Service name filter for traces")
+    parser.add_argument("--include_internal", default=False, type=bool, help="Include internal traces")
+    parser.add_argument("--include_synthetic", default=False, type=bool, help="Include synthetic traces")
     parser.add_argument("--traces_limit", default=None, type=int, help="Maximum number of traces to dump")
     parser.add_argument("--output_dir", default=os.getcwd(), type=str, help="Output directory for traces")
 
