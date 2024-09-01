@@ -29,6 +29,8 @@ jobs:
     - name: Update project level docs
       run: |
           make ci_push
+      env:
+        GITHUB_TOKEN: ${{ secrets.OBSERV_VOL_MGT_CI_UPDATER }}
     - uses: dorny/paths-filter@v3
       id: changes
       with:
