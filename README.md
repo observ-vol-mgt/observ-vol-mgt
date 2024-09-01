@@ -1,4 +1,4 @@
-# observ-vol-mgt: Observability Volume Manager
+# OVM: Observability Volume Manager
 In today's dynamic computing landscape spanning centralized clouds, multi-cloud, and edge computing, the demand for adaptable observability is paramount. In particular, managing the escalating volume of observability data is crucial.  With **Observability Volume Manager** we aim to address the complexities of dynamic observability data management by offering tailored processing capabilities to ensure efficient and effective observability across the entire computing infrastructure. 
 
 ## Overview
