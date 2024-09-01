@@ -17,7 +17,7 @@ Instana is a popular monitoring tool used by many organizations to monitor their
 2. **Dependencies**: Install the required Python packages using pip:
 
    ```bash
-   pip install requests
+   pip install requests urllib3
    ```
    
 3. **Configuration**: You need to obtain an Instana API token and know the base URL of your Instana instance. Set these values in the script or provide them as command-line arguments (see below).
