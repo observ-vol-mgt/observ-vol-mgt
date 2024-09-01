@@ -9,6 +9,8 @@ env:
 
 jobs:
   build-test-push:
+    permissions:
+      contents: write
     name: build-test-push
     runs-on: ubuntu-latest
     steps:
@@ -29,8 +31,6 @@ jobs:
     - name: Update project level docs
       run: |
           make ci_push
-      env:
-        GITHUB_TOKEN: ${{ secrets.OBSERV_VOL_MGT_CI_UPDATER }}
     - uses: dorny/paths-filter@v3
       id: changes
       with:
