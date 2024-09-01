@@ -83,3 +83,11 @@ push_processor_docker_image:
         DOCKER_IMAGE_BASE=${DOCKER_IMAGE_BASE}; \
         DOCKER_TAG=${DOCKER_TAG}; \
         make docker_push
+
+##@ CI
+.PHONY: ci_push
+ci_push: ## Executed upon ci push (merge) event
+	@echo "|||====> Building the project docs"
+	make build_and_deploy_docs
+	@echo "|||====> Done building project docs."
+
