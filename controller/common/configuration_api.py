@@ -251,7 +251,7 @@ class FeatureExtractionTsfel(BaseModel):
     features_json_file: Optional[str] = \
         "extract/tsfel_conf/limited_statistical.json"  # JSON file for features
     resample_rate: Optional[str] = "30s"  # Resampling rate
-    sampling_frequency: Optional[float] = (1/30)  # Sampling frequency
+    sampling_frequency: Optional[float] = (1 / 30)  # Sampling frequency
     trim: Optional[bool] = False
 
 
@@ -264,6 +264,8 @@ class InsightsAnalysisChainType(Enum):
     INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS = "pairwise_correlations"
     INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS = "compound_correlations"
     INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION = "metadata_classification"
+    INSIGHTS_ANALYSIS_ACCESS_LOG_INTERSECT = "access_log_intersect"
+    INSIGHTS_ANALYSIS_ACCESS_LOG_INTERSECT_NOT_ACCESSED = "access_log_intersect_not_accessed"
 
 
 class AnalysisChainProcess(BaseModel):
@@ -280,6 +282,7 @@ class AnalysisChainProcess(BaseModel):
     # The distance algorithm to use (scipy.spacial.distance) when using distance method
     pairwise_similarity_distance_method: Optional[str] = ""
     compound_similarity_threshold: Optional[float] = 0.99  # Threshold for compound similarity
+    access_log_file: Optional[str] = None  # Access_log file
 
 
 class GenerateInsights(BaseModel):

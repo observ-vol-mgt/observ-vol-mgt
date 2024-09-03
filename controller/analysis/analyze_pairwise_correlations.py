@@ -38,7 +38,7 @@ class PairwiseCorrelationAnalyzer(Analyzer, ABC):
         pairwise_similarity_distance_method = kwargs.get("pairwise_similarity_distance_method")
 
         if not signals.signals:
-            return [], [], "No insights, empty signals"
+            return self.get_signals(), "No insights, empty signals"
 
         # cross-signals features extraction
         df_features_matrix = pd.DataFrame()

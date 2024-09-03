@@ -16,6 +16,7 @@ import logging
 import common.configuration_api as api
 from analysis.analyze_compound_correlations import CompoundCorrelationAnalyzer
 from analysis.analyze_fixed_values import FixedValuesAnalyzer
+from analysis.analyze_intersect_with_access_log import AccessLogIntersectionAnalyzer
 from analysis.analyze_metadata_classification import MetadataClassificationAnalyzer
 from analysis.analyze_pairwise_correlations import PairwiseCorrelationAnalyzer
 from analysis.analyze_zero_values import ZeroValuesAnalyzer
@@ -36,7 +37,7 @@ def generate_insights(subtype, config, input_data):
     # execute the analysis according to the chain
     insights = []
     for analysis_process in analysis_chain:
-        logger.debug(f"Performing analysis process {analysis_process}")
+        logger.info(f"Performing analysis process {analysis_process}")
 
         if analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES:
             # finding zero signals
@@ -98,6 +99,17 @@ def generate_insights(subtype, config, input_data):
             metadata_classification_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 metadata_classification_analyzer.analyze())
+            insights.append(result_insights)
+        elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ACCESS_LOG_INTERSECT:
+            # finding intersection with access_log
+            access_log_intersection_analyzer = AccessLogIntersectionAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
+            access_log_file = analysis_process.access_log_file
+
+            access_log_intersection_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
+            signals, result_insights = (
+                access_log_intersection_analyzer.analyze(access_log_file=access_log_file))
             insights.append(result_insights)
         else:
             raise "unsupported analysis process"
