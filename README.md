@@ -25,7 +25,7 @@ The current version of *OVM* supports
 [Prometheus](https://prometheus.io/) as observability data collectors.  
 It uses either an **embedded**, lightweight, automated, SQL-based metric processing system 
 or the capabilities of the **community** [OTel processors](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/README.md)
-to manage and change in collected observability.      
+to manage and change the collected observability volume.      
 
 ### Architecture: A Bird's Eye View
 
@@ -78,8 +78,8 @@ The main objective of the current version of **Observability Volume Manager** is
 
 ## Getting started 
 
-To demonstrate the value of *OVM* and provide a "learning by example" getting  
-started experience, OVM provides several **Proof of Concept**s experiences. 
+To demonstrate the value of *OVM* and provide a "learning by example" getting started 
+experience, OVM provides several **Proof of Concept**s experiences.
 Each POC includes documentation and deployment of OVM and additional
 components demonstrating a specific scenario and exploiting OVM configuration.
 
