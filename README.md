@@ -9,22 +9,22 @@ efficient and effective observability across the entire computing infrastructure
 Observability Volume Manager provides a mechanism to perform various transformations 
 on observability data to manage the volume and support various edge deployment 
 use cases.  
-- *OVM* minimized compute, transport and data persistency while preserving 
+- **OVM** minimizes compute, transport and data persistency while preserving 
 the complete value of observability to detect, troubleshoot and support 
 analytics and tooling.
-- *OVM* reacts dynamically to changes in system state and system behaviours, and 
+- **OVM** reacts dynamically to changes in system state and system behaviours, and 
 based on user provided policies, optimizes observability volume to adopt.
-- *OVM* encapsulates multiple layers of "smartness" and can be used in full automation
+- **OVM** encapsulates multiple layers of "smartness" (a.k.a. AI) and can be used in full automation
 mode, or used as a recommendation system supporting a "user in the loop" pattern.  
-- *OVM* provides user-centric intent-based semantics language that supports multiple 
+- **OVM** provides user-centric intent-based semantic language supporting multiple 
 transformations represented as a DAG. 
-This semantics is deployment and technology-agnostic.
+This semantic language is deployment and technology-agnostic.
 
 The current version of *OVM* supports
-[OpenTelemetry collector](https://opentelemetry.io/docs/collector/) and 
+[OpenTelemetry](https://opentelemetry.io/docs/collector/) and 
 [Prometheus](https://prometheus.io/) as observability data collectors.  
-It uses either an *embedded*, lightweight, automated, SQL-based metric processing system 
-or the capabilities of the *community* [OTel processors](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/README.md)
+It uses either an **embedded**, lightweight, automated, SQL-based metric processing system 
+or the capabilities of the **community** [OTel processors](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/README.md)
 to manage and change in collected observability.      
 
 ### Architecture: A Bird's Eye View
@@ -79,7 +79,7 @@ The main objective of the current version of **Observability Volume Manager** is
 ## Getting started 
 
 To demonstrate the value of *OVM* and provide a "learning by example" getting  
-started experience, OVM provides several *Proof of Concept*s experiences. 
+started experience, OVM provides several **Proof of Concept**s experiences. 
 Each POC includes documentation and deployment of OVM and additional
 components demonstrating a specific scenario and exploiting OVM configuration.
 
