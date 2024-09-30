@@ -89,7 +89,7 @@ components demonstrating a specific scenario and exploiting OVM configuration.
 
 
 > Note: We have created a video demonstrating the *Insights based POC* in action. 
-> It can be accessed [here](docs/videos/poc_v2_video.mp4).
+> It can be accessed [here](docs/videos/poc_v2_video.mp4).      
 > Note: We have created a blog demonstrating the *OTel based POC* 
 > It can be accessed [here](https://medium.com/@eran.raichstein/master-observability-with-ovm-and-open-telemetry-1ddd266b022d).
 
