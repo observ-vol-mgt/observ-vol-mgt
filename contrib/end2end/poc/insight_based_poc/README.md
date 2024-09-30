@@ -31,7 +31,7 @@ or
 ```commandline
 docker-compose -f docker-compose-quay.yml up -d
 ```
-2. Confirm that the metrics are available in `thanos query` UI: `http://127.0.0.1:19192`    
+2. Confirm that the metrics are available in `thanos query` UI `http://127.0.0.1:19192`:    
 The following metrics should be available: `k8s_pod_network_bytes` and `nwdaf_5G_network_utilization`.    
 There should be a single metric for each edge, hence a total of four metrics.
 
@@ -39,15 +39,18 @@ There should be a single metric for each edge, hence a total of four metrics.
 ```commandline
 make perform_analysis
 ```
-or  
-Via the manager API. `http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_analyze`
+or via the manager API.   
+`http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_analyze`
 
 4. Verify the generated insights in the Controller UI: `http://127.0.0.1:5000/insights`  
 Click `Insights details 4` and the analysis should show three metrics
-(`k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP) `)
-that are correlated with `k8s_pod_network_bytes`.
+`k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP)`  
+`nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP)`    
+`nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP)`    
+Those metrics are analyzed as correlated with `k8s_pod_network_bytes`.
 
-5. The insights can be used just as a recommendation or for full-automation where corresponding transform will be applied to each edge to handle the pruning. In this poc we will run in full automation mode.
+5. The insights can be used just as a recommendation or for full-automation where corresponding transform will be applied to each edge to handle the pruning. 
+In this POC we demonstrate the full automation mode.
 
 6. The controller triggers transformation in each cloud which can be seen using the manager UI:     
 Access `http://127.0.0.1:5010/apidocs/#/Processor%20Configuration/getProcessorConfig`.    
