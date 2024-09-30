@@ -43,7 +43,7 @@ or via the manager API.
 `http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_analyze`
 
 4. Verify the generated insights in the Controller UI: `http://127.0.0.1:5000/insights`  
-Click `Insights details 4` and the analysis should show three metrics
+Click `Insights details 4` and the analysis should show three metrics:  
 `k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP)`  
 `nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP)`    
 `nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP)`    
