@@ -1,8 +1,8 @@
-name: push - build test and push
+name: release - build test and push
 
 on:
-  push:
-    branches: [ main ]
+  release:
+    types: [created, edited]
 
 env:
   QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
@@ -30,7 +30,7 @@ jobs:
         password: ${{ secrets.QUAY_SECRET }}
     - name: Update project level docs
       run: |
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
     - uses: dorny/paths-filter@v3
       id: changes
       with:
@@ -49,24 +49,24 @@ jobs:
       if: steps.changes.outputs.controller == 'true'
       run: |
           cd controller
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push manager configurator image
       if: steps.changes.outputs.manager_configurator == 'true'
       run: |
           cd manager/configurator
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push manager alermanager image
       if: steps.changes.outputs.manager_alertmanager == 'true'
       run: |
           cd manager/alertmanager
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push processor image
       if: steps.changes.outputs.processor == 'true'
       run: |
           cd processor
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push otel-collector-proxy image
       if: steps.changes.outputs.otel_collector_proxy == 'true'
       run: |
           cd otel-collector-proxy
-          VERSION=latest make ci_push
+          VERSION=${{ github.event.release.tag_name }} make ci_push
