@@ -42,7 +42,7 @@ services:
      - "8001:8001"
 
   manager:
-    image: quay.io/observ-vol-mgt/manager
+    image: quay.io/observ-vol-mgt/manager:v0.1
     container_name: manager
     expose:
      - 5010
@@ -55,7 +55,7 @@ services:
      - 'manager_volume:/manager/app'
 
   pmf_processor1:
-    image: quay.io/observ-vol-mgt/pmf_processor
+    image: quay.io/observ-vol-mgt/pmf_processor:v0.1
     container_name: pmf_processor1
     command:
      # - 'go run'
@@ -71,7 +71,7 @@ services:
      - "8081:8081"
 
   pmf_processor2:
-    image: quay.io/observ-vol-mgt/pmf_processor
+    image: quay.io/observ-vol-mgt/pmf_processor:v0.1
     container_name: pmf_processor2
     command:
      #- 'go run'
@@ -197,7 +197,7 @@ services:
       retries: 3
   
   ruler_config:
-    image: quay.io/observ-vol-mgt/ruler_config 
+    image: quay.io/observ-vol-mgt/ruler_config:v0.1 
     container_name: ruler_config
     environment:
       - HOST=0.0.0.0
