@@ -12,7 +12,7 @@ services:
 # Central containers
 
   manager:
-    image: quay.io/observ-vol-mgt/manager
+    image: quay.io/observ-vol-mgt/manager:v0.3
     container_name: manager
     expose:
      - 5010
@@ -25,7 +25,7 @@ services:
      - 'manager_volume:/manager/app'
 
   controller:
-    image: quay.io/observ-vol-mgt/controller
+    image: quay.io/observ-vol-mgt/controller:v0.3
     container_name: controller
     command:
       - python
@@ -105,7 +105,7 @@ services:
       retries: 3
 
   ruler_config:
-    image: quay.io/observ-vol-mgt/ruler_config
+    image: quay.io/observ-vol-mgt/ruler_config:v0.3
     container_name: ruler_config
     environment:
       - HOST=0.0.0.0
@@ -199,7 +199,7 @@ services:
      - "8001:8001"
 
   otel_collector_proxy_east:
-    image: quay.io/observ-vol-mgt/otel_collector_proxy
+    image: quay.io/observ-vol-mgt/otel_collector_proxy:v0.3
     container_name: otel_collector_proxy_east
     entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_east" ]
     ports:
@@ -219,7 +219,7 @@ services:
       - otel_collector_proxy_east
 
   otel_collector_proxy_west:
-    image: quay.io/observ-vol-mgt/otel_collector_proxy
+    image: quay.io/observ-vol-mgt/otel_collector_proxy:v0.3
     container_name: otel_collector_proxy_west
     entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_west" ]
     ports:
