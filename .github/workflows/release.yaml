@@ -31,42 +31,23 @@ jobs:
     - name: Update project level docs
       run: |
           VERSION=${{ github.event.release.tag_name }} make ci_push
-    - uses: dorny/paths-filter@v3
-      id: changes
-      with:
-        filters: |
-          controller:
-            - 'controller/**'
-          manager_configurator:
-            - 'manager/configurator/**'
-          manager_alertmanager:
-            - 'manager/alertmanager/**'
-          processor:
-            - 'processor/**'
-          otel_collector_proxy:
-            - 'otel-collector-proxy/**'
     - name: run controller tests
-      if: steps.changes.outputs.controller == 'true'
       run: |
           cd controller
           VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push manager configurator image
-      if: steps.changes.outputs.manager_configurator == 'true'
       run: |
           cd manager/configurator
           VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push manager alermanager image
-      if: steps.changes.outputs.manager_alertmanager == 'true'
       run: |
           cd manager/alertmanager
           VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push processor image
-      if: steps.changes.outputs.processor == 'true'
       run: |
           cd processor
           VERSION=${{ github.event.release.tag_name }} make ci_push
     - name: push otel-collector-proxy image
-      if: steps.changes.outputs.otel_collector_proxy == 'true'
       run: |
           cd otel-collector-proxy
           VERSION=${{ github.event.release.tag_name }} make ci_push
