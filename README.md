@@ -1,3 +1,10 @@
+<h1 align="center" style="border-bottom: none">
+  <a href="https://prometheus.io" target="_blank"><img alt="OVM" src="/docs/images/OVM.png" width="120"></a><br>OVM
+</h1>
+
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://observ-vol-mgt.github.io/observ-vol-mgt/)
+
+
 # OVM: Observability Volume Manager
 In today's dynamic computing landscape spanning centralized clouds, multi-cloud, and edge computing, the demand for adaptable observability is paramount. In particular, managing the escalating volume of observability data is crucial. **Observability Volume Manager** addresses the complexities of dynamic observability data management by offering tailored processing capabilities to ensure efficient and effective observability across the entire computing infrastructure. 
 
@@ -8,7 +15,11 @@ Observability Volume Manager provides a mechanism to perform various transformat
 - **OVM** encapsulates multiple layers of "smartness" and can be used in full automation mode or as a recommendation system supporting a "user in the loop" design.  
 - **OVM** provides user-centric intent-based semantic language supporting multiple transformations represented as a DAG. This semantic language is deployment and technology-agnostic.
 
-The current version of *OVM* supports [OpenTelemetry](https://opentelemetry.io/docs/collector/) and [Prometheus](https://prometheus.io/) as observability data collectors.  
+The current version of *OVM* supports
+<img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OpenTelemetry Icon" width="20" height=""> [OpenTelemetry](https://opentelemetry.io/docs/collector/) 
+and 
+<img src="https://github.com/prometheus/prometheus/raw/main/documentation/images/prometheus-logo.svg" alt="Prometheus Icon" width="20" height=""> [Prometheus](https://prometheus.io/) as observability data collectors.  
+
 It uses either an **embedded**, lightweight, automated, SQL-based metric processing system  or the capabilities of the **community** [OTel processors](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/README.md) to manage and change the collected observability volume.      
 
 ### Architecture: A Bird's Eye View
