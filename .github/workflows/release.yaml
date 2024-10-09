@@ -1,8 +1,9 @@
 name: release - build test and push
 
 on:
-  release:
-    types: [created, edited]
+  push:
+    tags:
+      - 'v*.*'
 
 env:
   QUAY_ROBOT_USER: observ-vol-mgt+quay_io_observ_vol_mgt_github_actions_robot
@@ -22,6 +23,12 @@ jobs:
       run: sudo apt-get install make
     - name: checkout
       uses: actions/checkout@v4
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: Print release version
+      run: |
+        echo $RELEASE_VERSION
+        echo ${{ env.RELEASE_VERSION }}
     - name: login to quay.io
       uses: docker/login-action@v3
       with:
@@ -30,24 +37,24 @@ jobs:
         password: ${{ secrets.QUAY_SECRET }}
     - name: Update project level docs
       run: |
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
     - name: run controller tests
       run: |
           cd controller
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
     - name: push manager configurator image
       run: |
           cd manager/configurator
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
     - name: push manager alermanager image
       run: |
           cd manager/alertmanager
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
     - name: push processor image
       run: |
           cd processor
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
     - name: push otel-collector-proxy image
       run: |
           cd otel-collector-proxy
-          VERSION=${{ github.event.release.tag_name }} make ci_push
+          VERSION=${{ env.RELEASE_VERSION }} make ci_push
