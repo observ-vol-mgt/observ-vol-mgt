@@ -2,8 +2,9 @@
   <a href="https://prometheus.io" target="_blank"><img alt="OVM" src="/docs/images/OVM.png" width="120"></a><br>OVM
 </h1>
 
+[![push - build test and push](https://github.com/observ-vol-mgt/observ-vol-mgt/actions/workflows/push.yml/badge.svg)](https://github.com/observ-vol-mgt/observ-vol-mgt/actions/workflows/push.yml)
+[![Open Issues](https://img.shields.io/github/issues-raw/observ-vol-mgt/observ-vol-mgt)](https://github.com/observ-vol-mgt/observ-vol-mgt/issues)
 [![Docs](https://img.shields.io/badge/docs-latest-blue)](https://observ-vol-mgt.github.io/observ-vol-mgt/)
-
 
 # OVM: Observability Volume Manager
 In today's dynamic computing landscape spanning centralized clouds, multi-cloud, and edge computing, the demand for adaptable observability is paramount. In particular, managing the escalating volume of observability data is crucial. **Observability Volume Manager** addresses the complexities of dynamic observability data management by offering tailored processing capabilities to ensure efficient and effective observability across the entire computing infrastructure. 
