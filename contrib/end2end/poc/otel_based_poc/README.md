@@ -1,14 +1,14 @@
-# PoC usecase
+# PoC use-case
 ![demofigure](../../../../docs/images/poc_otel.svg)
 
 The PoC demonstrates two edges connected to a central cloud. 
-Each edge comprises metric generator whose metrics are scraped by an oTel collector. 
-The collector does a remote write to thanos (running in the central cloud) for long term storage and analysis. 
-The remote write is intercepted as part of the oTel processor pipeline workflow. 
+Each edge comprises a metric generator whose metrics are scraped by an OTel collector. 
+The collector does a remote write to Thanos (running in the central cloud) for long-term storage and analysis. 
+The remote write is intercepted as part of the OTel processor pipeline workflow. 
 A "configuration proxy" is used to apply various transformations from the central cloud 
-to the processors inside the oTel collectors. 
+to the processors inside the OTel collectors. 
 
-In this PoC we showcase how our controller generate insights that trigger pruning of metrics based on similarity across east and west edge/clouds.
+This PoC uses OTel collectors and showcases how the controller generates insights that trigger metrics pruning based on similarity across east and west edges/clouds.
 
 ## Environment Setup
 
@@ -52,10 +52,10 @@ Via the manager API. `http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_ana
 Click `Insights details 4` and the analysis should show three metrics
 (`k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP) `)
 that are correlated with `k8s_pod_network_bytes`.
-5. The insights can be used just as a recommendation or for full-automation where corresponding transform will be applied to each edge to handle the pruning. In this poc we will run in full automation mode. 
+5. The insights can be used just as a recommendation or for full automation, where a corresponding transform will be applied to each edge to handle the pruning. In this post, we will run in full automation mode. 
 6. The controller triggers transformation in each cloud which can be seen using the manager UI   
 Access `http://127.0.0.1:5010/apidocs/#/Processor%20Configuration/getProcessorConfig`.  
-Use `east` and `west` in the UI combo box as the processor ids to check transformation added to individual clouds. 
+Use `east` and `west` in the UI combo box as the processor ids to check the transformation added to individual clouds. 
 7. You can visualize the change in the metrics values 
 Execute the query `k8s_pod_network_bytes or nwdaf_5G_network_utilization`) in the `thanos query` UI (in graph mode). 
 You will see only `k8s_pod_network_bytes` with label ` processor="east"` flowing.
