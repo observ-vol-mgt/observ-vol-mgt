@@ -1,5 +1,5 @@
 <h1 align="center" style="border-bottom: none">
-  <a href="https://prometheus.io" target="_blank"><img alt="OVM" src="/docs/images/OVM.png" width="120"></a><br>OVM
+  <a href="https://observ-vol-mgt.github.io/observ-vol-mgt/" target="_blank"><img alt="OVM" src="https://github.com/observ-vol-mgt/observ-vol-mgt/blob/main/docs/images/OVM.png" width="140"></a><br>OVM
 </h1>
 
 [![push - build test and push](https://github.com/observ-vol-mgt/observ-vol-mgt/actions/workflows/push.yml/badge.svg)](https://github.com/observ-vol-mgt/observ-vol-mgt/actions/workflows/push.yml)
