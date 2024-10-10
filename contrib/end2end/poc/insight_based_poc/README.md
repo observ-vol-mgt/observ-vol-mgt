@@ -23,49 +23,17 @@ Edge containers:
 
 ## Running the PoC story
 
-1. Bring up the PoC environment  
-```commandline
-make start
+1. Bring up the PoC environment
 ```
-or 
-```commandline
 docker-compose -f docker-compose-quay.yml up -d
 ```
-2. Confirm that the metrics are available in `thanos query` UI `http://127.0.0.1:19192`:    
-The following metrics should be available: `k8s_pod_network_bytes` and `nwdaf_5G_network_utilization`.    
-There should be a single metric for each edge, hence a total of four metrics.
-
-3. Next, we trigger the controller to draw insights  
-```commandline
-make perform_analysis
-```
-or via the manager API.   
-`http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_analyze`
-
-4. Verify the generated insights in the Controller UI: `http://127.0.0.1:5000/insights`  
-Click `Insights details 4` and the analysis should show three metrics:  
-`k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP)`  
-`nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP)`    
-`nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP)`    
-Those metrics are analyzed as correlated with `k8s_pod_network_bytes`.
-
-5. The insights can be used just as a recommendation or for full-automation where corresponding transform will be applied to each edge to handle the pruning. 
-In this POC we demonstrate the full automation mode.
-
-6. The controller triggers transformation in each cloud which can be seen using the manager UI:     
-Access `http://127.0.0.1:5010/apidocs/#/Processor%20Configuration/getProcessorConfig`.    
-Use `east` and `west` in the UI combo box as the processor ids to check transformation added to individual clouds.   
-
-8. You can visualize the change in the metrics values: 
-Execute the query `k8s_pod_network_bytes or nwdaf_5G_network_utilization`) in the `thanos query` UI (in graph mode).   
-You will see only `k8s_pod_network_bytes` with label ` processor="east"` flowing.
-Other analyzed as similar metrics are now being pruned/dropped.
-
-9. To end the POC and clean docker execute:    
-```commandline
-make end
-```
-or   
-```commandline
-docker compose_down
-```
+2. Confirm the metrics are flowing correctly in the `thanos query` UI:
+`http://0.0.0.0:19192/`\
+Confirm metrics `k8s_pod_network_bytes or nwdaf_5G_network_utilization` are flowing correctly. There will be 1 of each in for both the edges hence 4 metrics.
+3. Next, we trigger the controller to draw insights via the manager API. `http://0.0.0.0:5010/apidocs/#/Controller/post_api_v1_analyze`
+4. To check the insights generated go to `http://0.0.0.0:5000/insights` and click on `Insights details 3`.\
+   You will see it shows 3 metrics (`k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP),nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP) `) are correlated to `k8s_pod_network_bytes`.
+5. The insights can be used just as a recommendation or for full-automation where corresponding transform will be applied to each edge to handle the pruning. In this poc we will run in full automation mode.
+6. The controller triggers transformation in each cloud which can be seen using the manager UI. `http://0.0.0.0:5010/apidocs/#/Processor%20Configuration/getProcessorConfig`. Use `east` and `west` as the processor id to check transformation added to individual clouds.
+7. You can visualize the change in the metrics values (running query: `k8s_pod_network_bytes or nwdaf_5G_network_utilization`) in the `thanos query` UI (in the graph mode). You will see only `k8s_pod_network_bytes` with label ` processor="east"` flowing and other of the similar metrics being pruned/dropped.
+8. To revert the transform and analysis do `make compose_down`.
