@@ -1,0 +1,9 @@
+HOST: '0.0.0.0'
+PORT: 5010
+APP_URL_PREFIX: "/api/v1"
+PROCESSORS_FOLDER: "./app/processors"
+RULES_FOLDER: "./app/rules"
+PROCESSOR_east_URL: "http://otel_collector_proxy_east:5000"
+PROCESSOR_west_URL: "http://otel_collector_proxy_west:5000"
+ALERTMANAGER_URL: "http://ruler_config:8090"
+CONTROLLER_URL: "http://controller:5000/api/v1/rerun"

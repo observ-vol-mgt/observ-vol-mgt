@@ -1,0 +1,3889 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/observ-vol-mgt/observ-vol-mgt/controller/docs/configuration_parameters/">
+      
+      
+        <link rel="prev" href="../config/">
+      
+      
+        <link rel="next" href="../api/api/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.26">
+    
+    
+      
+        <title>Configuration parameters - Observability Volume Manager</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#list-of-project-classes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Observability Volume Manager" class="md-header__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Observability Volume Manager
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration parameters
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Observability Volume Manager" class="md-nav__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    Observability Volume Manager
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Controller
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Controller
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configuration parameters
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configuration parameters
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-project-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      List of project classes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common.configuration_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      configuration_api
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="configuration_api">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api--controller-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.AnalysisChainProcess" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnalysisChainProcess
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.BaseStageParameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      BaseStageParameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.BaseStageSchedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      BaseStageSchedule
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorOtel" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorOtel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorOtelProcessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorOtelProcessor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorProcessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorProcessor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSerialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      EncodeSerialized
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EncodeSerialized">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSerialized--configuration-for-serialized-file-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for serialized file encoding.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      EncodeSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ExtractSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ExtractSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.FeatureExtractionTsfel" class="md-nav__link">
+    <span class="md-ellipsis">
+      FeatureExtractionTsfel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GenerateInsights" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenerateInsights
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GenerateInsightsType" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenerateInsightsType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GeneratorNone" class="md-nav__link">
+    <span class="md-ellipsis">
+      GeneratorNone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GlobalSettings" class="md-nav__link">
+    <span class="md-ellipsis">
+      GlobalSettings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestDummy" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestDummy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFile" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestFile
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IngestFile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFile--configuration-for-file-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for file ingestion.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFormat" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestFormat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestPromql" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestPromql
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSerialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestSerialized
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IngestSerialized">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSerialized--configuration-for-serialized-file-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for serialized file ingestion.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestTimeUnit" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestTimeUnit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.InsightsAnalysisChainType" class="md-nav__link">
+    <span class="md-ellipsis">
+      InsightsAnalysisChainType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapByName" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapByName
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapSimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapSimple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationFewShot" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationFewShot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationRegEx" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationRegEx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationZeroShot" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationZeroShot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.PipelineDefinition" class="md-nav__link">
+    <span class="md-ellipsis">
+      PipelineDefinition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ReduceSimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      ReduceSimple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ReduceSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ReduceSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.StageType" class="md-nav__link">
+    <span class="md-ellipsis">
+      StageType
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Manager
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Manager
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/docs/configuration_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/alertmanager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AlertManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Processor
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Processor
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../processor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    otel-collector-proxy
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            otel-collector-proxy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otel-collector-proxy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    POC (Getting started)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            POC (Getting started)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/poc/insight_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Insights POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://drive.google.com/file/d/1-rTCcJpnHUDHP-Cre3HotnRnzyWIatNi/view?usp=sharing" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Video
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/poc/otel_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oTel POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    More
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            More
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/ec-metric-gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/ec-metric-gen/doc/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    End-To-End tests
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/examples/generate-synthetic-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    generate-synthetic-metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/fetch-offline-data/instana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Instana Observability Data Fetchers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-project-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      List of project classes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common.configuration_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      configuration_api
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="configuration_api">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api--controller-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controller configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.AnalysisChainProcess" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnalysisChainProcess
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.BaseStageParameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      BaseStageParameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.BaseStageSchedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      BaseStageSchedule
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorOtel" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorOtel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorOtelProcessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorOtelProcessor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorProcessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorProcessor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ConfigGeneratorSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigGeneratorSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSerialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      EncodeSerialized
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EncodeSerialized">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSerialized--configuration-for-serialized-file-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for serialized file encoding.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.EncodeSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      EncodeSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ExtractSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ExtractSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.FeatureExtractionTsfel" class="md-nav__link">
+    <span class="md-ellipsis">
+      FeatureExtractionTsfel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GenerateInsights" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenerateInsights
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GenerateInsightsType" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenerateInsightsType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GeneratorNone" class="md-nav__link">
+    <span class="md-ellipsis">
+      GeneratorNone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.GlobalSettings" class="md-nav__link">
+    <span class="md-ellipsis">
+      GlobalSettings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestDummy" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestDummy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFile" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestFile
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IngestFile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFile--configuration-for-file-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for file ingestion.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestFormat" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestFormat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestPromql" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestPromql
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSerialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestSerialized
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IngestSerialized">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSerialized--configuration-for-serialized-file-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration for serialized file ingestion.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.IngestTimeUnit" class="md-nav__link">
+    <span class="md-ellipsis">
+      IngestTimeUnit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.InsightsAnalysisChainType" class="md-nav__link">
+    <span class="md-ellipsis">
+      InsightsAnalysisChainType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapByName" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapByName
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapSimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapSimple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MapSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      MapSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationFewShot" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationFewShot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationRegEx" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationRegEx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.MetadataClassificationZeroShot" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataClassificationZeroShot
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.PipelineDefinition" class="md-nav__link">
+    <span class="md-ellipsis">
+      PipelineDefinition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ReduceSimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      ReduceSimple
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.ReduceSubType" class="md-nav__link">
+    <span class="md-ellipsis">
+      ReduceSubType
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common.configuration_api.StageType" class="md-nav__link">
+    <span class="md-ellipsis">
+      StageType
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Configuration parameters</h1>
+
+<h2 id="list-of-project-classes">List of project classes</h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="common.configuration_api" class="doc doc-heading">
+            <code>common.configuration_api</code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+      <h4 id="common.configuration_api--controller-configuration">Controller configuration</h4>
+<p>This document describes the configuration of the volume management controller component.
+The configuration is stored in a YAML file, typically <code>config.yaml</code>.
+The configuration is read by the controller component when it starts.
+The configuration is provided to the <code>controller</code> using the <code>-c</code> command line argument.</p>
+<p>Typical example usage:</p>
+<pre><code>`./controller -c config.yaml`
+</code></pre>
+<p>The configuration is organized into two areas.</p>
+<ol>
+<li>Pipeline definition - this area describes the pipeline stages and the relationship between stages.
+ It includes only high-level configuration that does not describe the functionality of the pipeline, just
+ provides names to stages, and describes the order of execution.</li>
+</ol>
+<blockquote>
+<p>For each stage, there is a named section, describing the functional behavior and
+ configuration of the stage.</p>
+</blockquote>
+<ol>
+<li>Stage configuration - For each <code>named stage</code>, describes the functionality of the stage using <code>Type</code> and <code>subType</code>.
+  Additional specific configuration parameters according to the functionality.</li>
+</ol>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.AnalysisChainProcess" class="doc doc-heading">
+            <code>AnalysisChainProcess</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for each of the analysis processes.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnalysisChainProcess</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for each of the analysis processes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">InsightsAnalysisChainType</span>  <span class="c1"># The type of analysis process</span>
+    <span class="n">filter_signals_by_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Filter signals to analyze by list of tags</span>
+    <span class="n">close_to_zero_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Threshold for close to zero analysis</span>
+    <span class="n">pairwise_similarity_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span>  <span class="c1"># Threshold for pairwise similarity</span>
+    <span class="n">pairwise_similarity_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">GenerateInsightsType</span><span class="o">.</span><span class="n">INSIGHTS_SIMILARITY_METHOD_PEARSON</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># Method for pairwise similarity</span>
+    <span class="c1"># The distance algorithm to use (scipy.spacial.distance) when using distance method</span>
+    <span class="n">pairwise_similarity_distance_method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">compound_similarity_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.99</span>  <span class="c1"># Threshold for compound similarity</span>
+    <span class="n">access_log_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Access_log file</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.BaseStageParameters" class="doc doc-heading">
+            <code>BaseStageParameters</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for Stage parameters.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BaseStageParameters</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for Stage parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Name of stage instance</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Type of stage instance (e.g. ingest, extract, insights, etc)</span>
+    <span class="n">subtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Subtype of stage instance (e.g. file_ingest vs promql ingest)</span>
+    <span class="n">input_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of input data names for the stage</span>
+    <span class="n">output_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of output data names for the stage</span>
+    <span class="n">cache_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Directory to store output data</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Stage-specific configuration parameters</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.BaseStageSchedule" class="doc doc-heading">
+            <code>BaseStageSchedule</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for order of stages that make up the pipeline.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BaseStageSchedule</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for order of stages that make up the pipeline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Name of stage instance</span>
+    <span class="n">follows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of stages that must precede currently defined sage in the pipeline</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ConfigGeneratorOtel" class="doc doc-heading">
+            <code>ConfigGeneratorOtel</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for OpenTelemetry (OTel) configuration generation.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ConfigGeneratorOtel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for OpenTelemetry (OTel) configuration generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/tmp&quot;</span>  <span class="c1"># Directory to store configuration</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ConfigGeneratorOtelProcessor" class="doc doc-heading">
+            <code>ConfigGeneratorOtelProcessor</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for otel processor-based configuration generation.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ConfigGeneratorOtelProcessor</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for otel processor-based configuration generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">processor_id_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for processor ID</span>
+    <span class="n">signal_name_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for signal name</span>
+    <span class="c1"># Template for signal condition</span>
+    <span class="n">signal_condition_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">signal_filter_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for signal filter</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Directory to store configuration</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># URL to fetch data from</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ConfigGeneratorProcessor" class="doc doc-heading">
+            <code>ConfigGeneratorProcessor</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for processor-based configuration generation.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ConfigGeneratorProcessor</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for processor-based configuration generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">processor_id_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for processor ID</span>
+    <span class="n">signal_name_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for signal name</span>
+    <span class="c1"># Template for signal condition</span>
+    <span class="n">signal_condition_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">signal_filter_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for signal filter</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Directory to store configuration</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># URL to fetch data from</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ConfigGeneratorSubType" class="doc doc-heading">
+            <code>ConfigGeneratorSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for configuration generation.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ConfigGeneratorSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for configuration generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_CONFIG_GENERATOR_NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="n">PIPELINE_CONFIG_GENERATOR_OTEL</span> <span class="o">=</span> <span class="s2">&quot;otel&quot;</span>
+    <span class="n">PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR</span> <span class="o">=</span> <span class="s2">&quot;otel_processor&quot;</span>
+    <span class="n">PIPELINE_CONFIG_GENERATOR_PROCESSOR</span> <span class="o">=</span> <span class="s2">&quot;processor&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.EncodeSerialized" class="doc doc-heading">
+            <code>EncodeSerialized</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <h6 id="common.configuration_api.EncodeSerialized--configuration-for-serialized-file-encoding">Configuration for serialized file encoding.</h6>
+<p>This configuration is applied when <code>stage</code>:
+  type: encode
+  subtype: serialized</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EncodeSerialized</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ### Configuration for serialized file encoding.</span>
+<span class="sd">    This configuration is applied when `stage`:</span>
+<span class="sd">      type: encode</span>
+<span class="sd">      subtype: serialized</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Name of the file to ingest</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.EncodeSubType" class="doc doc-heading">
+            <code>EncodeSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for encoding.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EncodeSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for encoding.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_ENCODE_SERIALIZED</span> <span class="o">=</span> <span class="s2">&quot;serialized&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ExtractSubType" class="doc doc-heading">
+            <code>ExtractSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for metadata extraction.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExtractSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for metadata extraction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_EXTRACT_TSFEL</span> <span class="o">=</span> <span class="s2">&quot;tsfel&quot;</span>
+    <span class="n">PIPELINE_EXTRACT_TRIM</span> <span class="o">=</span> <span class="s2">&quot;trim&quot;</span>  <span class="c1"># trim time series</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.FeatureExtractionTsfel" class="doc doc-heading">
+            <code>FeatureExtractionTsfel</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for feature extraction using TSFEL.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FeatureExtractionTsfel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for feature extraction using TSFEL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">features_json_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="s2">&quot;extract/tsfel_conf/limited_statistical.json&quot;</span>  <span class="c1"># JSON file for features</span>
+    <span class="n">resample_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;30s&quot;</span>  <span class="c1"># Resampling rate</span>
+    <span class="n">sampling_frequency</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">30</span><span class="p">)</span>  <span class="c1"># Sampling frequency</span>
+    <span class="n">trim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.GenerateInsights" class="doc doc-heading">
+            <code>GenerateInsights</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for generating insights.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GenerateInsights</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for generating insights.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="c1"># chain of analysis processes to be executed to generate insights</span>
+    <span class="n">analysis_chain</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AnalysisChainProcess</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">AnalysisChainProcess</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_ZERO_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="n">AnalysisChainProcess</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_FIXED_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">filter_signals_by_tags</span><span class="o">=</span><span class="p">[</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_ZERO_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">]),</span>
+        <span class="n">AnalysisChainProcess</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">filter_signals_by_tags</span><span class="o">=</span><span class="p">[</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_ZERO_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_FIXED_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">]),</span>
+        <span class="n">AnalysisChainProcess</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">filter_signals_by_tags</span><span class="o">=</span><span class="p">[</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_ZERO_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_FIXED_VALUES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                    <span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS</span><span class="o">.</span><span class="n">value</span><span class="p">]),</span>
+        <span class="n">AnalysisChainProcess</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">InsightsAnalysisChainType</span><span class="o">.</span><span class="n">INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+    <span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.GenerateInsightsType" class="doc doc-heading">
+            <code>GenerateInsightsType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different types of insights generation methods.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GenerateInsightsType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different types of insights generation methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INSIGHTS_SIMILARITY_METHOD_PEARSON</span> <span class="o">=</span> <span class="s2">&quot;pearson&quot;</span>
+    <span class="n">INSIGHTS_SIMILARITY_METHOD_SPEARMAN</span> <span class="o">=</span> <span class="s2">&quot;spearman&quot;</span>
+    <span class="n">INSIGHTS_SIMILARITY_METHOD_KENDALL</span> <span class="o">=</span> <span class="s2">&quot;kendall&quot;</span>
+    <span class="n">INSIGHTS_SIMILARITY_METHOD_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;distance&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.GeneratorNone" class="doc doc-heading">
+            <code>GeneratorNone</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Placeholder configuration for no specific generation task.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GeneratorNone</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Placeholder configuration for no specific generation task.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.GlobalSettings" class="doc doc-heading">
+            <code>GlobalSettings</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for global settings.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GlobalSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for global settings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">number_of_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Number of processes to create to perform map-reduce operations in parallel</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestDummy" class="doc doc-heading">
+            <code>IngestDummy</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for dummy ingestion.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestDummy</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for dummy ingestion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestFile" class="doc doc-heading">
+            <code>IngestFile</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <h6 id="common.configuration_api.IngestFile--configuration-for-file-ingestion">Configuration for file ingestion.</h6>
+<p>This configuration is applied when <code>stage</code>:
+  type: ingest
+  subtype: file</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestFile</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ### Configuration for file ingestion.</span>
+<span class="sd">    This configuration is applied when `stage`:</span>
+<span class="sd">      type: ingest</span>
+<span class="sd">      subtype: file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Name of the file to ingest</span>
+    <span class="n">filter_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Metadata filter</span>
+    <span class="n">ingest_name_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for ingest names</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">IngestFormat</span><span class="o">.</span><span class="n">PIPELINE_INGEST_FORMAT_PROM</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">time_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">IngestTimeUnit</span><span class="o">.</span><span class="n">PIPELINE_TIME_UNIT_SECOND</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestFormat" class="doc doc-heading">
+            <code>IngestFormat</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for ingestion.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for ingestion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_INGEST_FORMAT_PROM</span> <span class="o">=</span> <span class="s2">&quot;prometheus&quot;</span>
+    <span class="n">PIPELINE_INGEST_FORMAT_INSTANA_INFRA</span> <span class="o">=</span> <span class="s2">&quot;instana_infra&quot;</span>
+    <span class="n">PIPELINE_INGEST_FORMAT_INSTANA_APP</span> <span class="o">=</span> <span class="s2">&quot;instana_app&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestPromql" class="doc doc-heading">
+            <code>IngestPromql</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for PromQL ingestion.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestPromql</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for PromQL ingestion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># URL to fetch data from</span>
+    <span class="n">ingest_window</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Time interval for ingestion</span>
+    <span class="n">filter_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Metadata filter</span>
+    <span class="n">ingest_name_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Template for ingest names</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestSerialized" class="doc doc-heading">
+            <code>IngestSerialized</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <h6 id="common.configuration_api.IngestSerialized--configuration-for-serialized-file-ingestion">Configuration for serialized file ingestion.</h6>
+<p>This configuration is applied when <code>stage</code>:
+  type: ingest
+  subtype: serialized</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestSerialized</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ### Configuration for serialized file ingestion.</span>
+<span class="sd">    This configuration is applied when `stage`:</span>
+<span class="sd">      type: ingest</span>
+<span class="sd">      subtype: serialized</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Name of the file to ingest</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestSubType" class="doc doc-heading">
+            <code>IngestSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for ingestion.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for ingestion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_INGEST_DUMMY</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>
+    <span class="n">PIPELINE_INGEST_FILE</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
+    <span class="n">PIPELINE_INGEST_PROMQL</span> <span class="o">=</span> <span class="s2">&quot;promql&quot;</span>
+    <span class="n">PIPELINE_INGEST_SERIALIZED</span> <span class="o">=</span> <span class="s2">&quot;serialized&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.IngestTimeUnit" class="doc doc-heading">
+            <code>IngestTimeUnit</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different time units supported for time series data</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IngestTimeUnit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different time units supported for time series data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_TIME_UNIT_SECOND</span> <span class="o">=</span> <span class="s2">&quot;s&quot;</span>
+    <span class="n">PIPELINE_TIME_UNIT_MILLISECOND</span> <span class="o">=</span> <span class="s2">&quot;ms&quot;</span>
+    <span class="n">PIPELINE_TIME_UNIT_MICROSECOND</span> <span class="o">=</span> <span class="s2">&quot;us&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.InsightsAnalysisChainType" class="doc doc-heading">
+            <code>InsightsAnalysisChainType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates analysis processes (used by insights analysis_chain)</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">InsightsAnalysisChainType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates analysis processes (used by insights analysis_chain)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_ZERO_VALUES</span> <span class="o">=</span> <span class="s2">&quot;zero_values&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_FIXED_VALUES</span> <span class="o">=</span> <span class="s2">&quot;fixed_values&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS</span> <span class="o">=</span> <span class="s2">&quot;pairwise_correlations&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS</span> <span class="o">=</span> <span class="s2">&quot;compound_correlations&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION</span> <span class="o">=</span> <span class="s2">&quot;metadata_classification&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_ACCESS_LOG_INTERSECT</span> <span class="o">=</span> <span class="s2">&quot;access_log_intersect&quot;</span>
+    <span class="n">INSIGHTS_ANALYSIS_ACCESS_LOG_INTERSECT_NOT_ACCESSED</span> <span class="o">=</span> <span class="s2">&quot;access_log_intersect_not_accessed&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MapByName" class="doc doc-heading">
+            <code>MapByName</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for map operations by name pattern.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MapByName</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for map operations by name pattern.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">name_pattern</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Pattern for mapping by name</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MapSimple" class="doc doc-heading">
+            <code>MapSimple</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for simple map operations.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MapSimple</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for simple map operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">number</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># Number for mapping</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MapSubType" class="doc doc-heading">
+            <code>MapSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for map operations.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MapSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for map operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_MAP_SIMPLE</span> <span class="o">=</span> <span class="s2">&quot;simple&quot;</span>
+    <span class="n">PIPELINE_MAP_BY_NAME</span> <span class="o">=</span> <span class="s2">&quot;by_name&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MetadataClassificationFewShot" class="doc doc-heading">
+            <code>MetadataClassificationFewShot</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for few-shot metadata classification.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataClassificationFewShot</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for few-shot metadata classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="c1"># Pre-trained model to use</span>
+    <span class="n">base_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sentence-transformers/paraphrase-mpnet-base-v2&quot;</span>
+    <span class="n">few_shot_classification_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;./metadata_classification/data/observability_metrics_classification_zero_shot.json&quot;</span>
+    <span class="p">)</span>  <span class="c1"># File containing few-shot classification external data</span>
+    <span class="n">few_shot_pretrained_model_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;./metadata_classification/data/few_shot_pretrained_model&quot;</span>
+    <span class="p">)</span>  <span class="c1"># Directory containing a pretrained few-shot model</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MetadataClassificationRegEx" class="doc doc-heading">
+            <code>MetadataClassificationRegEx</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for regex metadata classification.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataClassificationRegEx</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for regex metadata classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">regex_classification_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;./metadata_classification/data/observability_metrics_classification_regex.json&quot;</span>
+    <span class="p">)</span>  <span class="c1"># File containing regex classification external data</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MetadataClassificationSubType" class="doc doc-heading">
+            <code>MetadataClassificationSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates subtypes for metadata classification.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataClassificationSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates subtypes for metadata classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># `metadata_classification_regex`: uses regex to perform metadata classification</span>
+    <span class="n">PIPELINE_METADATA_CLASSIFICATION_REGEX</span> <span class="o">=</span> <span class="s2">&quot;metadata_classification_regex&quot;</span>
+    <span class="c1"># `metadata_classification_zero_shot`: uses zero-shot (AI) technique to perform metadata classification</span>
+    <span class="n">PIPELINE_METADATA_CLASSIFICATION_ZERO_SHOT</span> <span class="o">=</span> <span class="s2">&quot;metadata_classification_zero_shot&quot;</span>
+    <span class="c1"># `metadata_classification_few_shot`: uses few-shot (AI) technique to perform metadata classification</span>
+    <span class="n">PIPELINE_METADATA_CLASSIFICATION_FEW_SHOT</span> <span class="o">=</span> <span class="s2">&quot;metadata_classification_few_shot&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.MetadataClassificationZeroShot" class="doc doc-heading">
+            <code>MetadataClassificationZeroShot</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for zero-shot metadata classification.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetadataClassificationZeroShot</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for zero-shot metadata classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;roberta-large-mnli&quot;</span>  <span class="c1"># Pre-trained model to use</span>
+    <span class="n">zero_shot_classification_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;./metadata_classification/data/observability_metrics_classification_zero_shot.json&quot;</span>
+    <span class="p">)</span>  <span class="c1"># File containing zero-shot classification external data</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.PipelineDefinition" class="doc doc-heading">
+            <code>PipelineDefinition</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for pipeline definition.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineDefinition</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for pipeline definition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">global_settings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pipeline</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseStageSchedule</span><span class="p">]</span>  <span class="c1"># Order of stages that make up the pipeline</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseStageParameters</span><span class="p">]</span>  <span class="c1"># Specific parameters to configure each stage in the pipeline</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ReduceSimple" class="doc doc-heading">
+            <code>ReduceSimple</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Configuration for simple reduce operations.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ReduceSimple</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for simple reduce operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s1">&#39;forbid&#39;</span><span class="p">)</span>  <span class="c1"># Configuration for the model</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.ReduceSubType" class="doc doc-heading">
+            <code>ReduceSubType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Enumerates different subtypes for reduce operations.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ReduceSubType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enumerates different subtypes for reduce operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PIPELINE_REDUCE_SIMPLE</span> <span class="o">=</span> <span class="s2">&quot;simple&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="common.configuration_api.StageType" class="doc doc-heading">
+            <code>StageType</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+      <p>Stage <code>type</code> (stage functionality):
+Each <code>named stage configuration</code> includes one of the following <code>type</code> (string) options:</p>
+
+              <details class="quote">
+                <summary>Source code in <code>controller/common/configuration_api.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StageType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stage `type` (stage functionality):</span>
+<span class="sd">    Each `named stage configuration` includes one of the following `type` (string) options:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INGEST</span> <span class="o">=</span> <span class="s2">&quot;ingest&quot;</span>  <span class="c1"># `ingest`: ingest data from various sources into the controller</span>
+    <span class="c1"># `extract`: performs feature extraction on the signals</span>
+    <span class="n">EXTRACT</span> <span class="o">=</span> <span class="s2">&quot;extract&quot;</span>
+    <span class="n">INSIGHTS</span> <span class="o">=</span> <span class="s2">&quot;insights&quot;</span>  <span class="c1"># `insights`: generates insights (analytics)</span>
+    <span class="c1"># `config_generator`: Generates and apply processor configurations</span>
+    <span class="n">CONFIG_GENERATOR</span> <span class="o">=</span> <span class="s2">&quot;config_generator&quot;</span>
+    <span class="c1"># `metadata_classification`: Metadata classification</span>
+    <span class="n">METADATA_CLASSIFICATION</span> <span class="o">=</span> <span class="s2">&quot;metadata_classification&quot;</span>
+    <span class="c1"># `map_reduce`: apply map reduce operations (for stages scalability)</span>
+    <span class="n">MAP_REDUCE</span> <span class="o">=</span> <span class="s2">&quot;map_reduce&quot;</span>
+    <span class="n">ENCODE</span> <span class="o">=</span> <span class="s2">&quot;encode&quot;</span>  <span class="c1"># `encode`: encode data</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+    
+  </body>
+</html>

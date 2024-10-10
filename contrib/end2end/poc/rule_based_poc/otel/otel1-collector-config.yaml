@@ -1,0 +1,39 @@
+receivers:
+  prometheus:
+      config:
+        scrape_configs:
+          - job_name: app
+            scrape_interval: 5s
+            static_configs:
+              - targets: ['metricgen1:8000']
+            metrics_path: '/'
+
+processors:
+  metricstransform/1:
+        transforms:
+          - include: .*
+            match_type: regexp
+            action: update
+            operations:
+              - action: experimental_scale_value
+                experimental_scale: 1
+exporters:
+  prometheusremotewrite:
+          endpoint: "http://pmf_processor1:8081/api/v1/receive"
+          external_labels:
+            processor: "east"
+  logging:
+
+
+service:
+  telemetry:
+     logs:
+        level: debug
+     metrics:
+        #level: detailed
+        address: 0.0.0.0:8888
+  pipelines:
+    metrics/1:
+      receivers:  [ prometheus ]
+      processors: [ metricstransform/1 ]
+      exporters:  [ prometheusremotewrite , logging]

@@ -1,0 +1,19 @@
+rules:
+    - rule_id: rule_1
+      processors: [processor_id_1]
+      expr: (cluster_metric_2) > 100
+      duration: 1s
+      description: cluster metric more than 100
+      action:
+            action_type: create
+            create:
+                dag: /path/to/dag
+    - rule_id: rule_2
+      processors: [processor_id_1, processor_id_2]
+      expr: (fake_metric_3) > 100
+      duration: 1s
+      description: rule to filter and keep only a subset of metrics when under serious stress
+      action:
+            action_type: append
+            append:
+                dag: /path/to/dag
