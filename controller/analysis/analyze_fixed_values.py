@@ -45,5 +45,5 @@ class FixedValuesAnalyzer(Analyzer, ABC):
                      f'{signal_name}</a> - Signal has fixed value\n')
         fixed_value_insights += "-=-=--=\n\n"
 
-        self.tag_signals_by_names(fixed_value_signals, InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value)
+        self.tag_signals_by_names(fixed_value_signals, InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value)
         return self.get_signals(), fixed_value_insights
