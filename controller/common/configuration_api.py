@@ -261,6 +261,7 @@ class InsightsAnalysisChainType(Enum):
     """
     INSIGHTS_ANALYSIS_ZERO_VALUES = "zero_values"
     INSIGHTS_ANALYSIS_FIXED_VALUES = "fixed_values"
+    INSIGHTS_ANALYSIS_MONOTONIC = "monotonic"
     INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS = "pairwise_correlations"
     INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS = "compound_correlations"
     INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION = "metadata_classification"
@@ -308,6 +309,10 @@ class GenerateInsights(BaseModel):
                                     InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS.value]),
         AnalysisChainProcess(
             type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_METADATA_CLASSIFICATION.value),
+        AnalysisChainProcess(
+            type=InsightsAnalysisChainType.INSIGHTS_ANALYSIS_MONOTONIC.value,
+            filter_signals_by_tags=[InsightsAnalysisChainType.INSIGHTS_ANALYSIS_ZERO_VALUES.value,
+                                    InsightsAnalysisChainType.INSIGHTS_ANALYSIS_FIXED_VALUES.value]),
     ]
 
 

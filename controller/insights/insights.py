@@ -16,6 +16,7 @@ import logging
 import common.configuration_api as api
 from analysis.analyze_compound_correlations import CompoundCorrelationAnalyzer
 from analysis.analyze_fixed_values import FixedValuesAnalyzer
+from analysis.analyze_monotonic import MonotonicAnalyzer
 from analysis.analyze_intersect_with_access_log import AccessLogIntersectionAnalyzer
 from analysis.analyze_metadata_classification import MetadataClassificationAnalyzer
 from analysis.analyze_pairwise_correlations import PairwiseCorrelationAnalyzer
@@ -60,6 +61,22 @@ def generate_insights(subtype, config, input_data):
             fixed_values_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
             signals, result_insights = (
                 fixed_values_analyzer.analyze())
+            insights.append(result_insights)
+
+        elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_MONOTONIC:
+
+            # finding monotonic signals
+
+            monotonic_analyzer = MonotonicAnalyzer(signals)
+
+            filter_signals_by_tags = analysis_process.filter_signals_by_tags
+
+            monotonic_analyzer.filter_signals_by_tags(filter_signals_by_tags, out=True, _any=True)
+
+            signals, result_insights = (
+
+                monotonic_analyzer.analyze())
+
             insights.append(result_insights)
 
         elif analysis_process.type == api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_PAIRWISE_CORRELATIONS:
