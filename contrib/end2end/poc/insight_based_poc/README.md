@@ -32,7 +32,9 @@ or
 docker-compose -f docker-compose-quay.yml up -d
 ```
 2. Confirm that the metrics are available in `thanos query` UI `http://127.0.0.1:19192`:    
-The following metrics should be available: `k8s_pod_network_bytes` and `nwdaf_5G_network_utilization`.    
+
+The following metrics should be available: `k8s_pod_network_bytes or nwdaf_5G_network_utilization`.
+    
 There should be a single metric for each edge, hence a total of four metrics.
 
 3. Next, we trigger the controller to draw insights  
@@ -43,7 +45,7 @@ or via the manager API.
 `http://127.0.0.1:5010/apidocs/#/Controller/post_api_v1_analyze`
 
 4. Verify the generated insights in the Controller UI: `http://127.0.0.1:5000/insights`  
-Click `Insights details 4` and the analysis should show three metrics:  
+Click `Insights details 3` and the analysis should show three metrics:  
 `k8s_pod_network_bytes($app,c0,metricgen2:8001,west,$IP)`  
 `nwdaf_5G_network_utilization(analytic_function,c0,metricgen1:8000,east,$IP)`    
 `nwdaf_5G_network_utilization(analytic_function,c0,metricgen2:8001,west,$IP)`    
@@ -67,5 +69,5 @@ make end
 ```
 or   
 ```commandline
-docker compose_down
+docker-compose -f docker-compose-quay.yml down
 ```

@@ -19,6 +19,7 @@ delete_configuration: ## Deletes the processors configurations
 
 end: ## Ends the POC
 	make compose_down
+	make cleanup_artifacts
 
 ##@ POC Development
 compose_up: ## Docker compose up
@@ -34,8 +35,8 @@ cleanup_artifacts: compose_down ## Cleanup compose artifacts ( prometheus, thano
 	-sudo rm -R prometheus_data1
 	-sudo rm -R prometheus_data2
 	-sudo rm -R thanos_data
-	-docker volume rm poc_manager_volume
-	-docker volume rm poc_shared-data
+	-docker volume rm insight_based_poc_manager_volume
+	-docker volume rm insight_based_poc_shared-data
 
 clean_docker_images: compose_down ## Delete local docker images
 	-docker rmi quay.io/observ-vol-mgt/controller
