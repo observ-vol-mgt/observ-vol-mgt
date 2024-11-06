@@ -1,0 +1,28 @@
+{
+  "statistical": {
+    "Max": {
+      "function": "tsfel.calc_max",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Min": {
+      "function": "tsfel.calc_min",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Mean": {
+      "function": "tsfel.calc_mean",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    },
+    "Median": {
+      "function": "tsfel.calc_median",
+      "parameters": "",
+      "n_features": 1,
+      "use": "yes"
+    }
+  }
+}

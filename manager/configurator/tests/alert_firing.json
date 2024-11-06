@@ -1,0 +1,48 @@
+{
+  "receiver": "web\\.hook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "rule_1",
+        "cluster": "1",
+        "instance": "localhost:8000",
+        "job": "prometheus",
+        "processor": "processor_id_1",
+        "receive": "true",
+        "severity": "critical",
+        "tenant_id": "default-tenant"
+      },
+      "annotations": {
+        "description": "cluster metric more than 100",
+        "summary": "Usage  of tenant default-tenant is above 100."
+      },
+      "startsAt": "2024-04-23T05:21:24.023388597Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "/graph?g0.expr=%28cluster_metric_2%29+%3E+100&g0.tab=1",
+      "fingerprint": "b0157199a1668083"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "rule_1"
+  },
+  "commonLabels": {
+    "alertname": "rule_1",
+    "cluster": "1",
+    "instance": "localhost:8000",
+    "job": "prometheus",
+    "processor": "processor_id_1",
+    "receive": "true",
+    "severity": "critical",
+    "tenant_id": "default-tenant"
+  },
+  "commonAnnotations": {
+    "description": "cluster metric more than 100",
+    "summary": "Usage  of tenant default-tenant is above 100."
+  },
+  "externalURL": "http://Priyankas-MacBook-Pro.local:9093",
+  "version": "4",
+  "groupKey": "{}:{alertname='rule_1'}",
+  "truncatedAlerts": 0
+}

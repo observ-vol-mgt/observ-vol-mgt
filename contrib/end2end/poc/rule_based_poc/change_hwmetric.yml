@@ -1,0 +1,8 @@
+action: SET
+metrics:
+   - name: 'cluster'
+     type: 
+       - 'hardware'
+     index:
+       - '0'
+  

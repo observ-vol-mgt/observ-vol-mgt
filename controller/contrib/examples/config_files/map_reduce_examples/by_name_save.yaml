@@ -1,0 +1,45 @@
+global_settings:
+  number_of_workers: 8
+pipeline:
+- name: ingest_file
+- name: feature_extraction_tsfel
+  follows: [ingest_file]
+- name: encode1
+  follows: [feature_extraction_tsfel]
+parameters:
+- name: ingest_file
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [signals]
+  config:
+    filter_metadata: ""
+    ingest_name_template: "$plugin-$instance-$label-$__name__"
+    file_name: ../contrib/fetch-offline-data/instana/promql_metrics_1000_metrics_with_labels.json
+- name: feature_extraction_tsfel
+  type: map_reduce
+  input_data: [signals]
+  output_data: [extracted_signals]
+  config:
+    map_function:
+      name: map1
+      type: map
+      subtype: by_name
+      config:
+        name_pattern: "([0-9a-fA-F]{2}:){7}[0-9a-fA-F]{2}"
+    compute_function:
+      name: extract_in_parallel
+      type: extract
+      subtype: tsfel
+    reduce_function:
+      name: reduce1
+      type: reduce
+      subtype: simple
+- name: encode1
+  type: encode
+  subtype: serialized
+  input_data: [extracted_signals]
+  output_data: []
+  config:
+    file_name: ../contrib/fetch-offline-data/instana/promql_metrics_1000_metrics_with_labels_intermediate
+
