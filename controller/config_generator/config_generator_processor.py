@@ -45,7 +45,7 @@ def generate_reduce(config, extracted_signals, signals_to_keep, signals_to_reduc
     logger.debug("generating processor configuration using: ")
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(
-        'config_generator/templates/processor_filter_processor_template.yaml')
+        'config_generator/templates/processor_filter_processor_template_drop.yaml')
     context_per_processor = {}
 
     # building context per each of the processors with signals to drop (for the jinja template)
@@ -121,7 +121,7 @@ def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_re
                             "name": Template(signal_name_template).safe_substitute(signal.metadata),
                             "condition": Template(signal_condition_template).safe_substitute(signal.metadata),
                             "interval": '10000',
-                          }
+                            }
         processor_id = Template(
             processor_id_template).safe_substitute(signal.metadata)
 
@@ -154,27 +154,6 @@ def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_re
             if url:
                 response = send_to_processor(url, output, processor_id)
                 logger.debug(f"send_to_processor returned: {response}")
-
-    return
-
-
-    # writing and sending configuration to relevant processors based on configuration
-    for processor_id, processor_context in context_per_processor.items():
-        output = template.render(processor_context)
-        print(f"processor_id = {processor_id}, output = {output}")
-
-        # Write to file if directory exists in configuration
-        if directory:
-            response = write_to_file(
-                directory + f"/{processor_id}", extracted_signals, output)
-            logger.debug(f"write_to_file returned: {response}")
-
-        # Send to processor URL if url exists in configuration
-        url = config.url
-        if url:
-            response = send_to_processor(url, output, processor_id)
-            logger.debug(f"send_to_processor returned: {response}")
-
 
     return
 

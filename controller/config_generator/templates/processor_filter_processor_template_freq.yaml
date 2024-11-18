@@ -1,0 +1,16 @@
+processors:
+{%- for signal_to_adjust in signals_to_adjust %}
+  - type: frequency
+    id: freq_{{ signal_to_adjust.id }}
+    metrics:
+      metric_name: {{ signal_to_adjust.name }}
+      interval: {{signal_to_adjust.interval }}
+      condition: {{ signal_to_adjust.condition }}
+{%- endfor %}
+dag:
+{%- set ns = namespace(previous_node="") %}
+{%- for signal_to_adjust in signals_to_adjust %}
+  - node: freq_{{ signal_to_adjust.id }}
+    children: [{{ ns.previous_node }}]
+{%- set ns.previous_node = "freq_" ~ signal_to_adjust.id %}
+{%- endfor %}
