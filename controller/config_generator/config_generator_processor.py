@@ -139,21 +139,21 @@ def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_re
             context_per_processor[processor_id]['signals_to_adjust'].append(
                 signal_to_adjust)
 
-        # writing and sending configuration to relevant processors based on configuration
-        for processor_id, processor_context in context_per_processor.items():
-            output = template.render(processor_context)
+    # writing and sending configuration to relevant processors based on configuration
+    for processor_id, processor_context in context_per_processor.items():
+        output = template.render(processor_context)
 
-            # Write to file if directory exists in configuration
-            if directory:
-                response = write_to_file(
-                    directory + f"/freq_{processor_id}", extracted_signals, output)
-                logger.debug(f"write_to_file returned: {response}")
+        # Write to file if directory exists in configuration
+        if directory:
+            response = write_to_file(
+                directory + f"/freq_{processor_id}", extracted_signals, output)
+            logger.debug(f"write_to_file returned: {response}")
 
-            # Send to processor URL if url exists in configuration
-            url = config.url
-            if url:
-                response = send_to_processor(url, output, processor_id)
-                logger.debug(f"send_to_processor returned: {response}")
+        # Send to processor URL if url exists in configuration
+        url = config.url
+        if url:
+            response = send_to_processor(url, output, processor_id)
+            logger.debug(f"send_to_processor returned: {response}")
 
     return
 
