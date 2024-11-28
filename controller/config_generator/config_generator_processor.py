@@ -79,7 +79,7 @@ def generate_reduce(config, extracted_signals, signals_to_keep, signals_to_reduc
         # Write to file if directory exists in configuration
         if directory:
             response = write_to_file(
-                directory + f"/drop_{processor_id}", extracted_signals, output)
+                directory + f"/{processor_id}", extracted_signals, output)
             logger.debug(f"write_to_file returned: {response}")
 
         # Send to processor URL if url exists in configuration
