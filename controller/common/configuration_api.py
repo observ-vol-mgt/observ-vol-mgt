@@ -316,14 +316,6 @@ class GenerateInsights(BaseModel):
     ]
 
 
-class ConfigGeneratorOtel(BaseModel):
-    """
-    Configuration for OpenTelemetry (OTel) configuration generation.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    directory: Optional[str] = "/tmp"  # Directory to store configuration
-
-
 class ConfigGeneratorProcessor(BaseModel):
     """
     Configuration for processor-based configuration generation.

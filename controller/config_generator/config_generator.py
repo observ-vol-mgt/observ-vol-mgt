@@ -42,12 +42,6 @@ def config_generator(subtype, config, input_data):
         api.GeneratorNone(**config)
         logger.debug("not generating configuration")
         r_value = "not generating configuration"
-    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_OTEL.value:
-        typed_config = api.ConfigGeneratorOtel(**config)
-        logger.debug("using otel config_generator")
-        from config_generator.config_generator_otel import generate
-        r_value = generate(typed_config, extracted_signals,
-                           signals_to_keep, signals_to_reduce)
     elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PROCESSOR.value:
         typed_config = api.ConfigGeneratorProcessor(**config)
         logger.debug("using processor config_generator")
