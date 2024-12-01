@@ -1,4 +1,11 @@
 processors:
+{%- for signal_to_drop in signals_to_drop %}
+  - type: drop
+    id: drop_{{ signal_to_drop.id }}
+    metrics:
+      metric_name: {{ signal_to_drop.name }}
+      condition: {{ signal_to_drop.condition }}
+{%- endfor %}
 {%- for signal_to_adjust in signals_to_adjust %}
   - type: frequency
     id: freq_{{ signal_to_adjust.id }}
@@ -8,6 +15,12 @@ processors:
       condition: {{ signal_to_adjust.condition }}
 {%- endfor %}
 dag:
+{%- set ns = namespace(previous_node="") %}
+{%- for signal_to_drop in signals_to_drop %}
+  - node: drop_{{ signal_to_drop.id }}
+    children: [{{ ns.previous_node }}]
+{%- set ns.previous_node = "drop_" ~ signal_to_drop.id %}
+{%- endfor %}
 {%- set ns = namespace(previous_node="") %}
 {%- for signal_to_adjust in signals_to_adjust %}
   - node: freq_{{ signal_to_adjust.id }}
