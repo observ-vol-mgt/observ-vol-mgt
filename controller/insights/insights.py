@@ -138,8 +138,9 @@ def generate_insights(subtype, config, input_data):
                            api.InsightsAnalysisChainType.INSIGHTS_ANALYSIS_COMPOUND_CORRELATIONS.value]
     signals_to_reduce = signals.filter_by_tags(reduce_signals_tags, filter_in=True, _any=True)
     signals_to_keep = signals.filter_by_tags(reduce_signals_tags, filter_in=False, _any=True)
-    logger.info(f"******* reduce_signals_tags = {reduce_signals_tags}")
-    logger.info(f"******** signals_to_keep = {[signal.metadata['__name__'] for signal in signals_to_keep]}")
+    logger.debug(f"******* reduce_signals_tags = {reduce_signals_tags}")
+    logger.debug(f"******** signals_to_reduce = {[signal.metadata['__name__'] for signal in signals_to_reduce]}")
+    logger.debug(f"******** signals_to_keep = {[signal.metadata['__name__'] for signal in signals_to_keep]}")
 
     result_insights = insights_summary(signals_to_keep)
     insights.append(result_insights)
