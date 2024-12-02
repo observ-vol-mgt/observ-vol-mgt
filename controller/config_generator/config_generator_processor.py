@@ -34,11 +34,11 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
     context_per_processor = {}
     for processor_id, processor_context in context_per_processor_reduce.items():
         context_per_processor[processor_id] = processor_context
-        for processor_id2, processor_context2 in context_per_processor_monotonic.items():
-            if processor_id2 not in context_per_processor:
-                context_per_processor[processor_id2] = {}
-            for key, value in processor_context2.items():
-                context_per_processor[processor_id2][key] = value
+    for processor_id, processor_context in context_per_processor_monotonic.items():
+        if processor_id not in context_per_processor:
+            context_per_processor[processor_id] = {}
+        for key, value in processor_context.items():
+            context_per_processor[processor_id][key] = value
 
     directory = config.directory
     env = Environment(loader=FileSystemLoader('.'))
