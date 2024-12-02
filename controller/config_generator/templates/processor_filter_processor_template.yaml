@@ -12,7 +12,6 @@ processors:
     metrics:
       metric_name: {{ signal_to_adjust.name }}
       interval: {{signal_to_adjust.interval }}
-      condition: {{ signal_to_adjust.condition }}
 {%- endfor %}
 dag:
 {%- set ns = namespace(previous_node="") %}
