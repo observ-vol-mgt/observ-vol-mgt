@@ -20,7 +20,6 @@ dag:
     children: [{{ ns.previous_node }}]
 {%- set ns.previous_node = "drop_" ~ signal_to_drop.id %}
 {%- endfor %}
-{%- set ns = namespace(previous_node="") %}
 {%- for signal_to_adjust in signals_to_adjust %}
   - node: freq_{{ signal_to_adjust.id }}
     children: [{{ ns.previous_node }}]
