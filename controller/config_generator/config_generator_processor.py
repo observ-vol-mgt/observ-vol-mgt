@@ -130,6 +130,7 @@ def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_re
         signal_to_adjust = {"id": _id,
                             "name": Template(signal_name_template).safe_substitute(signal.metadata),
                             "interval": str(config.monotonic_freq_interval),
+                            "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
                             }
         processor_id = Template(
             processor_id_template).safe_substitute(signal.metadata)
