@@ -123,7 +123,7 @@ def get_all_processors_config():
             processor_data = read_processor_file(PROCESSORS_FOLDER, processor_id)
             processor_list.append(processor_data)
 
-        logger.error(processor_list)
+        logger.info(processor_list)
         logger.info("GET config request successful for all processors")
         return jsonify(processor_list), 200
 
@@ -210,7 +210,7 @@ def update_processor_config(processor_id):
                 message:
                   type: string
     """
-    logger.debug(f"POST config request received for processor with id {processor_id}")
+    logger.info(f"POST config request received for processor with id {processor_id}")
     try:
         processor_data = request.get_data(as_text=True)
 
