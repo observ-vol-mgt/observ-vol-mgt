@@ -331,20 +331,6 @@ class ConfigGeneratorProcessor(BaseModel):
     url: Optional[str] = None  # URL to fetch data from
 
 
-class ConfigGeneratorOtelProcessor(BaseModel):
-    """
-    Configuration for otel processor-based configuration generation.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    processor_id_template: Optional[str] = ""  # Template for processor ID
-    signal_name_template: Optional[str] = ""  # Template for signal name
-    # Template for signal condition
-    signal_condition_template: Optional[str] = ""
-    signal_filter_template: Optional[str] = ""  # Template for signal filter
-    directory: Optional[str] = None  # Directory to store configuration
-    url: Optional[str] = None  # URL to fetch data from
-
-
 class GeneratorNone(BaseModel):
     """
     Placeholder configuration for no specific generation task.
