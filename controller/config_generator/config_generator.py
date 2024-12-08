@@ -58,4 +58,3 @@ def config_generator(subtype, config, input_data):
     else:
         raise "unsupported feature_extraction configuration"
     return [r_value]
-
