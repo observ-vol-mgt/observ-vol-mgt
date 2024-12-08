@@ -23,4 +23,3 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
     template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
     generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce, template_file)
     return
-
