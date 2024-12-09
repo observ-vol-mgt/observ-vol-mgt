@@ -26,15 +26,15 @@ def generate_common(config, extracted_signals, signals_to_keep, signals_to_reduc
         for key, value in processor_context.items():
             context_per_processor[processor_id][key] = value
 
-    logger.info(f"context_per_processor = {context_per_processor}")
+    logger.info(f"context_per_processor = \n{context_per_processor}")
     directory = config.directory
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_file)
 
     for processor_id, processor_context in context_per_processor.items():
-        logger.info(f", processor_id = {processor_id}, processor_context = {processor_context}")
+        logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
         output = template.render(processor_context)
-        logger.info(f"output = {output}")
+        logger.info(f"output = \n{output}")
 
         # Write to file if directory exists in configuration
         if directory:

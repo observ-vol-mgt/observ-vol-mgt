@@ -15,12 +15,11 @@ processors:
         - 'name == "{{ signal_to_drop.name }}"'
         - '{{ signal_to_drop.condition }}'
 {%- endfor %}
-  intervalprocessor:
 {%- for signal_to_adjust in signals_to_adjust %}
+  interval/update_{{signal_to_adjust.id}}:
     metrics:
       metric:
         - 'name == "{{ signal_to_adjust.name }}"'
         - 'interval == "{{signal_to_adjust.interval }}"'
-        - '{{ signal_to_adjust.condition }}'
 {%- endfor %}
 
