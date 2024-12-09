@@ -46,3 +46,7 @@ class Analyzer(ABC):
         for signal in self.signals:
             if signal.metadata["__name__"] in names:
                 signal.tag(tag)
+
+    def __print__(self):
+        self.signals.__print__()
+        self.filtered_signals.__print__()
