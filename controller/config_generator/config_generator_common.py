@@ -4,16 +4,15 @@ import re
 from string import Template
 
 import requests
-from jinja2 import Environment, FileSystemLoader
 from common.utils import add_slash_to_dir
 from common.configuration_api import InsightsAnalysisChainType
 
 logger = logging.getLogger(__name__)
 
 
-def generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce, template_file):
-    context_per_processor_reduce = generate_reduce(config, extracted_signals, signals_to_keep, signals_to_reduce)
-    context_per_processor_monotonic = generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_reduce)
+def generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce):
+    context_per_processor_reduce = generate_reduce(config, extracted_signals, signals_to_reduce)
+    context_per_processor_monotonic = generate_monotonic(config, extracted_signals, signals_to_keep)
     # writing and sending configuration to relevant processors based on configuration
 
     # combine the contexts
@@ -27,31 +26,24 @@ def generate_common(config, extracted_signals, signals_to_keep, signals_to_reduc
             context_per_processor[processor_id][key] = value
 
     logger.info(f"context_per_processor = \n{context_per_processor}")
+    return context_per_processor
+
+
+def record_results(config, extracted_signals, output, processor_id):
     directory = config.directory
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template(template_file)
-
-    for processor_id, processor_context in context_per_processor.items():
-        logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
-        output = template.render(processor_context)
-        logger.info(f"output = \n{output}")
-
-        # Write to file if directory exists in configuration
-        if directory:
-            response = write_to_file(
-                directory + f"/{processor_id}", extracted_signals, output)
-            logger.debug(f"write_to_file returned: {response}")
-
-        # Send to processor URL if url exists in configuration
-        url = config.url
-        if url:
-            response = send_to_processor(url, output, processor_id)
-            logger.debug(f"send_to_processor returned: {response}")
-
-    return
+    # Write to file if directory exists in configuration
+    if directory:
+        response = write_to_file(
+            directory + f"/{processor_id}", extracted_signals, output)
+        logger.debug(f"write_to_file returned: {response}")
+    # Send to processor URL if url exists in configuration
+    url = config.url
+    if url:
+        response = send_to_processor(url, output, processor_id)
+        logger.debug(f"send_to_processor returned: {response}")
 
 
-def generate_reduce(config, extracted_signals, signals_to_keep, signals_to_reduce):
+def generate_reduce(config, extracted_signals, signals_to_reduce):
     signal_filter_template = config.signal_filter_template
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
@@ -91,7 +83,7 @@ def generate_reduce(config, extracted_signals, signals_to_keep, signals_to_reduc
     return context_per_processor
 
 
-def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_reduce):
+def generate_monotonic(config, extracted_signals, signals_to_keep):
     signal_filter_template = config.signal_filter_template
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
@@ -115,7 +107,7 @@ def generate_monotonic(config, extracted_signals, signals_to_keep, signals_to_re
             continue
         signal_to_adjust = {"id": _id,
                             "name": Template(signal_name_template).safe_substitute(signal.metadata),
-                            "interval": str(config.monotonic_freq_interval),
+                            "interval": config.monotonic_freq_interval,
                             "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
                             }
         processor_id = Template(
