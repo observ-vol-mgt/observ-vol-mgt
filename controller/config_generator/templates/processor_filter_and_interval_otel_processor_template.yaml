@@ -8,6 +8,11 @@ processors:
         operations:
           - action: experimental_scale_value
             experimental_scale: 1
+  interval:
+    interval: {{ signals_to_adjust[0].interval }}
+    pass_through:
+      gauge: true
+      summary: true
 {%- for signal_to_drop in signals_to_drop %}
   filter/drop_{{ signal_to_drop.id }}:
     error_mode: ignore
