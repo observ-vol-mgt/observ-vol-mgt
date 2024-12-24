@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
     template_file = 'config_generator/templates/processor_filter_processor_template.yaml'
-    context_per_processor = generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce, template_file)
+    context_per_processor = generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce)
 
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_file)
