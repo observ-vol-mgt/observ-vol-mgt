@@ -316,14 +316,6 @@ class GenerateInsights(BaseModel):
     ]
 
 
-class ConfigGeneratorOtel(BaseModel):
-    """
-    Configuration for OpenTelemetry (OTel) configuration generation.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    directory: Optional[str] = "/tmp"  # Directory to store configuration
-
-
 class ConfigGeneratorProcessor(BaseModel):
     """
     Configuration for processor-based configuration generation.
@@ -334,20 +326,7 @@ class ConfigGeneratorProcessor(BaseModel):
     # Template for signal condition
     signal_condition_template: Optional[str] = ""
     signal_filter_template: Optional[str] = ""  # Template for signal filter
-    directory: Optional[str] = None  # Directory to store configuration
-    url: Optional[str] = None  # URL to fetch data from
-
-
-class ConfigGeneratorOtelProcessor(BaseModel):
-    """
-    Configuration for otel processor-based configuration generation.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    processor_id_template: Optional[str] = ""  # Template for processor ID
-    signal_name_template: Optional[str] = ""  # Template for signal name
-    # Template for signal condition
-    signal_condition_template: Optional[str] = ""
-    signal_filter_template: Optional[str] = ""  # Template for signal filter
+    monotonic_freq_interval: Optional[str] = "60s"  # time interval for measurements of monotonic metrics (milliseconds)
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from
 
