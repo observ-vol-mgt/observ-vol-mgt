@@ -22,18 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
+    template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
     context_per_processor = generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce)
 
     env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template(template_file)
 
     for processor_id, processor_context in context_per_processor.items():
         logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
-        if 'signals_to_adjust' in processor_context:
-            template_file = 'config_generator/templates/processor_filter_and_interval_otel_processor_template.yaml'
-        else:
-            template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
-        template = env.get_template(template_file)
-        logger.info(f"template = \n{template}")
         output = template.render(processor_context)
         logger.info(f"output = \n{output}")
 
