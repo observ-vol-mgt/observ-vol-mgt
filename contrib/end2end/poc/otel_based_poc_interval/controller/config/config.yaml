@@ -44,10 +44,15 @@ parameters:
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
-    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization|process_cpu_seconds_total"
+    signal_filter_template: "k8s_|nwdaf_|process_"
     signal_name_template: "$original_name"
-    signal_condition_template: "resource.attributes[\"cluster\"] == \"$cluster\" and resource.attributes[\"instance\"] == \"$instance\""
+    signal_condition_template: "resource.attributes[\"processor\"] == \"$processor\" and resource.attributes[\"instance\"] == \"$instance\""
     processor_id_template: "$processor"
     monotonic_freq_interval: 30s
+    metrics_frequency:
+    - name: process_cpu_seconds_total
+      interval: 20s
+    - name: k8s_pod_network_bytes
+      interval: 10s
     directory: /tmp
     url: http://manager:5010

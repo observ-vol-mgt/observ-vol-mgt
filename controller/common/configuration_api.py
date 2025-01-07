@@ -316,6 +316,15 @@ class GenerateInsights(BaseModel):
     ]
 
 
+class FrequencyDef(BaseModel):
+    """
+    Placeholder configuration for no specific generation task.
+    """
+    model_config = ConfigDict(extra='forbid')  # Configuration for the model
+    name: str # Name of metric for which to adjust frequency
+    interval: str # Time of specified interval
+
+
 class ConfigGeneratorProcessor(BaseModel):
     """
     Configuration for processor-based configuration generation.
@@ -326,7 +335,8 @@ class ConfigGeneratorProcessor(BaseModel):
     # Template for signal condition
     signal_condition_template: Optional[str] = ""
     signal_filter_template: Optional[str] = ""  # Template for signal filter
-    monotonic_freq_interval: Optional[str] = "60s"  # time interval for measurements of monotonic metrics (milliseconds)
+    monotonic_freq_interval: Optional[str] = "1m"  # time interval for measurements of monotonic metrics (milliseconds)
+    metrics_frequency: Optional[List[FrequencyDef]] = []
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from
 
