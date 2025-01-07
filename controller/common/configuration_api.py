@@ -321,8 +321,8 @@ class FrequencyDef(BaseModel):
     Placeholder configuration for no specific generation task.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    name: str # Name of metric for which to adjust frequency
-    interval: str # Time of specified interval
+    name: str  # Name of metric for which to adjust frequency
+    interval: str  # Time of specified interval
 
 
 class ConfigGeneratorProcessor(BaseModel):

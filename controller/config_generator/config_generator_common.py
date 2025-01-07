@@ -4,7 +4,6 @@ import re
 from string import Template
 
 import requests
-import common.configuration_api as api
 from common.utils import add_slash_to_dir
 from common.configuration_api import InsightsAnalysisChainType
 
