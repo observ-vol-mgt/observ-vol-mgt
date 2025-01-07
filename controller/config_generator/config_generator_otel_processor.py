@@ -30,7 +30,7 @@ def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
 
     for processor_id, processor_context in context_per_processor.items():
         logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
-        output = template.render(processor_context)
+        output = template.render(processor_context, interval_value=config.monotonic_freq_interval)
         logger.info(f"output = \n{output}")
 
         record_results(config, extracted_signals, output, processor_id)

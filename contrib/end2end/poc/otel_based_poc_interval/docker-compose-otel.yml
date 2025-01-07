@@ -24,24 +24,6 @@ services:
      - '$PWD/manager/config:/etc/config'
      - 'manager_volume:/manager/app'
 
-  controller:
-    image: quay.io/kalmanmeth/ovmcontroller:interval_freq
-    container_name: controller
-    command:
-      - python
-      - main.py
-      - -c
-      - '/etc/controller/config/config.yaml'
-    expose:
-     - 5000
-    ports:
-     - "5000:5000"
-    volumes:
-     - '$PWD/controller/config:/etc/controller/config'
-    depends_on:
-      thanos_query:
-        condition: service_healthy
-
   thanos_receive:
     image: thanosio/thanos:v0.29.0
     container_name: thanos_receive
