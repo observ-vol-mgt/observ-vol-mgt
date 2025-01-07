@@ -8,7 +8,7 @@ The remote write is intercepted as part of the OTel processor pipeline workflow.
 A "configuration proxy" is used to apply various transformations from the central cloud 
 to the processors inside the OTel collectors. 
 
-This PoC uses a customized OTel collector and showcases how the controller generates insights that trigger adjusting frequency of metrics collection for monotone metrics on the east and west edges/clouds.
+This PoC uses a customized OTel collector and showcases how the controller generates insights that trigger adjusting frequency of metrics collection.
 
 ## Environment Setup
 
@@ -58,9 +58,12 @@ Access `http://127.0.0.1:5010/apidocs/#/Processor%20Configuration/getProcessorCo
 Use `east` and `west` in the UI combo box as the processor ids to check the transformation added to individual clouds. 
 7. You can visualize the change in the metrics values 
 Execute the query `process_cpu_seconds_total` in the `thanos query` UI (in graph mode). 
-You will see that the frequency of the update of the metric has changed from 5 seconds to 30 seconds.
-Execute the query `k8s_pod_network_bytes` in the `thanos query` UI (in graph mode). 
+You will see that the frequency of the update of the metric has changed from 5 seconds to 20 seconds.
+Execute the query `nwdaf_5G_network_utilization` in the `thanos query` UI (in graph mode). 
 You will see that the frequency of the update of the metric remains unchanged at 5 seconds.
+Execute the query `k8s_pod_network_bytes` in the `thanos query` UI (in graph mode). 
+You will see that the frequency of the update of the metric has changed from 5 seconds to 10 seconds.
+These frequency definitions can be seen at the end of the file contrib/end2end/poc/otel_based_poc_interval/controller/config/config.yaml.
 8. To end the POC and clean docker execute  
 ```commandline
 make end
