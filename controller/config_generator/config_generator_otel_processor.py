@@ -16,13 +16,22 @@ import logging
 from jinja2 import Environment, FileSystemLoader
 
 
+import common.configuration_api as api
 from config_generator.config_generator_common import generate_common, record_results
 
 logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
-    template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
+    if len(config.metrics_frequency) > 0:
+        if config.monotonic_freq_interval == "":
+            config.monotonic_freq_interval = api.monotonic_freq_interval_default
+        template_file = 'config_generator/templates/processor_filter_otel_processor_extended_template.yaml'
+    elif config.monotonic_freq_interval != "":
+        template_file = 'config_generator/templates/processor_filter_otel_processor_interval_template.yaml'
+    else:
+        template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
+
     context_per_processor = generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce)
 
     env = Environment(loader=FileSystemLoader('.'))
