@@ -15,4 +15,14 @@ processors:
         - 'name == "{{ signal_to_drop.name }}"'
         - '{{ signal_to_drop.condition }}'
 {%- endfor %}
+  interval:
+    interval: {{ interval_value }}
+    pass_through:
+      gauge: true
+      summary: true
+    rules:
+{%- for signal_to_adjust in signals_to_adjust %}
+      - name: {{ signal_to_adjust.name }}
+        interval: {{signal_to_adjust.interval }}
+{%- endfor %}
 
