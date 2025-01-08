@@ -87,12 +87,12 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
     signal_condition_template = config.signal_condition_template
-    print(f"config = {config}")
+    logger.debug(f"config = {config}")
 
     metrics_frequency = config.metrics_frequency
-    print(f"metrics_frequency = {metrics_frequency}")
+    logger.debug(f"metrics_frequency = {metrics_frequency}")
     metrics_dict = {item.name: item.interval for item in metrics_frequency}
-    print(f"metrics_dict = {metrics_dict}")
+    logger.debug(f"metrics_dict = {metrics_dict}")
 
     # if signal filtering template is set, filter signals
     signals_to_adjust = signals_to_keep
@@ -100,32 +100,33 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
         signals_to_adjust = [signal_name for signal_name in signals_to_adjust if re.search(
             signal_filter_template, signal_name)]
 
-    print(f" ********* signals_to_adjust = {signals_to_adjust}")
+    logger.debug(f" ********* signals_to_adjust = {signals_to_adjust}")
     context_per_processor = {}
 
     # building context per each of the processors with signals to adjust (for the jinja template)
     for _id, signal_name in enumerate(signals_to_adjust):
         signal = extracted_signals.filter_by_names(signal_name)[0]
         signal_name = Template(signal_name_template).safe_substitute(signal.metadata)
-        if signal_name in metrics_dict.keys():
-            signal_to_adjust = {"id": _id,
-                                "name": signal_name,
-                                "interval": metrics_dict[signal_name],
-                                "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
-                                }
+        match = False
+        for metric_key in metrics_dict.keys():
+            if re.search(metric_key, signal_name):
+                match = True
+                interval = metrics_dict[metric_key]
+                break
 
-        else:
+        if not match:
             if "tags" not in signal.metadata.keys():
                 continue
             if not signal.is_tagged([InsightsAnalysisChainType.INSIGHTS_ANALYSIS_MONOTONIC.value], True):
                 continue
-            signal_to_adjust = {"id": _id,
-                                "name": signal_name,
-                                "interval": config.monotonic_freq_interval,
-                                "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
-                                }
-        processor_id = Template(
-            processor_id_template).safe_substitute(signal.metadata)
+            interval = config.monotonic_freq_interval
+
+        signal_to_adjust = {"id": _id,
+                            "name": signal_name,
+                            "interval": interval,
+                            "condition": Template(signal_condition_template).safe_substitute(signal.metadata)
+                            }
+        processor_id = Template(processor_id_template).safe_substitute(signal.metadata)
 
         if processor_id not in context_per_processor:
             context_per_processor[processor_id] = {"signals_to_adjust": []}
