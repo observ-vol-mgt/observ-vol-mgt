@@ -157,3 +157,119 @@ global_settings:
 ```
 
 
+## Insights
+An `insights` stage performs the analytics on the data.
+The `input_data` should contain a single `Signals` element (typically after feature extraction)
+and the `output_data`  contains 3 lists: [signals_to_keep, signals_to_reduce, text_insights].
+
+The following insights are currently supported:
+- zero_values: identify signals that have constant zero value.
+- fixed_values: identify signals that have constant non-zero value.
+- monotonic: identify signals that are monotonic (typical of a counter)
+- pairwise_correlations: identify signals that are directly correlated to some other signal.
+- compound_correlations: identify signals that are some linear combination of other signals.
+
+The order of the computed analytics should be specified.
+It is expected that typically the zero-valued and fixed-valued signals are identified,
+and then the remaining signals are tested for monotonicity or correlation.
+
+The zero-valued, fixed-valued, and correlated signals are primary candidates to be dropped.
+The monotonic signals are primary candidates to have their measurement frequency reduced.
+
+The format of the `insights` stage is as follows:
+```commandline
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+    analysis_chain:
+    - type: zero_values
+      close_to_zero_threshold: 0.02
+    - type: fixed_values
+      filter_signals_by_tags: ["zero_values"]
+    - type: monotonic
+      filter_signals_by_tags: ["zero_values","fixed_values"]
+    - type: pairwise_correlations
+      filter_signals_by_tags: ["zero_values","fixed_values"]
+      pairwise_similarity_threshold: 0.02
+      pairwise_similarity_distance_method: pearson
+    - type: compound_correlations
+      filter_signals_by_tags: ["zero_values","fixed_values","pairwise_correlations"]
+      compound_similarity_threshold: 1
+```
+
+Any subset of the available analytics may be specified in the `analytics_chain`.
+
+The `filter_signals_by_tags` key specifies which signals to exclude from the particular analysis stage.
+Thus, we do not include the zero-valued and fixed-valued signals in the pairwise-correlation analytic.
+Additional parameters are availabe for some of the analytics.
+
+These insights can be viewed in the `controller` gui (in the demo see http://localhost:5000/insights).
+
+
+## Config_generator
+The `config_generator` stage takes the data proviced by the `insights` stage and produces yaml files to configure
+the metrics collector to utilize the inisights.
+The `input_data` should contain 3 lists of signals: [extracted_signals, signals_to_keep, signals_to_reduce].
+
+The format of the `config_generator` stage is as follows:
+```commandline
+- name: config_generator_processor
+  type: config_generator
+  subtype: processor
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+  config:
+    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization"
+    signal_name_template: "$original_name"
+    signal_condition_template: "cluster=$cluster and instance=$instance"
+    processor_id_template: "$processor"
+    directory: /tmp
+    url: http://manager:5010
+```
+
+The `signal_filter_template` parameter contains a regular expression of metric names that interest us.
+Metrics whose names do not match the `signal_filter_template` are ignored.
+The `url` parameter specifies where to send the produced generated configurations.
+The `directory` parameter may be used to specify where to save (locally) a copy of the generated configuration files.
+
+We support both PMF (`subtype: processor`) and otel (`subtype: otel_processor`) formats.
+
+To specify a customized metric frequency for monotonic metrics, the following parameter can be used:
+
+```commandline
+  config:
+    monotonic_freq_interval: 30s
+```
+
+To specify a specific frequency for specified metrics, the following config parameters may be used:
+```commandline
+  config:
+    metrics_frequency:
+    - name: process_
+      interval: 20s
+    - name: k8s_pod_
+      interval: 10s
+```
+These `name:` parameters match a regular expression of metric names.
+In this example, all metrics whose names contain `process_` will have their metrics reporting adjusted to every 20s.
+
+These can be combined into a configuration that looks like this:
+```commandline
+  config:
+    signal_filter_template: "k8s_|nwdaf_|process_"
+    signal_name_template: "$original_name"
+    signal_condition_template: "resource.attributes[\"processor\"] == \"$processor\" and resource.attributes[\"instance\"] == \"$instance\""
+    processor_id_template: "$processor"
+    monotonic_freq_interval: 30s
+    metrics_frequency:
+    - name: process_
+      interval: 20s
+    - name: k8s_
+      interval: 10s
+    directory: /tmp
+    url: http://manager:5010
+```
+
