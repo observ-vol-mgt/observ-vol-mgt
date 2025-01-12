@@ -34,6 +34,7 @@ parameters:
   config:
     analysis_chain:
     - type: zero_values
+      close_to_zero_threshold: 0.02
     - type: fixed_values
       filter_signals_by_tags: ["zero_values"]
     - type: monotonic
