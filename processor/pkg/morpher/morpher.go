@@ -167,7 +167,7 @@ type Morpher struct {
 }
 
 func createDefaultQuery(selectors []string) string {
-	union_stmt := strings.Join(selectors, " or phash in ")
+	union_stmt := strings.Join(selectors, " or ")
 	log.Debugf(union_stmt)
 	return union_stmt
 }
