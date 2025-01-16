@@ -1,0 +1,220 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "localhost:9001",
+          "job": "prometheus"
+        },
+        "values": [
+          [
+            1711897040,
+            "23159257"
+          ],
+          [
+            1711897600,
+            "47411328"
+          ],
+          [
+            1711898160,
+            "279657"
+          ],
+          [
+            1711898720,
+            "13874880"
+          ],
+          [
+            1711899280,
+            "43661322"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "localhost:9002",
+          "job": "prometheus"
+        },
+        "values": [
+          [
+            1711897040,
+            "23199250"
+          ],
+          [
+            1711897600,
+            "47316074"
+          ],
+          [
+            1711898160,
+            "340116"
+          ],
+          [
+            1711898720,
+            "13963058"
+          ],
+          [
+            1711899280,
+            "43702399"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "minio:9000",
+          "job": "minio"
+        },
+        "values": [
+          [
+            1711898160,
+            "163736"
+          ],
+          [
+            1711898720,
+            "39649709"
+          ],
+          [
+            1711899280,
+            "147389419"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "thanos_querier:10902",
+          "job": "thanos-query"
+        },
+        "values": [
+          [
+            1711897040,
+            "3614733"
+          ],
+          [
+            1711897600,
+            "7418595"
+          ],
+          [
+            1711898160,
+            "41815"
+          ],
+          [
+            1711898720,
+            "2275428"
+          ],
+          [
+            1711899280,
+            "6994996"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "thanos_query_frontend:19090",
+          "job": "thanos_query_frontend"
+        },
+        "values": [
+          [
+            1711897040,
+            "10247563"
+          ],
+          [
+            1711897600,
+            "20779786"
+          ],
+          [
+            1711898160,
+            "68010"
+          ],
+          [
+            1711898720,
+            "6434496"
+          ],
+          [
+            1711899280,
+            "22883567"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "thanos_sidecar_one:10902",
+          "job": "thanos-sidecar_one"
+        },
+        "values": [
+          [
+            1711897040,
+            "1411566"
+          ],
+          [
+            1711897600,
+            "2904365"
+          ],
+          [
+            1711898160,
+            "25769"
+          ],
+          [
+            1711898720,
+            "811169"
+          ],
+          [
+            1711899280,
+            "2242956"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "thanos_sidecar_two:10902",
+          "job": "thanos-sidecar_two"
+        },
+        "values": [
+          [
+            1711897040,
+            "1444884"
+          ],
+          [
+            1711897600,
+            "2862403"
+          ],
+          [
+            1711898160,
+            "30397"
+          ],
+          [
+            1711898720,
+            "756634"
+          ],
+          [
+            1711899280,
+            "2252585"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "go_memstats_frees_total",
+          "instance": "thanos_store:10902",
+          "job": "thanos-store"
+        },
+        "values": [
+          [
+            1711898720,
+            "1723853"
+          ],
+          [
+            1711899280,
+            "5193015"
+          ]
+        ]
+      }
+    ]
+  }
+}

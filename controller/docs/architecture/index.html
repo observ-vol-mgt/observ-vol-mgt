@@ -1,0 +1,1278 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/observ-vol-mgt/observ-vol-mgt/controller/docs/architecture/">
+      
+      
+        <link rel="prev" href="../api/api/">
+      
+      
+        <link rel="next" href="../../../manager/configurator/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.26">
+    
+    
+      
+        <title>Architecture - Observability Volume Manager</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#volume-manager-controller" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Observability Volume Manager" class="md-header__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Observability Volume Manager
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Observability Volume Manager" class="md-nav__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    Observability Volume Manager
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Controller
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Controller
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration parameters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task flows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task flows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task types
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Manager
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Manager
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/docs/configuration_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/alertmanager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AlertManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Processor
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Processor
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../processor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    otel-collector-proxy
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            otel-collector-proxy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otel-collector-proxy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    POC (Getting started)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            POC (Getting started)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/poc/insight_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Insights POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://drive.google.com/file/d/1-rTCcJpnHUDHP-Cre3HotnRnzyWIatNi/view?usp=sharing" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Video
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/poc/otel_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oTel POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    More
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            More
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/ec-metric-gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/ec-metric-gen/doc/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/end2end/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    End-To-End tests
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/examples/generate-synthetic-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    generate-synthetic-metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contrib/fetch-offline-data/instana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Instana Observability Data Fetchers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task flows
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task flows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task types
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="volume-manager-controller">Volume Manager Controller</h1>
+<h2 id="architecture">Architecture</h2>
+<p>The Volume Manager Controller is responsible for receiving information from the Observability Collectors and
+Observability Processors. It then performs a set of operations to contextualize and analyze this information. Along with
+the user-provided policies, the Controller generates insights and conducts automation operations to control and optimize
+the volume of observability data.</p>
+<p>The volume manager is built around pipelines of tasks that are executed asynchronously. Each task performs a different
+function, and the pipelines are configurable to allow flexibility and support for various use cases.</p>
+<p>Tasks can be optimized and parallelized to enhance scalability and efficiency. Each task is classified based on its
+type, which determines its specific functionality and characteristics. The input and output data structures of each task
+differ from one another. The controller manages and arranges the tasks in Directed Acyclic Graphs (DAGs), and performs
+operations on them periodically and on-demand. The data ingestion into the controller is batched and processed between
+the various task operations.</p>
+<p>The controller requires data persistence to efficiently analyze observability data over time. Data persistence is
+decoupled from computing tasks, allowing flexibility for specific use cases.</p>
+<p>The controller's behavior is governed by a collection of high-level semantic policies that are visible to the user. This
+enables the controller to be managed based on intentions. The policies are analyzed by the controller and compared with
+the observed data to provide insights and configurations for handling the volume of observability data.</p>
+<h2 id="task-flows">Task flows</h2>
+<h3 id="basic">Basic</h3>
+<p>For basic use cases, the volume manager controller tasks can be configured as follows:</p>
+<!---to edit mermaid flowcharts online use: https://mermaid.live/) 
+--->
+
+<pre class="mermaid"><code>flowchart LR
+    direction TB
+    subgraph Ingress[" "]
+        direction TB
+        Ingress-Node["Ingest\n(prometheus metrics)"]
+    end
+    subgraph User[" "]
+        direction TB
+        User-Policy{{"User\nPolicy"}}
+        User-Policy:::policyclass
+        User-Node["Rules\nEngine"]
+        User-Policy-.-&gt;User-Node
+    end
+    subgraph Insights[" "]
+        direction TB
+        Insights-Node["Volume reduction\nInsights"]
+    end   
+    subgraph Automation[" "]
+        direction TB
+        Automation-Policy{{"Automation\nPolicy"}}
+        Automation-Policy:::policyclass
+        Automation-Node["Configuration\nGenerator"]
+        Automation-Policy-.-&gt;Automation-Node
+    end
+    subgraph Egress[" "]
+        direction TB
+        Egress-Node["Egress\n(Processor\nConfiguration)"]
+    end     
+classDef policyclass fill:lightblue    
+Ingress --&gt; User --&gt; Insights --&gt; Automation --&gt; Egress</code></pre>
+<blockquote>
+<p>Note: In this MVP controller pipeline. The configuration of the controller uses a subset of the available tasks.</p>
+</blockquote>
+<h3 id="advanced">Advanced</h3>
+<p>In advanced use cases, the task pipeline can be extended to provide additional capabilities. For example:</p>
+<pre class="mermaid"><code>flowchart LR
+    direction TB
+    subgraph MetricsIngress[" "]
+        direction TB
+        MetricsIngress-Node["Ingest\n(prometheus signals)"]
+    end
+    subgraph LogsIngress[" "]
+        direction TB
+        LogsIngress-Node["Ingest\n(logs signals)"]
+    end    
+    subgraph Grouping[" "]
+        direction TB
+        Grouping-Policy{{"Grouping\nPolicy"}}
+        Grouping-Policy:::policyclass
+        Grouping-Node["Signal-Grouping\n(labels)"]
+        Grouping-Policy-.-&gt;Grouping-Node        
+    end     subgraph Features[" "]
+        direction TB
+        Features-Node["Features-Extraction\n(labels)"]
+    end   
+
+    subgraph ObserFeatures[" "]
+        direction TB
+        ObserFeatures-Node["Observability-Domain\nFeatures\n(Extra labels)"]
+    end      
+    subgraph User[" "]
+        direction TB
+        User-Policy{{"User\nPolicy"}}
+        User-Policy:::policyclass
+        User-Node["Rules\nEngine"]
+        User-Policy-.-&gt;User-Node
+    end
+    subgraph Insights[" "]
+        direction TB
+        Insights-Node["Volume reduction\nInsights"]
+    end   
+    subgraph Automation[" "]
+        direction TB
+        Automation-Policy{{"Automation\nPolicy"}}
+        Automation-Policy:::policyclass
+        Automation-Node["Configuration\nGenerator"]
+        Automation-Policy-.-&gt;Automation-Node
+    end
+    subgraph Egress[" "]
+        direction TB
+        Egress-Node["Egress\n(Processor\nConfiguration)"]
+    end     
+classDef policyclass fill:lightblue    
+MetricsIngress --&gt; Grouping --&gt; Features --&gt; ObserFeatures --&gt; User --&gt; Insights --&gt; Automation --&gt; Egress
+LogsIngress --&gt; Grouping</code></pre>
+<h2 id="task-types">Task types</h2>
+<p>Following are basic explanations for each of the task types:</p>
+<table>
+<thead>
+<tr>
+<th>Task Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ingest</td>
+<td>Ingest tasks are responsible for ingesting information into the controller. The objects ingested into the controller are “signals”. Signals can be each of the basic common observability data sources: metrics, logs, traces, etc. Signals can be ingested into the controller both synchronously and asynchronously.</td>
+</tr>
+<tr>
+<td>Grouping</td>
+<td>Grouping tasks use data from the signals to cluster, group, and partition multiple signals into a <code>signal group</code>. The grouping rules are policy-driven and rely on meta-data and data from the signals. The clustering is  based on raw labels provided as part of the signals.</td>
+</tr>
+<tr>
+<td>Feature-Extraction</td>
+<td>Feature Extraction tasks are responsible for the basic statistical analysis of the signals. They analyze the signal behaviors and produce a basic set of understandings of the signals.</td>
+</tr>
+<tr>
+<td>Observability-Analysis</td>
+<td>Observability analysis tasks are responsible for domain-specific analysis of signals generating observability-level understandings of signals</td>
+</tr>
+<tr>
+<td>User-Policy-Analyzer</td>
+<td>The policy enforcer will intersect the user-provided policies with the observability signals information and analysis gathered by the controller to generate policy driver information.</td>
+</tr>
+<tr>
+<td>System-Policy-Analyzer</td>
+<td>system policy analyzer tasks are responsible for the analysis of system behavior and the correlation of system risk analysis with the observability data. The  tasks will annotate the signals with relevant information to identify the dynamic applicability of the signals according to the policies</td>
+</tr>
+<tr>
+<td>Signal-Insight</td>
+<td>Insight tasks are responsible for the generation of volume management insights. Those insights are user-facing outputs of the pipelines and according to policies can be consumed by the users or pushed. The insights are tangible, environment-specific, and dynamic. They provide insights into volume management behaviors and action recommendations.</td>
+</tr>
+<tr>
+<td>Automation/configuration generator</td>
+<td>Automation tasks are responsible for the generation of per-processor configuration based on the action recommendation of the insights tasks. The configurations are sent using a customer-provided control plane to the processors to enforce the volume management reductions automatically.</td>
+</tr>
+</tbody>
+</table>
+<p>TBD:</p>
+<p>Configurations the configuration tasks are</p>
+<p>Feature extraction feature</p>
+<p>Persistence:</p>
+<p>Objects to consider:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,6 @@
+Flask
+requests
+pyyaml
+pydantic>=1.8.2
+flasgger==0.9.7.1
+pydantic-openapi-schema

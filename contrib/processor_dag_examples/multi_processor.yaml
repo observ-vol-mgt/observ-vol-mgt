@@ -1,0 +1,16 @@
+processors:
+  - type: drop
+    id: drop_1
+    metrics:
+      metric_name: nwdaf_5G_network_utilization
+      condition: cluster=c0 and instance=metricgen1:8000
+  - type: frequency
+    id: freq_1
+    metrics:
+      metric_name: process_cpu_seconds_total
+      interval: 120000
+dag:
+  - node: drop_1
+    children: []
+  - node: freq_1
+    children: []

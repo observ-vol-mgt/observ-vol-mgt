@@ -1,0 +1,12 @@
+
+name: '1'
+clusters: 
+  num_metrics: 10
+hardware:
+  num_nodes: 3
+  num_metrics: 10
+apps:
+  - name: 'A'
+    num_metrics: 10
+  - name: 'B'
+    num_metrics: 10  

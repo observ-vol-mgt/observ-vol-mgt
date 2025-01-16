@@ -1,0 +1,74 @@
+[
+  [
+    "The request latency in milliseconds for the 'service_name' service, endpoint 'endpoint', and status code 'status_code'",
+    "Health"
+  ],
+  [
+    "The CPU utilization percentage for the server 'server_name' and process 'process_name'",
+    "Health"
+  ],
+  [
+    "The queue length for the queue 'queue_name' of type 'queue_type'",
+    "Health"
+  ],
+  [
+    "Network Traffic: Tracks the volume of data transmitted over the network, enabling SREs to monitor bandwidth usage and detect anomalies.",
+    "Performance"
+  ],
+  [
+    "Request Queue Length: Indicates the number of requests waiting to be processed, guiding SREs in optimizing system capacity and responsiveness.",
+    "Performance"
+  ],
+  [
+    "CPU Utilization: Monitors the percentage of CPU resources being utilized, assisting SREs in optimizing resource allocation and performance.",
+    "Performance"
+  ],
+  [
+    "Disk I/O Throughput: Rate of data read from or written to disk, essential for detecting storage performance issues and optimizing disk usage.",
+    "Resource Utilization"
+  ],
+  [
+    "Memory Usage: Amount of physical or virtual memory being used by processes, indicating potential bottlenecks or memory leaks impacting system stability.",
+    "Resource Utilization"
+  ],
+  [
+    "Filesystem Utilization: Percentage of disk space used on a filesystem, important for predicting storage capacity needs and preventing out-of-space errors.",
+    "Resource Utilization"
+  ],
+  [
+    "Error Rate: Percentage of failed requests compared to total requests, labeled as \"error_rate_percentage\"",
+    "Application"
+  ],
+  [
+    "Database Queries: Number of queries executed by the database, labeled as \"database_queries_per_second\".",
+    "Application"
+  ],
+  [
+    "Cache Hit Ratio: Percentage of requests served from cache compared to total requests, labeled as \"cache_hit_ratio_percentage\".",
+    "Application"
+  ],
+  [
+    "Privileged User Activity Monitoring (PUAM): Monitors actions performed by privileged users or accounts with elevated access rights, ensuring compliance with security policies and detecting suspicious behavior indicative of insider threats or account compromise.",
+    "Security"
+  ],
+  [
+    "Cryptographic Strength Monitoring (CSM): Evaluates the robustness of cryptographic protocols and algorithms in use, ensuring compliance with security standards and identifying potential weaknesses.",
+    "Security"
+  ],
+  [
+    "Access Control Violations (ACV): Monitors instances of unauthorized access attempts or policy violations, aiding in the identification of potential security breaches or insider threats.\n\n",
+    "Security"
+  ],
+  [
+    "Error Budget: Quantifies the allowable amount of errors or downtime within a specified timeframe, guiding the trade-offs between innovation and reliability in service development and deployment.",
+    "Business"
+  ],
+  [
+    "Saturation: Evaluates the degree to which a resource (such as CPU, memory, or network bandwidth) is utilized, highlighting potential bottlenecks or capacity constraints.",
+    "Business"
+  ],
+  [
+    "Service Dependency SLI: Measurement of the health and performance of dependencies required for the service to function properly, ensuring minimal impact on service reliability due to external factors.",
+    "Business"
+  ]
+]

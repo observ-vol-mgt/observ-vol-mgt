@@ -1,0 +1,3 @@
+expr: (fake_metric_1) > 100
+for: 1s
+description: dash

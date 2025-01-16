@@ -1,0 +1,253 @@
+version: '3.2'
+services:
+
+  metricgen1:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen1
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '-p=8000'
+     - '-cp=5002'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+     - '--duplicate=false'
+    expose:
+     - 5002
+     - 8000
+    ports:
+     - "5002:5002"
+     - "8000:8000"
+  
+  metricgen2:
+    image: quay.io/observ-vol-mgt/metricgen
+    container_name: metricgen2
+    command:
+     #- '/bin/sh -c python3 demo-metrics-gutentag.py --conf conf.yaml --nmetrics 100 --nlabels 10'
+     - 'python3'
+     - 'demo-metrics-gutentag.py'
+     - '--conf=conf.yaml'
+     - '--port=8001'
+     - '--clientport=5003'
+     - '--nmetrics=100'
+     - '--nlabels=10'
+     - '--duplicate=false'
+    expose:
+     - 5003
+     - 8001
+    ports:
+     - "5003:5003"
+     - "8001:8001"
+
+  manager:
+    image: quay.io/observ-vol-mgt/manager
+    container_name: manager
+    expose:
+     - 5010
+    ports:
+     - "5010:5010"
+    environment:
+     - CONFIG_FILE=/etc/config/config.yaml
+    volumes:
+     - '$PWD/manager/config:/etc/config'
+     - 'manager_volume:/manager/app'
+
+  pmf_processor1:
+    image: quay.io/observ-vol-mgt/pmf_processor
+    container_name: pmf_processor1
+    command:
+     # - 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=:8081'
+     - '--morpher=:8100'
+    expose:
+     - 8100
+     - 8081
+    ports:
+     - "8100:8100"
+     - "8081:8081"
+
+  pmf_processor2:
+    image: quay.io/observ-vol-mgt/pmf_processor
+    container_name: pmf_processor2
+    command:
+     #- 'go run'
+     - './processor'
+     #- '--target=http://thanos_receive:19291/api/v1/receive'
+     - '--listen=0.0.0.0:8082'
+     - '--morpher=0.0.0.0:8101'
+    expose:
+     - 8101
+     - 8082
+    ports:
+     - "8101:8101"
+     - "8082:8082"
+
+  prometheus1:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus1
+    user: root
+    volumes:
+      - ./prometheus/prometheus1:/etc/config/
+      - ./prometheus_data1:/data
+    command:
+      - '--config.file=/etc/config/prometheus.yml'
+      - '--storage.tsdb.path=/data'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=2h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.listen-address=:9001'
+      - '--storage.tsdb.min-block-duration=5m'
+      - '--storage.tsdb.max-block-duration=5m'
+    restart: unless-stopped
+    expose:
+      - 9001
+    ports:
+      - "9001:9001"
+
+  prometheus2:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus2
+    user: root
+    volumes:
+      - ./prometheus/prometheus2:/etc/config/
+      - ./prometheus_data2:/data
+    command:
+      - '--config.file=/etc/config/prometheus.yml'
+      - '--storage.tsdb.path=/data'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=2h'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+      - '--web.listen-address=:9002'
+      - '--storage.tsdb.min-block-duration=5m'
+      - '--storage.tsdb.max-block-duration=5m'
+    restart: unless-stopped
+    expose:
+      - 9002
+    ports:
+      - "9002:9002"
+
+  thanos_receive:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_receive
+    volumes:
+      - ./thanos_data:/data
+    command:
+      - receive
+      - --grpc-address=0.0.0.0:10901
+      - --http-address=0.0.0.0:10902
+      - --remote-write.address=0.0.0.0:19291
+      - --receive.replication-factor=1
+      - --label=receive="true"
+      - --tsdb.path=/data/receive
+      - --tsdb.retention=15d
+      - --receive.local-endpoint=thanos-receive:10901
+    healthcheck:
+      test: wget -q -O- localhost:10902/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    expose:
+      - 19291
+    ports:
+      - "19291:19291"
+
+  thanos_query:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_query
+    command:
+      - "query"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--grpc-address=:20901"
+      - "--http-address=:19192"
+      - "--store=thanos_receive:10901"
+      # - "--store=thanos_rule:10901"
+      - "--store.sd-interval=5m"
+      - "--query.replica-label=monitor"
+    expose:
+      - 20901
+      - 19192
+    healthcheck:
+      test: wget -q -O- localhost:19192/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "19192:19192"
+  
+  alertmanager:
+    image: "quay.io/prometheus/alertmanager:v0.25.0"
+    container_name: alertmanager
+    volumes:
+      - ${PWD}/alertmanager:/etc/alertmanager
+    ports:
+      - 9093:9093
+    healthcheck:
+      test: wget -q -O- localhost:9093/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  
+  ruler_config:
+    image: quay.io/observ-vol-mgt/ruler_config 
+    container_name: ruler_config
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8090
+      - RULES_FOLDER=/shared
+      - THANOS_RULE_URL=http://thanos_ruler:10903
+      - LOG_FILE=ruleTranslator.log
+    volumes:
+      - shared-data:/shared
+    expose:
+      - 8090
+    ports:
+      - "8090:8090"
+
+  thanos_ruler:
+    image: thanosio/thanos:v0.29.0
+    container_name: thanos_ruler
+    command:
+      - "rule"
+      - "--log.level=debug"
+      - "--log.format=logfmt"
+      - "--grpc-address=:30901"
+      - "--http-address=:10903"
+      - "--query=thanos_query:19192"
+      - "--rule-file=/shared/rules.yml"
+      - "--alertmanagers.url=http://alertmanager:9093"
+    volumes:
+      - shared-data:/shared
+    expose:
+      - 30901
+      - 10903
+    healthcheck:
+      test: wget -q -O- localhost:10903/-/ready
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "10903:10903"  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    user: '0'
+    ports:
+     - '3000:3000'
+    volumes:
+      - '$PWD/grafana/provisioning:/etc/grafana/provisioning'
+
+
+volumes:
+  shared-data:
+  manager_volume:
+

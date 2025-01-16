@@ -1,0 +1,10 @@
+processors:
+  - type: frequency
+    id: initial
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      interval: 10m
+dag:
+  - node: initial
+    children: [freq1, agg1]
