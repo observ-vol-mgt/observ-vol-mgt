@@ -151,7 +151,7 @@ class ConfigGeneratorSubType(Enum):
     PIPELINE_CONFIG_GENERATOR_NONE = "none"
     PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
     PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR = "otel_processor"
-    PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
+    PIPELINE_CONFIG_GENERATOR_PMF_PROCESSOR = "pmf_processor"
 
 
 class GenerateInsightsType(Enum):

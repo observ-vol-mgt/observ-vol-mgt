@@ -43,10 +43,10 @@ def config_generator(subtype, config, input_data):
         api.GeneratorNone(**config)
         logger.debug("not generating configuration")
         r_value = "not generating configuration"
-    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PROCESSOR.value:
+    elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_PMF_PROCESSOR.value:
         typed_config = api.ConfigGeneratorProcessor(**config)
         logger.debug("using processor config_generator")
-        from config_generator.config_generator_processor import generate
+        from config_generator.config_generator_pmf_processor import generate
         r_value = generate(typed_config, extracted_signals,
                            signals_to_keep, signals_to_reduce)
     elif subtype == api.ConfigGeneratorSubType.PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR.value:
