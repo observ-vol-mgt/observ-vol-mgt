@@ -325,7 +325,7 @@ class FrequencyDef(BaseModel):
     interval: str  # Time of specified interval
 
 
-monotonic_freq_interval_default = "1m"
+counter_default_interval_default = "1m"
 
 
 class ConfigGeneratorProcessor(BaseModel):
@@ -337,8 +337,9 @@ class ConfigGeneratorProcessor(BaseModel):
     signal_name_template: Optional[str] = ""  # Template for signal name
     # Template for signal condition
     signal_condition_template: Optional[str] = ""
-    signal_filter_template: Optional[str] = ""  # Template for signal filter
-    monotonic_freq_interval: Optional[str] = ""  # time interval for measurements of monotonic metrics (milliseconds)
+    signal_filter_reduce_template: Optional[str] = ""  # Template for signal filter for dropped signals
+    signal_filter_adjust_template: Optional[str] = ""  # Template for signal filter for adjusted signals
+    counter_default_interval: Optional[str] = ""  # time interval for counters
     metrics_frequency: Optional[List[FrequencyDef]] = []
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from
