@@ -44,7 +44,7 @@ def record_results(config, extracted_signals, output, processor_id):
 
 
 def generate_reduce(config, extracted_signals, signals_to_reduce):
-    signal_filter_template = config.signal_filter_template
+    signal_filter_template = config.signal_filter_reduce_template
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
     signal_condition_template = config.signal_condition_template
@@ -83,7 +83,7 @@ def generate_reduce(config, extracted_signals, signals_to_reduce):
 
 
 def generate_adjust(config, extracted_signals, signals_to_keep):
-    signal_filter_template = config.signal_filter_template
+    signal_filter_template = config.signal_filter_adjust_template
     processor_id_template = config.processor_id_template
     signal_name_template = config.signal_name_template
     signal_condition_template = config.signal_condition_template
@@ -119,7 +119,7 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
                 continue
             if not signal.is_tagged([InsightsAnalysisChainType.INSIGHTS_ANALYSIS_MONOTONIC.value], True):
                 continue
-            interval = config.monotonic_freq_interval
+            interval = config.counter_default_interval
 
         signal_to_adjust = {"id": _id,
                             "name": signal_name,
