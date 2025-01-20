@@ -5,7 +5,6 @@ from string import Template
 
 import requests
 from common.utils import add_slash_to_dir
-from common.configuration_api import InsightsAnalysisChainType
 
 logger = logging.getLogger(__name__)
 
