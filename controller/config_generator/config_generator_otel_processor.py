@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
-    if len(config.metrics_frequency) > 0:
+    if len(config.metrics_adjustment) > 0:
         if config.counter_default_interval == "":
             config.counter_default_interval = api.counter_default_interval_default
         template_file = 'config_generator/templates/processor_filter_otel_processor_extended_template.yaml'
