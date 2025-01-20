@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import logging
 import os
 import re
@@ -90,12 +89,7 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
     signal_condition_template = config.signal_condition_template
     logger.debug(f"config = {config}")
 
-    metrics_adjustment = config.metrics_adjustment
-    logger.debug(f"metrics_adjustment = {metrics_adjustment}")
-    metrics_dict = OrderedDict()
-    for item in metrics_adjustment:
-        metrics_dict[item.name_template] = item
-    logger.info(f"metrics_dict = {metrics_dict}")
+    logger.info(f"metrics_adjustment = {config.metrics_adjustment}")
 
     # if signal filtering template is set, filter signals
     signals_to_adjust = signals_to_keep
@@ -111,18 +105,20 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
         signal = extracted_signals.filter_by_names(signal_name)[0]
         signal_name = Template(signal_name_template).safe_substitute(signal.metadata)
         match = False
-        for metric_key in metrics_dict.keys():
-            if re.search(metric_key, signal_name):
-                match = True
-                interval = metrics_dict[metric_key].interval
-                break
+        for item in config.metrics_adjustment:
+            if re.search(item.name_template, signal_name):
+                if len(item.tag_filter) > 0:
+                    if signal.is_tagged(item.tag_filter, True):
+                        match = True
+                        interval = item.interval
+                        break
+                else:
+                    match = True
+                    interval = item.interval
+                    break
 
         if not match:
-            if "tags" not in signal.metadata.keys():
-                continue
-            if not signal.is_tagged([InsightsAnalysisChainType.INSIGHTS_ANALYSIS_MONOTONIC.value], True):
-                continue
-            interval = config.counter_default_interval
+            continue
 
         signal_to_adjust = {"id": _id,
                             "name": signal_name,
