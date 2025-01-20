@@ -275,7 +275,7 @@ class AnalysisChainProcess(BaseModel):
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     type: InsightsAnalysisChainType  # The type of analysis process
-    filter_signals_by_tags: Optional[List[str]] = ""  # Filter signals to analyze by list of tags
+    filter_signals_by_tags: Optional[List[str]] = []  # Filter signals to analyze by list of tags
     close_to_zero_threshold: Optional[float] = 0  # Threshold for close to zero analysis
     pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
     pairwise_similarity_method: Optional[str] = (
@@ -321,7 +321,8 @@ class FrequencyDef(BaseModel):
     Placeholder configuration for no specific generation task.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    name: str  # Name of metric for which to adjust frequency
+    name_template: str  # (regex of) Name of metric for which to adjust frequency
+    tag_filter: Optional[List[str]] = []  # metadata tags to match
     interval: str  # Time of specified interval
 
 
@@ -340,7 +341,7 @@ class ConfigGeneratorProcessor(BaseModel):
     signal_filter_reduce_template: Optional[str] = ""  # Template for signal filter for dropped signals
     signal_filter_adjust_template: Optional[str] = ""  # Template for signal filter for adjusted signals
     counter_default_interval: Optional[str] = ""  # time interval for counters
-    metrics_frequency: Optional[List[FrequencyDef]] = []
+    metrics_adjustment: Optional[List[FrequencyDef]] = []
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from
 

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import logging
 import os
 import re
@@ -89,10 +90,12 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
     signal_condition_template = config.signal_condition_template
     logger.debug(f"config = {config}")
 
-    metrics_frequency = config.metrics_frequency
-    logger.debug(f"metrics_frequency = {metrics_frequency}")
-    metrics_dict = {item.name: item.interval for item in metrics_frequency}
-    logger.debug(f"metrics_dict = {metrics_dict}")
+    metrics_adjustment = config.metrics_adjustment
+    logger.debug(f"metrics_adjustment = {metrics_adjustment}")
+    metrics_dict = OrderedDict()
+    for item in metrics_adjustment:
+        metrics_dict[item.name_template] = item
+    logger.info(f"metrics_dict = {metrics_dict}")
 
     # if signal filtering template is set, filter signals
     signals_to_adjust = signals_to_keep
@@ -111,7 +114,7 @@ def generate_adjust(config, extracted_signals, signals_to_keep):
         for metric_key in metrics_dict.keys():
             if re.search(metric_key, signal_name):
                 match = True
-                interval = metrics_dict[metric_key]
+                interval = metrics_dict[metric_key].interval
                 break
 
         if not match:
