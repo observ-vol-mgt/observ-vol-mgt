@@ -151,7 +151,7 @@ class ConfigGeneratorSubType(Enum):
     PIPELINE_CONFIG_GENERATOR_NONE = "none"
     PIPELINE_CONFIG_GENERATOR_OTEL = "otel"
     PIPELINE_CONFIG_GENERATOR_OTEL_PROCESSOR = "otel_processor"
-    PIPELINE_CONFIG_GENERATOR_PROCESSOR = "processor"
+    PIPELINE_CONFIG_GENERATOR_PMF_PROCESSOR = "pmf_processor"
 
 
 class GenerateInsightsType(Enum):
@@ -275,7 +275,7 @@ class AnalysisChainProcess(BaseModel):
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
     type: InsightsAnalysisChainType  # The type of analysis process
-    filter_signals_by_tags: Optional[List[str]] = ""  # Filter signals to analyze by list of tags
+    filter_signals_by_tags: Optional[List[str]] = []  # Filter signals to analyze by list of tags
     close_to_zero_threshold: Optional[float] = 0  # Threshold for close to zero analysis
     pairwise_similarity_threshold: Optional[float] = 0.95  # Threshold for pairwise similarity
     pairwise_similarity_method: Optional[str] = (
@@ -316,12 +316,17 @@ class GenerateInsights(BaseModel):
     ]
 
 
-class ConfigGeneratorOtel(BaseModel):
+class FrequencyDef(BaseModel):
     """
-    Configuration for OpenTelemetry (OTel) configuration generation.
+    Placeholder configuration for no specific generation task.
     """
     model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    directory: Optional[str] = "/tmp"  # Directory to store configuration
+    name_template: str  # (regex of) Name of metric for which to adjust frequency
+    tag_filter: Optional[List[str]] = []  # metadata tags to match
+    interval: str  # Time of specified interval
+
+
+counter_default_interval_default = "1m"
 
 
 class ConfigGeneratorProcessor(BaseModel):
@@ -333,21 +338,10 @@ class ConfigGeneratorProcessor(BaseModel):
     signal_name_template: Optional[str] = ""  # Template for signal name
     # Template for signal condition
     signal_condition_template: Optional[str] = ""
-    signal_filter_template: Optional[str] = ""  # Template for signal filter
-    directory: Optional[str] = None  # Directory to store configuration
-    url: Optional[str] = None  # URL to fetch data from
-
-
-class ConfigGeneratorOtelProcessor(BaseModel):
-    """
-    Configuration for otel processor-based configuration generation.
-    """
-    model_config = ConfigDict(extra='forbid')  # Configuration for the model
-    processor_id_template: Optional[str] = ""  # Template for processor ID
-    signal_name_template: Optional[str] = ""  # Template for signal name
-    # Template for signal condition
-    signal_condition_template: Optional[str] = ""
-    signal_filter_template: Optional[str] = ""  # Template for signal filter
+    signal_filter_reduce_template: Optional[str] = ""  # Template for signal filter for dropped signals
+    signal_filter_adjust_template: Optional[str] = ""  # Template for signal filter for adjusted signals
+    counter_default_interval: Optional[str] = ""  # time interval for counters
+    metrics_adjustment: Optional[List[FrequencyDef]] = []
     directory: Optional[str] = None  # Directory to store configuration
     url: Optional[str] = None  # URL to fetch data from
 

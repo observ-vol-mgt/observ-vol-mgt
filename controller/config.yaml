@@ -34,7 +34,7 @@ parameters:
   output_data: [signals_to_keep, signals_to_reduce, text_insights]
 - name: config_generator_processor
   type: config_generator
-  subtype: processor
+  subtype: pmf_processor
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
 

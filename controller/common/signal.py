@@ -44,6 +44,9 @@ class Signal:
     def __str__(self):
         return f"Signal: type: {self.type}, metadata: {self.metadata}, time_series:{self.time_series}"
 
+    def __print__(self):
+        print(f"Signal: type: {self.type}, metadata: {self.metadata}")
+
 
 class Signals:
     def __init__(self, metadata={}, signals=None):
@@ -101,3 +104,8 @@ class Signals:
 
     def __str__(self):
         return f"Signal: metadata: {self.metadata}, signals:{self.signals}"
+
+    def __print__(self):
+        print(f"Signal: metadata: {self.metadata}")
+        for signal in self.signals:
+            signal.__print__()
