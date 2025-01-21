@@ -21,7 +21,7 @@ exporters:
     endpoint: http://thanos_receive:19291/api/v1/receive
     external_labels:
       processor: east
-  debug:
+  logging:
 
 service:
   telemetry:
@@ -34,4 +34,4 @@ service:
     metrics/1:
       receivers:  [ prometheus ]
       processors: [ metricstransform ]
-      exporters:  [ prometheusremotewrite , debug]
+      exporters:  [ prometheusremotewrite , logging]
