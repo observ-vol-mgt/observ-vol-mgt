@@ -218,11 +218,12 @@ The format of the `config_generator` stage is as follows:
 ```commandline
 - name: config_generator_processor
   type: config_generator
-  subtype: processor
+  subtype: pmf_processor
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
-    signal_filter_template: "app_A_network_utilization_metric_0|cluster_network_metric_0|k8s_pod_network_bytes|nwdaf_5G_network_utilization"
+    signal_filter_reduce_template: "k8s_|nwdaf_|process_"
+    signal_filter_adjust_template: "k8s_|nwdaf_|process_"
     signal_name_template: "$original_name"
     signal_condition_template: "cluster=$cluster and instance=$instance"
     processor_id_template: "$processor"
@@ -230,46 +231,55 @@ The format of the `config_generator` stage is as follows:
     url: http://manager:5010
 ```
 
-The `signal_filter_template` parameter contains a regular expression of metric names that interest us.
-Metrics whose names do not match the `signal_filter_template` are ignored.
+The `signal_filter_reduce_template` parameter contains a regular expression of metric names that interest us.
+Metrics whose names do not match the `signal_filter_reduce_template` are ignored when computing the list of metrics to reduce.
+Similarly, metrics whose names do not match the `signal_filter_adjust_template` are ignored when computing the list of metrics whose sampling frequency to adjust.
 The `url` parameter specifies where to send the produced generated configurations.
 The `directory` parameter may be used to specify where to save (locally) a copy of the generated configuration files.
 
-We support both PMF (`subtype: processor`) and otel (`subtype: otel_processor`) formats.
+We support both PMF (`subtype: pmf_processor`) and otel (`subtype: otel_processor`) formats.
 
-To specify a customized metric frequency for monotonic metrics, the following parameter can be used:
+To specify a customized metric frequency for counters (when using otel), the following parameter can be used:
 
 ```commandline
   config:
-    monotonic_freq_interval: 30s
+    counter_default_interval: 30s
 ```
 
-To specify a specific frequency for specified metrics, the following config parameters may be used:
+To specify a specific sampling frequency for specified metrics, the following config parameters may be used:
 ```commandline
   config:
-    metrics_frequency:
-    - name: process_
+    metrics_adjustment:
+    - name_template: process_
       interval: 20s
-    - name: k8s_pod_
+    - name:_template k8s_pod_
       interval: 10s
 ```
-These `name:` parameters match a regular expression of metric names.
+These `name_template:` parameters match a regular expression of metric names.
 In this example, all metrics whose names contain `process_` will have their metrics reporting adjusted to every 20s.
 
 These can be combined into a configuration that looks like this:
 ```commandline
   config:
-    signal_filter_template: "k8s_|nwdaf_|process_"
+    signal_filter_reduce_template: "k8s_|nwdaf_|process_"
+    signal_filter_adjust_template: "k8s_|nwdaf_|process_"
     signal_name_template: "$original_name"
     signal_condition_template: "resource.attributes[\"processor\"] == \"$processor\" and resource.attributes[\"instance\"] == \"$instance\""
     processor_id_template: "$processor"
-    monotonic_freq_interval: 30s
-    metrics_frequency:
-    - name: process_
+    counter_default_interval: 30s
+    metrics_adjustment:
+    - name_template: process_
       interval: 20s
-    - name: k8s_
+    - name_template: k8s_
       interval: 10s
+    - name_template: .*
+      tag_filter: ["monotonic"]
+      interval: 30s
     directory: /tmp
     url: http://manager:5010
 ```
+The `name_template: .*` matches all regular expressions, and may be used to catch all other metrics that are not explicitly specified earlier.
+The rules for `metrics_adjustment` are imposed on a first-match basis.
+The `tag_filter` parameter specifies a list of tags to be checked to restrict the application of the `metrics_adjustment` rule.
+In this example, only those signals that contain a tag `monotonic` will match this catch-all `name_template` and have their sampling frequency adjusted to 30 seconds.
 
