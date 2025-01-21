@@ -45,15 +45,20 @@ parameters:
   input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
   output_data: [r_value]
   config:
-    signal_filter_template: "k8s_|nwdaf_|process_"
+    signal_filter_reduce_template: "k8s_|nwdaf_|process_"
+    signal_filter_adjust_template: "k8s_|nwdaf_|process_"
     signal_name_template: "$original_name"
     signal_condition_template: "resource.attributes[\"processor\"] == \"$processor\" and resource.attributes[\"instance\"] == \"$instance\""
     processor_id_template: "$processor"
-    monotonic_freq_interval: 30s
-    metrics_frequency:
-    - name: process_cpu_seconds_total
+    counter_default_interval: 10s
+    metrics_adjustment:
+    - name_template: process_cpu_seconds_total
+      interval: 30s
+    - name_template: k8s_pod_network_bytes
       interval: 20s
-    - name: k8s_pod_network_bytes
-      interval: 10s
+    - name_template: .*
+      tag_filter: ["fixed_values", "monotonic"]
+      interval: 20s
     directory: /tmp
     url: http://manager:5010
+
