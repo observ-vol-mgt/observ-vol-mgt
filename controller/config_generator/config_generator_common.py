@@ -180,6 +180,6 @@ def record_results(config, context_per_processor, extracted_signals, template_fi
     template = env.get_template(template_file)
     for processor_id, processor_context in context_per_processor.items():
         logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
-        output = template.render(processor_context, interval_value=config.counter_default_interval)
+        output = template.render(processor_context, config=config)
         logger.info(f"output = \n{output}")
         record_result_per_processor(config, extracted_signals, output, processor_id)

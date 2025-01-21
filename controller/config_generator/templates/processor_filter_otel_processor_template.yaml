@@ -15,4 +15,32 @@ processors:
         - 'name == "{{ signal_to_drop.name }}"'
         - '{{ signal_to_drop.condition }}'
 {%- endfor %}
+{% if config.counter_default_interval != "" and signals_to_adjust %}
+  interval:
+    interval: {{ config.counter_default_interval }}
+    pass_through:
+      gauge: true
+      summary: true
+    rules:
+{%- for signal_to_adjust in signals_to_adjust %}
+      - name: {{ signal_to_adjust.name }}
+        interval: {{signal_to_adjust.interval }}
+{%- endfor %}
+{% elif signals_to_adjust %}
+  interval:
+    pass_through:
+      gauge: true
+      summary: true
+    rules:
+{%- for signal_to_adjust in signals_to_adjust %}
+      - name: {{ signal_to_adjust.name }}
+        interval: {{signal_to_adjust.interval }}
+{%- endfor %}
+{% elif config.counter_default_interval %}
+  interval:
+    interval: {{ config.counter_default_interval }}
+    pass_through:
+      gauge: true
+      summary: true
+{% endif %}
 
