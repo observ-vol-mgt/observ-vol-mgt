@@ -5,6 +5,7 @@ from string import Template
 
 import requests
 from common.utils import add_slash_to_dir
+from jinja2 import Environment, FileSystemLoader
 
 logger = logging.getLogger(__name__)
 
@@ -26,20 +27,6 @@ def generate_common(config, extracted_signals, signals_to_keep, signals_to_reduc
 
     logger.info(f"context_per_processor = \n{context_per_processor}")
     return context_per_processor
-
-
-def record_results(config, extracted_signals, output, processor_id):
-    directory = config.directory
-    # Write to file if directory exists in configuration
-    if directory:
-        response = write_to_file(
-            directory + f"/{processor_id}", extracted_signals, output)
-        logger.debug(f"write_to_file returned: {response}")
-    # Send to processor URL if url exists in configuration
-    url = config.url
-    if url:
-        response = send_to_processor(url, output, processor_id)
-        logger.debug(f"send_to_processor returned: {response}")
 
 
 def generate_reduce(config, extracted_signals, signals_to_reduce):
@@ -172,3 +159,27 @@ def write_to_file(directory, extracted_signals, processor_configuration):
         f.write(processor_configuration)
 
     return f"Configuration file was written in processor format to {file_name}"
+
+
+def record_result_per_processor(config, extracted_signals, output, processor_id):
+    directory = config.directory
+    # Write to file if directory exists in configuration
+    if directory:
+        response = write_to_file(
+            directory + f"/{processor_id}", extracted_signals, output)
+        logger.debug(f"write_to_file returned: {response}")
+    # Send to processor URL if url exists in configuration
+    url = config.url
+    if url:
+        response = send_to_processor(url, output, processor_id)
+        logger.debug(f"send_to_processor returned: {response}")
+
+
+def record_results(config, context_per_processor, extracted_signals, template_file):
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template(template_file)
+    for processor_id, processor_context in context_per_processor.items():
+        logger.info(f", processor_id = {processor_id}, processor_context = \n{processor_context}")
+        output = template.render(processor_context, interval_value=config.counter_default_interval)
+        logger.info(f"output = \n{output}")
+        record_result_per_processor(config, extracted_signals, output, processor_id)
