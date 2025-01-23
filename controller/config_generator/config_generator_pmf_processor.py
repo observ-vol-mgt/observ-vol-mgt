@@ -14,13 +14,15 @@
 
 import logging
 
-from config_generator.config_generator_common import generate_common, record_results
+from config_generator.config_generator_common import generate_common
+
+from config_generator.config_generator_common import record_results
 
 logger = logging.getLogger(__name__)
 
 
 def generate(config, extracted_signals, signals_to_keep, signals_to_reduce):
-    template_file = 'config_generator/templates/processor_filter_otel_processor_template.yaml'
+    template_file = 'config_generator/templates/processor_filter_pmf_processor_template.yaml'
     context_per_processor = generate_common(config, extracted_signals, signals_to_keep, signals_to_reduce)
     record_results(config, context_per_processor, extracted_signals, template_file)
 

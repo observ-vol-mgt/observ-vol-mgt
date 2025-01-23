@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from config_generator.config_generator_processor import generate
+from config_generator.config_generator_pmf_processor import generate
 
 from common.configuration_api import ConfigGeneratorProcessor
 from common.signal import Signal, Signals

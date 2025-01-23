@@ -123,7 +123,7 @@ def get_all_processors_config():
             processor_data = read_processor_file(PROCESSORS_FOLDER, processor_id)
             processor_list.append(processor_data)
 
-        logger.error(processor_list)
+        logger.info(processor_list)
         logger.info("GET config request successful for all processors")
         return jsonify(processor_list), 200
 
@@ -210,20 +210,23 @@ def update_processor_config(processor_id):
                 message:
                   type: string
     """
-    logger.debug(f"POST config request received for processor with id {processor_id}")
+    logger.info(f"POST config request received for processor with id {processor_id}")
     try:
         processor_data = request.get_data(as_text=True)
+        logger.info(f"processor_data = {processor_data}")
 
         # Validate if the provided data is valid YAML
         try:
             processor_data_yaml = yaml.safe_load(processor_data)
-            print(processor_data_yaml)
             processor_data_yaml_validated = validate_yaml(processor_data_yaml)
         except ValidationError as e:
+            logger.error(f"ValidationError = {e}")
             return jsonify({"message": "Invalid YAML data", "error": e.errors()}), 400
         except Exception as e:
+            logger.error(f"Exception = {e}")
             return jsonify({"message": "Error validating YAML data", "error": str(e)}), 500
 
+        logger.info(processor_data_yaml)
         if processor_id not in processor_ids:
             return {"message": f"Processor with id {processor_id} not found"}, 404
 
