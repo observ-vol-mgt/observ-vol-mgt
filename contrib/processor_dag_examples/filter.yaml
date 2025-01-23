@@ -1,0 +1,10 @@
+processors:
+  - type: filter
+    id: f1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      action: include/exclude
+dag:
+  - node: f1
+    children: []

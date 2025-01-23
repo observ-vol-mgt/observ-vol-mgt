@@ -1,0 +1,82 @@
+<!--
+  ~ # Copyright 2024 IBM, Inc.
+  ~
+  ~ # Licensed under the Apache License, Version 2.0 (the "License");
+  ~ # you may not use this file except in compliance with the License.
+  ~ # You may obtain a copy of the License at
+  ~
+  ~ #     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ # Unless required by applicable law or agreed to in writing, software
+  ~ # distributed under the License is distributed on an "AS IS" BASIS,
+  ~ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ # See the License for the specific language governing permissions and
+  ~ # limitations under the License.
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="%PUBLIC_URL%/favicon.ico" rel="icon"/>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="#000000" name="theme-color"/>
+    <title>Time Series Analysis</title>
+    <script>
+    function submitForm(values) {
+        const newWindow = window.open('index.html', '_blank');
+        newWindow.onload = function() {
+            inputElement = newWindow.document.getElementById('timeSeries');
+            for (var i = 0; i < inputElement.options.length; i++) {
+                selected = values.includes(inputElement.options[i].value)
+                inputElement.options[i].selected = selected;
+            }
+            const formElement = inputElement.form;
+            formElement.submit();
+        };
+    };
+
+    function showTab(index) {
+        var tabs = document.getElementsByClassName("tab");
+        var buttons = document.getElementsByClassName("tab-button");
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+            buttons[i].classList.remove("active");
+        }
+        tabs[index].style.display = "block";
+        buttons[index].classList.add("active");
+    };
+
+    window.onload = function() {
+    showTab(0);
+    };
+
+    </script>
+</head>
+<body>
+<!-- Include header -->
+{% include 'header.html' %}
+
+<div class="main_container">
+    <h1>Signals Analysis and Visualization</h1>
+    <h2>The current insights are:</h2>
+    <div class="tab-buttons">
+    {% for i in range(insights|length) %}
+        <button class="tab-button" onclick="showTab({{ i }})">Insight details {{ i+1 }}</button>
+    {% endfor %}
+    </div>
+
+    {% for insight in insights %}
+    <div class="tab" id="tab-{{ loop.index0 }}">
+        <p>{{ insight|safe }}</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+<!-- Include footer -->
+{% include 'footer.html' %}
+
+</body>
+</html>

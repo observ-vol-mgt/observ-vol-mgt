@@ -1,0 +1,25 @@
+pipeline:
+- name: ingest1
+- name: generate_insights
+  follows: [ingest1]
+- name: config_generator_processor
+  follows: [ingest1, generate_insights]
+parameters:
+- name: ingest1
+  type: ingest
+  subtype: serialized
+  input_data: []
+  output_data: [extracted_signals]
+  config:
+    file_name: ../contrib/fetch-offline-data/instana/promql_metrics_1000_metrics_with_labels_intermediate
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+- name: config_generator_processor
+  type: config_generator
+  subtype: processor
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+

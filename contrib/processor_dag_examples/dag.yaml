@@ -1,0 +1,47 @@
+processors:
+  - type: aggregate
+    id: agg1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      function: avg
+      time_window: 10m
+  - type: enrichment
+    id: enrich1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      enrich:
+        - label_name: imp_metric
+          label_value: true
+        - label_name: data_factory_metric
+          label_value: true
+  - type: filter
+    id: filter1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      action: include/exclude
+  - type: adaptive
+    id: adaptive1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      threshold: 125
+  - type: frequency
+    id: freq1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      interval: 10m
+dag:
+  - node: enrich1
+    children: [filter1, adaptive1]
+  - node: filter1
+    children: [freq1, agg1]
+  - node: adaptive1
+    children: []
+  - node: freq1
+    children: []
+  - node: agg1
+    children: []

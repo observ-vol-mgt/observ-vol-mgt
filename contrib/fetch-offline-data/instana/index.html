@@ -1,0 +1,1188 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/observ-vol-mgt/observ-vol-mgt/contrib/fetch-offline-data/instana/">
+      
+      
+        <link rel="prev" href="../../examples/generate-synthetic-metrics/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.26">
+    
+    
+      
+        <title>Instana Observability Data Fetchers - Observability Volume Manager</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#instana-observability-data-fetchers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Observability Volume Manager" class="md-header__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Observability Volume Manager
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Instana Observability Data Fetchers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Observability Volume Manager" class="md-nav__button md-logo" aria-label="Observability Volume Manager" data-md-component="logo">
+      
+  <img src="../../../docs/images/OVM.png" alt="logo">
+
+    </a>
+    Observability Volume Manager
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Controller
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Controller
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controller/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controller/docs/config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controller/docs/configuration_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration parameters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controller/docs/api/api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controller/docs/architecture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Architecture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Manager
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Manager
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/configurator/docs/configuration_parameters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../manager/alertmanager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AlertManager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Processor
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Processor
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../processor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    otel-collector-proxy
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            otel-collector-proxy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otel-collector-proxy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    POC (Getting started)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            POC (Getting started)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../end2end/poc/insight_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Insights POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://drive.google.com/file/d/1-rTCcJpnHUDHP-Cre3HotnRnzyWIatNi/view?usp=sharing" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Video
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../end2end/poc/otel_based_poc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    oTel POC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    More
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            More
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ec-metric-gen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metric Generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ec-metric-gen/doc/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../end2end/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    End-To-End tests
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/generate-synthetic-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    generate-synthetic-metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Instana Observability Data Fetchers
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Instana Observability Data Fetchers
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="instana-observability-data-fetchers">Instana Observability Data Fetchers</h1>
+<blockquote>
+<p>GitHub reference: <a href="https://github.com/observ-vol-mgt/observ-vol-mgt/tree/main/contrib/fetch-offline-data/instana">fetch-offline-data/instana</a> </p>
+</blockquote>
+<p>Those Python scripts allow fetching metrics, events, traces and topology data from Instana using REST API.
+The scripts persist the data in JSON format into files.</p>
+<h2 id="motivation">Motivation</h2>
+<p>Instana is a popular monitoring tool used by many organizations to monitor their infrastructure and applications. This script provides a convenient way to programmatically fetch metrics and events data from Instana, allowing users to analyze and process the data as needed.</p>
+<h2 id="usage">Usage</h2>
+<ol>
+<li>
+<p><strong>Installation</strong>: Before running the scripts, make sure you have Python installed on your system. You can download and install Python from <a href="https://www.python.org/">python.org</a>.</p>
+</li>
+<li>
+<p><strong>Dependencies</strong>: Install the required Python packages using pip:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>requests<span class="w"> </span>urllib3
+</code></pre></div>
+<ol>
+<li><strong>Configuration</strong>: You need to obtain an Instana API token and know the base URL of your Instana instance. Set these values in the script or provide them as command-line arguments (see below).</li>
+<li><strong>Execute the Scripts</strong>: Use the following commands to run the relevant scripts:</li>
+</ol>
+<h1 id="instana-infrastructure-metrics">INSTANA Infrastructure metrics</h1>
+<h2 id="args">Args</h2>
+<ol>
+<li><code>--log-level</code> - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]</li>
+<li><code>--start</code> - start date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--end</code> - end date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--url</code> - Instana instance bse url</li>
+<li><code>--token</code> - List of tokens (tokens will be rotated in api calls to prevent api limit error)</li>
+<li><code>--output_dir</code> - Folder to store retrieved data</li>
+<li><code>--plugin</code> - Filter data by plugin. Eg: prometheus</li>
+<li><code>--query</code> - Filter data by query. Eg: namespace=kube</li>
+</ol>
+<h2 id="example">Example</h2>
+<ul>
+<li>Fetching past 1 day data:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch_instana_data.py<span class="w"> </span>--url<span class="w"> </span>https://wmlpreprod-ibmdataaiap.instana.io<span class="w"> </span>--token<span class="w"> </span>EN6NUPBATJit5SJI_****<span class="w"> </span>--query<span class="w"> </span><span class="nv">namespace</span><span class="o">=</span>watsonx-huggingface<span class="w"> </span>--plugin<span class="w"> </span>prometheus<span class="w"> </span>--start<span class="w"> </span><span class="m">2024</span>-05-28T00:00:00<span class="w"> </span>--end<span class="w"> </span><span class="m">2024</span>-05-29T00:00:00<span class="w"> </span>--output_dir<span class="w"> </span>data
+</code></pre></div></li>
+<li>Fetching past 20 minutes:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch_instana_data.py<span class="w"> </span>--url<span class="w"> </span>https://wmlpreprod-ibmdataaiap.instana.io<span class="w"> </span>--token<span class="w"> </span>EN6NUPBATJit5SJI_****<span class="w"> </span>--query<span class="w"> </span><span class="nv">namespace</span><span class="o">=</span>watsonx-huggingface<span class="w"> </span>--plugin<span class="w"> </span>prometheus<span class="w"> </span>--start<span class="w"> </span><span class="m">2024</span>-05-28T23:40:00<span class="w"> </span>--end<span class="w"> </span><span class="m">2024</span>-05-29T00:00:00<span class="w"> </span>--output_dir<span class="w"> </span>data
+</code></pre></div></li>
+<li>Using default start time and end time with multiple tokens:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch-instana-data.py<span class="w"> </span>--url<span class="w"> </span>https://wmlpreprod-ibmdataaiap.instana.io<span class="w"> </span>--token<span class="w"> </span>EN6NUPBATJit5SJI_****<span class="w"> </span>JSY9IUWvQEapPBZ4yC****<span class="w"> </span>--output_dir<span class="w"> </span>data
+</code></pre></div></li>
+</ul>
+<h1 id="instana-application-metrics">INSTANA Application metrics</h1>
+<h2 id="args_1">Args</h2>
+<ol>
+<li><code>--log-level</code> - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]</li>
+<li><code>--start</code> - start date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--end</code> - end date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--url</code> - Instana instance bse url</li>
+<li><code>--token</code> - List of tokens (tokens will be rotated in api calls to prevent api limit error)</li>
+<li><code>--output_dir</code> - Folder to store retrieved data</li>
+</ol>
+<h2 id="example_1">Example</h2>
+<ul>
+<li>Getting application metrics:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch_instana_app_metrics.py<span class="w"> </span>--url<span class="w"> </span>https://instana1.tivlab.raleigh.ibm.com<span class="w"> </span>--token<span class="w"> </span>tmdOVgSMS7ucB2r****<span class="w"> </span>y7l5tD1wR9G581LY****<span class="w"> </span>tMd8pw4WS6SdLkx**<span class="w">  </span>--start<span class="w"> </span><span class="m">2024</span>-07-02T00:00:00<span class="w"> </span>--end<span class="w"> </span><span class="m">2024</span>-07-03T00:00:00<span class="w"> </span>--output_dir<span class="w"> </span>data
+</code></pre></div></li>
+</ul>
+<h1 id="instana-application-topology">INSTANA Application topology</h1>
+<h2 id="args_2">Args</h2>
+<ol>
+<li><code>--log-level</code> - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]</li>
+<li><code>--start</code> - start date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--end</code> - end date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--url</code> - Instana instance bse url</li>
+<li><code>--token</code> - Instana api token (string)</li>
+<li><code>--output_dir</code> - Folder to store retrieved data</li>
+</ol>
+<h2 id="example_2">Example</h2>
+<ul>
+<li>Getting application topology:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch_instana_traces.py<span class="w"> </span>--traces_limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--service_name_filter<span class="w"> </span>aggregator<span class="w"> </span>--url<span class="w"> </span>https://blue-instanaops.instana.io<span class="w"> </span>--token<span class="w"> </span><span class="nv">$apiToken</span><span class="w"> </span>--output_dir<span class="w"> </span>demo-eu
+</code></pre></div></li>
+</ul>
+<h1 id="instana-traces">INSTANA traces</h1>
+<h2 id="args_3">Args</h2>
+<ol>
+<li><code>--log-level</code> - ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]</li>
+<li><code>--start</code> - start date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--end</code> - end date in YYYY-MM-DDTHH:MM:SS format</li>
+<li><code>--url</code> - Instana instance bse url</li>
+<li><code>--token</code> - Instana api token (string)</li>
+<li><code>--service_name_filter</code> - Service name filter for traces</li>
+<li><code>--traces_limit</code> - Maximum number of traces to dump</li>
+<li><code>--output_dir</code> - Folder to store retrieved data</li>
+</ol>
+<h2 id="example_3">Example</h2>
+<ul>
+<li>Getting traces, limiting to 10 traces:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>fetch_instana_traces.py<span class="w"> </span>--url<span class="w"> </span>https://instana1.tivlab.raleigh.ibm.com<span class="w"> </span>--token<span class="w"> </span>y7l5tD1wR9G581LYO****<span class="w"> </span>--traces_limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--output_dir<span class="w"> </span>data
+</code></pre></div></li>
+</ul>
+<blockquote>
+<p>[!NOTE]<br />
+Replace YOUR_INSTANA_URL and YOUR_API_TOKEN with the base URL of your Instana instance and your API token, respectively.</p>
+<p>You can also specify the START_TIME and END_TIME in the format YYYY-MM-DDTHH:MM:SS to fetch data for a specific time window.<br />
+If you omit the --start and --end parameters, the script will fetch data for the last 24 hours by default.</p>
+<p>You can also specify a QUERY string to limit fetching to subset of the instana snapshots<br />
+If you omit the --query parameters, the script will fetch data from all snapshots.</p>
+<p>You can also specify a PLUGINS_FILTER string to limit fetching to regex instana plugins<br />
+If you omit the --plugins_filter parameters, the script will fetch data from all plugins.</p>
+<p>You can also specify the OUTPUT_DIR to save the data into a specific directory.<br />
+If you omit the --output_dir parameter, the script will save the data into the current directory.  </p>
+<p>You can also specify the LIMIT to limit data fetching.<br />
+If you omit the --limit parameter, the script will limit to 1000 metrics.</p>
+<p>By default, the script fetches metrics only, specify --fetch-events to include also events (Not implemented yet)  </p>
+</blockquote>
+<ol>
+<li><strong>Output</strong>: The script will save the fetched metrics and events data to JSON files named instana_metrics.json and instana_events.json, respectively.</li>
+</ol>
+<blockquote>
+<p>[!NOTE]<br />
+It is possible to execute the script <code>convert-dump-metrics-file-to-promql-format.py</code> 
+as a post-processing stage, and convert output metrics files into
+promQL format dump file. This file can be used with the 
+as input to the volume manager controller.  </p>
+<p>The default input file for the script is <code>instana_metrics.json</code> and the default
+output file is <code>promql_metrics.json</code>  </p>
+<p>To load into the controller, execute from the controller directory:</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>main.py<span class="w"> </span>--ingest_type<span class="o">=</span>file<span class="w"> </span>--ingest_file<span class="o">=</span>../contrib/fetch-offline-data/instana/promql_metrics.json<span class="w"> </span>--feature_extraction_type<span class="o">=</span>tsfel<span class="w"> </span>--config_generator_type<span class="o">=</span>otel<span class="w"> </span>--config_generator_directory<span class="o">=</span>/tmp
+</code></pre></div>
+<blockquote>
+<p>[!NOTE]<br />
+It is possible to execute the script <code>parse-instana-traces-queries-into-access-log.py</code>
+as a ost-processing stage, and convert output traces files into
+access_log format as input to the volume manager controller.</p>
+<p>Example usage:
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>parse-instana-traces-queries-into-access-log.py<span class="w"> </span>--input_file<span class="w"> </span>demo-eu/traces.json<span class="w"> </span>--output_dir<span class="w"> </span>demo-eu
+</code></pre></div></p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,69 @@
+global_settings:
+  number_of_workers: 8
+pipeline:
+- name: ingest_file
+- name: feature_extraction_tsfel
+  follows: [ingest_file]
+- name: generate_insights
+  follows: [feature_extraction_tsfel]
+- name: config_generator_otel
+  follows: [feature_extraction_tsfel, generate_insights]
+parameters:
+- name: ingest_file
+  type: ingest
+  subtype: file
+  input_data: []
+  output_data: [signals]
+  config:
+    filter_metadata: "cpu"
+    #filter_metadata: ".+__2315'|.+__2270'"
+    ingest_name_template: "$plugin|$__name__(job,$label,$instance,snapshot)__$count"
+    file_name: ../contrib/fetch-offline-data/instana/demo-eu/instana_metrics_rollup_600_23_6_2024.promql.json
+- name: feature_extraction_tsfel
+  type: map_reduce
+  input_data: [signals]
+  output_data: [extracted_signals]
+  config:
+    map_function:
+      name: map1
+      type: map
+      subtype: by_name
+      config:
+        name_pattern: "(^[^|]+)|.+"
+    compute_function:
+      name: extract_in_parallel
+      type: extract
+      subtype: tsfel
+    reduce_function:
+      name: reduce1
+      type: reduce
+      subtype: simple
+- name: generate_insights
+  type: insights
+  subtype:
+  input_data: [extracted_signals]
+  output_data: [signals_to_keep, signals_to_reduce, text_insights]
+  config:
+    analysis_chain:
+    - type: access_log_intersect
+      access_log_file: ../contrib/fetch-offline-data/instana/demo-eu/queries.json
+    - type: zero_values
+      close_to_zero_threshold: 0.02
+    - type: fixed_values
+      filter_signals_by_tags: ["zero_values"]
+    - type: pairwise_correlations
+      filter_signals_by_tags: ["zero_values","fixed_values"]
+      pairwise_similarity_threshold: 0.01
+      pairwise_similarity_method: distance
+      pairwise_similarity_distance_method: euclidean
+    - type: compound_correlations
+      filter_signals_by_tags: ["zero_values","fixed_values","pairwise_correlations"]
+      compound_similarity_threshold: 1
+    - type: metadata_classification
+- name: config_generator_otel
+  type: config_generator
+  subtype: otel
+  input_data: [extracted_signals, signals_to_keep, signals_to_reduce]
+  output_data: [r_value]
+  config:
+    directory: /tmp

@@ -1,0 +1,11 @@
+processors:
+  - type: aggregate
+    id: a1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      function: avg
+      time_window: 10m
+dag:
+  - node: a1
+    children: []

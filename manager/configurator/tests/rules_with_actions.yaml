@@ -1,0 +1,39 @@
+rules:
+  - rule_id: rule_1
+    processors: [processor_id_1]
+    expr: (app_A_network_metric_0) > 200
+    duration: 1s
+    description: rule to change frequency for bookkeeping metrics from 30 sec to 10 min during mild stress
+    firing_action:
+      action_type: create_dag
+      processors:
+      - type: aggregate
+        id: a1
+        metrics:
+          metric_name: cluster_cpu_usage
+          condition: cluster_id=wec1 and namespace_name=data-science
+          function: avg
+          time_window: 10m
+      - type: enrichment
+        id: e1
+        metrics:
+          metric_name: cluster_cpu_usage
+          condition: cluster_id=wec1 and namespace_name=data-science
+          enrich:
+            - label_name: imp_metric
+              label_value: yes
+            - label_name: data_factory_metric
+              label_value: yes
+      - type: filter
+        id: f1
+        metrics:
+          metric_name: cluster_cpu_usage
+          condition: cluster_id=wec1 and namespace_name=data-science
+          action: include/exclude
+      dag:
+        - node: f1
+          children: [a1]
+        - node: a1
+          children: [e1]
+    resolved_action:
+      action_type: delete_dag

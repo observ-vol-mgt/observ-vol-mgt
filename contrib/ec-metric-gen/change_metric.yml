@@ -1,0 +1,14 @@
+action: SET
+metrics:
+   - name: 'cluster'
+     type: 
+       - 'hardware'
+     index:
+       - '0'
+   - name: 'app'
+     type: 
+       - 'A'
+       - 'network'
+     index:
+       - '0'
+  

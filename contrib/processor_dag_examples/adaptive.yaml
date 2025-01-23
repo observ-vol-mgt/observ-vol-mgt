@@ -1,0 +1,10 @@
+processors:
+  - type: adaptive
+    id: a1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      threshold: 125
+dag:
+  - node: a1
+    children: []

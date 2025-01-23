@@ -1,0 +1,24 @@
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.3.1+cpu
+ConfigArgParse==1.7
+datasets==2.19.2
+flasgger==0.9.7.1
+Flask==3.0.3
+Jinja2==3.1.4
+matplotlib==3.5.3
+numpy==1.26.4
+pandas==2.2.2
+prometheus_api_client==0.5.5
+pydantic==2.7.4
+pytest==8.2.2
+PyYAML==6.0.1
+Requests==2.32.3
+requests_mock==1.12.1
+sentence_transformers==2.4.0
+setfit==1.0.2
+statsmodels==0.14.2
+transformers==4.38.0
+tsfel==0.1.7
+pytest-mock==3.14.0
+flake8==7.0.0
+scipy==1.13.1

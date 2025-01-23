@@ -1,0 +1,92 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Thanos Ruler API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/<rule_id>": {
+        "post": {
+          "description": "Add a rule to thanos ruler",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful rule addition"
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        },
+        "delete": {
+          "description": "Delete a rule",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Rule deleted"
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        },
+        "get": {
+          "description": "Get details of a rule",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Specific Rule details"
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/rules": {
+        "get": {
+          "description": "Get all rules",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Rule details"
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "AccessData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  

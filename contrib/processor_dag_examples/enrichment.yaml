@@ -1,0 +1,14 @@
+processors:
+  - type: enrichment
+    id: e1
+    metrics:
+      metric_name: cluster_cpu_usage
+      condition: cluster_id=wec1 and namespace_name=data-science
+      enrich:
+        - label_name: imp_metric
+          label_value: true
+        - label_name: data_factory_metric
+          label_value: true
+dag:
+  - node: e1
+    children: []

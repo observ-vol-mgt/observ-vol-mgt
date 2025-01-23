@@ -1,0 +1,146 @@
+/* styles.css */
+
+/* handling tabs */
+.tab {
+    display: none;
+}
+.tab-buttons {
+    display: flex;
+    margin-bottom: 10px;
+}
+.tab-buttons button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.tab-buttons button.active {
+    background-color: #ddd;
+}
+/******/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center align content horizontally */
+    align-items: center; /* Center align content vertically */
+}
+
+.main_container {
+    width: 90%;
+    margin-top: 50px;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange children vertically */
+    justify-content: space-between; /* Distribute remaining space evenly */
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+img {
+    width: 60%;
+    margin: 0 auto;
+    color: #333;
+}
+
+p {
+    white-space: pre-line;
+    text-align: left;
+    font-size: 18px;
+    color: #666;
+}
+
+form {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+select {
+    width: 100%;
+    height: 220px;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/*** footer ***/
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+}
+
+/*** header ***/
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+}
+
+.horizontal-nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.horizontal-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.horizontal-nav li {
+    margin-right: 10px; /* spacing between menu items */
+}
+
+.horizontal-nav li:last-child {
+    margin-right: 0;
+}
+
+.horizontal-nav a {
+    text-decoration: none;
+    color: white;
+}
+
+.horizontal-nav a:hover {
+    color: gray;
+}
+

@@ -1,0 +1,30 @@
+[
+  [
+    "The CPU utilization percentage for the server 'server_name' and process 'process_name'",
+    "Health"
+  ],
+  [
+    "Network Traffic: Tracks the volume of data transmitted over the network, enabling SREs to monitor bandwidth usage and detect anomalies.",
+    "Performance"
+  ],
+  [
+    "Disk I/O Throughput: Rate of data read from or written to disk, essential for detecting storage performance issues and optimizing disk usage.",
+    "Resource Utilization"
+  ],
+  [
+    "Error Rate: Percentage of failed requests compared to total requests, labeled as \"error_rate_percentage\"",
+    "Application"
+  ],
+  [
+    "Privileged User Activity Monitoring (PUAM): Monitors actions performed by privileged users or accounts with elevated access rights, ensuring compliance with security policies and detecting suspicious behavior indicative of insider threats or account compromise.",
+    "Security"
+  ],
+  [
+    "Cryptographic Strength Monitoring (CSM): Evaluates the robustness of cryptographic protocols and algorithms in use, ensuring compliance with security standards and identifying potential weaknesses.",
+    "Security"
+  ],
+  [
+    "Service Dependency SLI: Measurement of the health and performance of dependencies required for the service to function properly, ensuring minimal impact on service reliability due to external factors.",
+    "Business"
+  ]
+]
