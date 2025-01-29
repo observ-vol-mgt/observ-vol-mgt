@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    ovm.service: metricgen1
+  name: metricgen1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: metricgen1
+  template:
+    metadata:
+      labels:
+        ovm.service: metricgen1
+    spec:
+      containers:
+        - args:
+            - python3
+            - demo-metrics-gutentag.py
+            - --conf=conf.yaml
+            - -p=8000
+            - -cp=5002
+            - --nmetrics=100
+            - --nlabels=10
+            - --duplicate=false
+          image: quay.io/observ-vol-mgt/metricgen
+          name: metricgen1
+          ports:
+            - containerPort: 5002
+              protocol: TCP
+            - containerPort: 8000
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: metricgen1
+  name: metricgen1
+spec:
+  ports:
+    - name: "5002"
+      port: 5002
+      targetPort: 5002
+    - name: "8000"
+      port: 8000
+      targetPort: 8000
+  selector:
+    ovm.service: metricgen1
