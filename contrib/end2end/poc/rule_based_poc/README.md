@@ -93,7 +93,7 @@ This showcases the transformation happening in an automated fashion.
 
 1. The `k8s` directory contains the specifications for deployments, services, PVCs and PVClaims for the POC. It also includes the ingress definitions. The ingress definitions require the `APP_HOST` variable to be set to the DNS address configured for applications running on your kubernetes cluster. The following make command will create an `ovm` namespace, sed the specified `APPHOST` variable into the ingress definitions and apply the resources to the cluster.
 ```
-APPHOST=your-desired-apphost make up-k8s-kubectl
+APPHOST=your-desired-apphost make up-k8s
 ``` 
 2. Add the rules and actions (in the form of transformation) corresponding to the rule
 ```
