@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: pmf-processor2
+  name: pmf-processor2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: pmf-processor2
+  template:
+    metadata:
+      labels:
+        ovm.service: pmf-processor2
+    spec:
+      containers:
+        - args:
+            - ./processor
+            - --listen=0.0.0.0:8082
+            - --morpher=0.0.0.0:8101
+            - --target=http://thanosreceive.ovm.svc.cluster.local:19291/api/v1/recieve
+          image: quay.io/observ-vol-mgt/pmf_processor:v0.1
+          name: pmf-processor2
+          ports:
+            - containerPort: 8101
+              protocol: TCP
+            - containerPort: 8082
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: pmf-processor2
+  name: pmfprocessor2
+spec:
+  ports:
+    - name: "8101"
+      port: 8101
+      targetPort: 8101
+    - name: "8082"
+      port: 8082
+      targetPort: 8082
+  selector:
+    ovm.service: pmf-processor2

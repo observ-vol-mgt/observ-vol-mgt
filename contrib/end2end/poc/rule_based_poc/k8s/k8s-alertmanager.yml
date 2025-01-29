@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: alertmanager
+  name: alertmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: alertmanager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        ovm.service: alertmanager
+    spec:
+      containers:
+        - image: quay.io/prometheus/alertmanager:v0.25.0
+          livenessProbe:
+            exec:
+              command:
+                - wget -q -O- localhost:9093/-/ready
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: alertmanager
+          ports:
+            - containerPort: 9093
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config/config.yaml
+              subPath: config.yaml
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: alertmanager-config
+            items:
+              - key: alertmanager.yaml
+                path: alertmanager.yaml
+            defaultMode: 420
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: alertmanager
+  name: alertmanager
+spec:
+  ports:
+    - name: "9093"
+      port: 9093
+      targetPort: 9093
+  selector:
+    ovm.service: alertmanager
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-config
+data:
+  alertmanager.yaml: |-
+    global:
+      http_config: 
+        proxy_url: 'http://manager:5010'
+    route:
+      group_by: ['alertname']
+      group_wait: 1s
+      group_interval: 15s
+      repeat_interval: 1h
+      receiver: 'web.hook'
+    receivers:
+      - name: 'web.hook'
+        webhook_configs:
+          - url: 'http://manager:5010/alerthandler'
+    inhibit_rules:
+      - source_match:
+          severity: 'critical'
+        target_match:
+          severity: 'warning'
+        equal: ['alertname', 'dev', 'instance']

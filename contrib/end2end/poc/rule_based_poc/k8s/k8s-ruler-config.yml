@@ -1,0 +1,276 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: thanosruler
+  name: thanos-ruler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: thanosruler
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        ovm.service: thanosruler
+    spec:
+      containers:
+        - name: thanos-ruler
+          args:
+            - rule
+            - --log.level=debug
+            - --log.format=logfmt
+            - --grpc-address=:30901
+            - --http-address=:10903
+            - --query=thanos_query:19192
+            - --rule-file=/shared/rules.yml
+            - --alertmanagers.url=http://alertmanager.ovm.svc.cluster.local:9093
+            - --data-dir=/shared/data
+          image: thanosio/thanos:v0.29.0
+          livenessProbe:
+            exec:
+              command:
+                - wget -q -O- localhost:10903/-/ready
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 10903
+              protocol: TCP
+            - containerPort: 30901
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /shared
+              name: shared-data
+        - name: ruler-config
+          env:
+            - name: HOST
+              value: 0.0.0.0
+            - name: LOG_FILE
+              value: ruleTranslator.log
+            - name: PORT
+              value: "8090"
+            - name: RULES_FOLDER
+              value: /shared
+            - name: THANOS_RULE_URL
+              value: http://thanosruler.ovm.svc.cluster.local:10903
+          image: quay.io/observ-vol-mgt/ruler_config:latest
+          name: ruler-config
+          ports:
+            - containerPort: 8090
+              protocol: TCP
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared
+            - name: thanos-ruler-endpoint
+              mountPath: /shared/thanos-ruler-endpoint.py
+              subPath: thanos-ruler-endpoint.py
+            - name: config
+              mountPath: /shared/config.py
+              subPath: config.py
+      restartPolicy: Always
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: shared-data
+        - name: thanos-ruler-endpoint
+          configMap:
+            name: thanos-ruler-endpoint
+            items:
+              - key: thanos-ruler-endpoint.py
+                path: thanos-ruler-endpoint.py
+            defaultMode: 420
+        - name: config
+          configMap:
+            name: config
+            items:
+              - key: config.py
+                path: config.py
+            defaultMode: 420
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: thanosruler
+  name: thanosruler
+spec:
+  ports:
+    - name: "8090"
+      port: 8090
+      targetPort: 8090
+    - name: "10903"
+      port: 10903
+      targetPort: 10903
+    - name: "30901"
+      port: 30901
+      targetPort: 30901
+  selector:
+    ovm.service: thanosruler
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ovm.service: shared-data
+  name: shared-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: thanos-ruler-endpoint
+data:
+  thanos-ruler-endpoint.py: |-
+    from flask import Flask, jsonify, request, abort
+    from flask_swagger_ui import get_swaggerui_blueprint
+    from config import *
+    import requests
+    import logging
+    import yaml
+    import os
+
+    app = Flask(__name__)
+    SWAGGER_URL="/swagger"
+    API_URL="/static/swagger.json"
+    HOST=os.environ.get('HOST')
+    PORT=os.environ.get('PORT')
+    RULES_FOLDER=os.environ.get('RULES_FOLDER')
+    THANOS_RULE_URL=os.environ.get('THANOS_RULE_URL')
+    LOG_FILE=os.environ.get('LOG_FILE')
+
+    swagger_ui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': 'Thanos Ruler API'
+        }
+    )
+    app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
+
+    log_dir = os.path.dirname(f'{LOG_FILE}')
+    logging.basicConfig(filename=f'{LOG_FILE}', filemode='w', level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    @app.route('/<rule_id>', methods=['POST'])
+    def create_rule(rule_id):
+        logger.debug(f"ADD alert rule {rule_id}")
+        try:
+            rule_data = request.get_data()
+            try:
+                r_data = yaml.safe_load(rule_data)
+            except Exception as e:
+                logger.error("Invalid yaml data")
+                return {"message":"Invalid YAML data"}, 400
+            description = r_data.get('description')
+            if 'description' not in r_data.keys():
+                description = r_data.get('expr')
+            #TODO: check if rule_id already exists
+            
+            new_yaml_data_dict = {
+                'alert': f'{rule_id}',
+                'annotations': {'description': description,
+                    'summary': 'Usage {{ $labels.label_0 }} of tenant {{ $labels.tenant_id }} is above 100.',
+                },
+                'expr': r_data.get('expr'),
+                'for': r_data.get('for'),
+                'labels': {'severity': 'critical'},
+            }
+            file_path = os.path.join(f"{RULES_FOLDER}", f"rules.yml")
+            with open(file_path,'r') as yamlfile:
+                exists = False
+                cur_yaml = yaml.safe_load(yamlfile)
+                for index in range(len(cur_yaml["groups"][0]["rules"])):
+                    if cur_yaml["groups"][0]["rules"][index]["alert"] == f'{rule_id}':
+                        cur_yaml["groups"][0]["rules"][index] = new_yaml_data_dict
+                        exists = True
+                        break
+                if exists != True:    
+                    if not cur_yaml["groups"][0]["rules"]:
+                        cur_yaml["groups"][0]["rules"] = []
+                    cur_yaml["groups"][0]["rules"].append(new_yaml_data_dict)
+            if cur_yaml:
+                with open(file_path,'w') as yamlfile:
+                    yaml.safe_dump(cur_yaml, yamlfile, default_flow_style=False, sort_keys=False) 
+            url = THANOS_RULE_URL + "/-/reload"
+            r = requests.post(url)
+            logger.info(f"POST request successful for rules")
+            return {"message":"success"}, 200
+
+        except Exception as e:
+            logger.error(f"Error occurred while creating rule: {str(e)}")
+            abort(500, "An error occurred while creating the rule")
+
+    @app.route('/<rule_id>', methods=['DELETE'])
+    def delete_rule(rule_id):
+        logger.debug(f"DELETE alert rule {rule_id}")
+        try:
+            file_path = os.path.join(f"{RULES_FOLDER}", f"rules.yml")
+            with open(file_path,'r') as yamlfile:
+                    cur_yaml = yaml.safe_load(yamlfile)
+            for alert in cur_yaml["groups"][0]["rules"]:
+                    if alert.get("alert") == f'{rule_id}':
+                        cur_yaml["groups"][0]["rules"].remove(alert)
+                        with open(file_path,'w') as yamlfile:
+                            yaml.safe_dump(cur_yaml, yamlfile, default_flow_style=False, sort_keys=False)
+                        url = THANOS_RULE_URL + "/-/reload"
+                        r = requests.post(url)
+                        logger.info(f"DELETE request successful for rules")
+                        return {"message":"success"}, 200  
+            return {"message":"success"}, 200
+        except Exception as e:
+            logger.error(f"Error occurred while deleting rule: {str(e)}")
+            abort(500, "An error occurred while deleting the rule")
+
+    @app.route('/<rule_id>', methods=['GET'])
+    def get_rule(rule_id):
+        logger.debug(f"GET alert rule {rule_id}")
+        try:
+            file_path = os.path.join(f"{RULES_FOLDER}", f"rules.yml")
+            with open(file_path,'r') as yamlfile:
+                    cur_yaml = yaml.safe_load(yamlfile)
+            for alert in cur_yaml["groups"][0]["rules"]:
+                    if alert.get("alert") == f'{rule_id}':
+                        logger.info(f"GET request successful for the rule {rule_id}")
+                        return jsonify(alert), 200
+            return {"message":"rule not found"}, 200
+        except Exception as e:
+            logger.error(f"Error occurred while getting rule: {str(e)}")
+            abort(500, "An error occurred while getting the rule")
+
+    @app.route('/rules', methods=['GET'])
+    def get_all_rules():
+        try:
+            rule_list = []
+            file_path = os.path.join(f"{RULES_FOLDER}", f"rules.yml")
+            with open(file_path,'r') as yamlfile:
+                    cur_yaml = yaml.safe_load(yamlfile) # Note the safe_load
+            for alert in cur_yaml["groups"][0]["rules"]:
+                rule_list.append(alert)
+            logger.debug(f"GET all rules successful")
+            return jsonify(rule_list), 200
+        except Exception as e:
+            logger.error(f"Error occurred while fetching rules: {str(e)}")
+            abort(500, "An error occurred while fetching the rules")
+    if __name__ == '__main__':
+        app.run(host=f"{HOST}", port=f"{PORT}", debug=True)
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: config
+data:
+  config.py: |-
+    HOST = "0.0.0.0"
+    PORT = 8090
+
+    RULES_FOLDER = "/Users/priyanka/Downloads/thanos-0.29.0.darwin-amd64"
+    THANOS_RULE_URL = 'http://0.0.0.0:10903'
+    LOG_FILE = "ruleTranslator.log"

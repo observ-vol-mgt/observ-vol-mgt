@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: thanos
+  name: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: thanos
+  template:
+    metadata:
+      labels:
+        ovm.service: thanos
+    spec:
+      containers:
+        - name: thanos-query
+          args:
+            - query
+            - --log.level=debug
+            - --log.format=logfmt
+            - --grpc-address=:20901
+            - --http-address=:19192
+            - --store=thanos_receive:10901
+            - --store.sd-interval=5m
+            - --query.replica-label=monitor
+          image: thanosio/thanos:v0.29.0
+          livenessProbe:
+            exec:
+              command:
+                - wget -q -O- localhost:19192/-/ready
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 19192
+              protocol: TCP
+            - containerPort: 20901
+              protocol: TCP
+        - name: thanos-receive
+          args:
+            - receive
+            - --grpc-address=0.0.0.0:10901
+            - --http-address=0.0.0.0:10902
+            - --remote-write.address=0.0.0.0:19291
+            - --receive.replication-factor=1
+            - --label=receive="true"
+            - --tsdb.path=/data/receive
+            - --tsdb.retention=15d
+            - --receive.local-endpoint=thanos-receive:10901
+          image: thanosio/thanos:v0.29.0
+          livenessProbe:
+            exec:
+              command:
+                - wget -q -O- localhost:10902/-/ready
+            failureThreshold: 3
+            periodSeconds: 10
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 19291
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: thanos-receive-claim0
+      restartPolicy: Always
+      volumes:
+        - name: thanos-receive-claim0
+          persistentVolumeClaim:
+            claimName: thanos-receive-claim0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: thanos-query
+  name: thanosquery
+spec:
+  ports:
+    - name: "19192"
+      port: 19192
+      targetPort: 19192
+    - name: "20901"
+      port: 20901
+      targetPort: 20901
+  selector:
+    ovm.service: thanos
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: thanos-receive
+  name: thanosreceive
+spec:
+  ports:
+    - name: "19291"
+      port: 19291
+      targetPort: 19291
+  selector:
+    ovm.service: thanos
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ovm.service: thanos-receive-claim0
+  name: thanos-receive-claim0
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

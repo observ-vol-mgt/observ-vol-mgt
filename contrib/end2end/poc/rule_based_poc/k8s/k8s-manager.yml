@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: manager
+  name: manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: manager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        ovm.service: manager
+    spec:
+      containers:
+        - env:
+            - name: CONFIG_FILE
+              value: /etc/config/config.yaml
+          image: quay.io/observ-vol-mgt/manager:latest
+          name: manager
+          ports:
+            - containerPort: 5010
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config/config.yaml
+              subPath: config.yaml
+            - mountPath: /manager/app
+              name: manager-volume
+      restartPolicy: Always
+      volumes:
+        - name: manager-volume
+          persistentVolumeClaim:
+            claimName: manager-volume
+        - name: config
+          configMap:
+            name: manager-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+            defaultMode: 420
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: manager
+  name: manager
+spec:
+  ports:
+    - name: 5010-tcp
+      port: 5010
+      targetPort: 5010
+  selector:
+    ovm.service: manager
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ovm.service: manager-volume
+  name: manager-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: manager-config
+data:
+  config.yaml: |-
+    HOST: '0.0.0.0'
+    PORT: 5010
+    APP_URL_PREFIX: "/api/v1"
+    LOG_FILE: "./app/logs/manager.log"
+    PROCESSORS_FOLDER: "./app/processors"
+    RULES_FOLDER: "./app/rules"
+    PROCESSOR_east_URL: "http://pmfprocessor1.ovm.svc.cluster.local:8100/morphchain"
+    PROCESSOR_west_URL: "http://pmfprocessor2.ovm.svc.cluster.local:8101/morphchain"
+    ALERTMANAGER_URL: "http://thanos-ruler.ovm.svc.cluster.local:8090"
+    CONTROLLER_URL: "http://controller:5000/api/v1/rerun"

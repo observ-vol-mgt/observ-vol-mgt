@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: prometheus2
+  name: prometheus2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: prometheus2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        ovm.service: prometheus2
+    spec:
+      containers:
+        - args:
+            - --config.file=/etc/config/prometheus2-config.yaml
+            - --storage.tsdb.path=/data
+            - --web.console.libraries=/etc/prometheus/console_libraries
+            - --web.console.templates=/etc/prometheus/consoles
+            - --storage.tsdb.retention.time=2h
+            - --web.enable-lifecycle
+            - --web.enable-admin-api
+            - --web.listen-address=:9002
+            - --storage.tsdb.min-block-duration=5m
+            - --storage.tsdb.max-block-duration=5m
+          image: quay.io/prometheus/prometheus:v2.55.0
+          name: prometheus2
+          ports:
+            - containerPort: 9002
+              protocol: TCP
+          volumeMounts:
+            - name: prometheus2-config
+              mountPath: /etc/config/prometheus2-config.yaml
+              subPath: prometheus2-config.yaml
+            - mountPath: /data
+              name: prometheus2-data
+      restartPolicy: Always
+      volumes:
+        - name: prometheus2-config
+          configMap:
+            name: prometheus2-config
+            items:
+              - key: prometheus2-config.yaml
+                path: prometheus2-config.yaml
+            defaultMode: 420
+        - name: prometheus2-data
+          persistentVolumeClaim:
+            claimName: prometheus2-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: prometheus2
+  name: prometheus2
+spec:
+  ports:
+    - name: "9002"
+      port: 9002
+      targetPort: 9002
+  selector:
+    ovm.service: prometheus2
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ovm.service: prometheus2-data
+  name: prometheus2-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus2-config
+data:
+  prometheus2-config.yaml: |-
+    # my global config
+    global:
+      scrape_interval: 5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      external_labels:
+        processor: "west"
+      # scrape_timeout is set to the global default (10s).
+
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              # - alertmanager:9093
+
+    # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+    rule_files:
+      # - "first_rules.yml"
+      # - "second_rules.yml"
+
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+    scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+      - job_name: "prometheus"
+
+        # metrics_path defaults to '/metrics'
+        # scheme defaults to 'http'.
+
+        static_configs:
+          - targets: ["metricgen2:8001"]
+          #- targets: ["localhost:9090"]
+    remote_write:
+      - url: "http://pmf_processor2:8082/api/v1/receive"
+        queue_config:
+          max_samples_per_send: 200

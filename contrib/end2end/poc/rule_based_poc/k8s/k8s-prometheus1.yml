@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    ovm.service: prometheus1
+  name: prometheus1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ovm.service: prometheus1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        ovm.service: prometheus1
+    spec:
+      containers:
+        - args:
+            - --config.file=/etc/config/prometheus1-config.yaml
+            - --storage.tsdb.path=/data
+            - --web.console.libraries=/etc/prometheus/console_libraries
+            - --web.console.templates=/etc/prometheus/consoles
+            - --storage.tsdb.retention.time=2h
+            - --web.enable-lifecycle
+            - --web.enable-admin-api
+            - --web.listen-address=:9001
+            - --storage.tsdb.min-block-duration=5m
+            - --storage.tsdb.max-block-duration=5m
+          image: quay.io/prometheus/prometheus:v2.55.0
+          name: prometheus1
+          ports:
+            - containerPort: 9001
+              protocol: TCP
+          volumeMounts:
+            - name: prometheus1-config 
+              mountPath: /etc/config/prometheus1-config.yaml
+              subPath: prometheus1-config.yaml
+            - mountPath: /data
+              name: prometheus1-data
+      restartPolicy: Always
+      volumes:
+        - name: prometheus1-config
+          configMap:
+            name: prometheus1-config
+            items:
+              - key: prometheus1-config.yaml
+                path: prometheus1-config.yaml
+            defaultMode: 420
+        - name: prometheus1-data
+          persistentVolumeClaim:
+            claimName: prometheus1-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    ovm.service: prometheus1
+  name: prometheus1
+spec:
+  ports:
+    - name: "9001"
+      port: 9001
+      targetPort: 9001
+  selector:
+    ovm.service: prometheus1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ovm.service: prometheus1-data
+  name: prometheus1-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus1-config
+data:
+  prometheus1-config.yaml: |-
+    # my global config
+    global:
+      scrape_interval: 5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      external_labels:
+        processor: "east"
+      # scrape_timeout is set to the global default (10s).
+
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets:
+              # - alertmanager:9093
+
+    # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+    rule_files:
+      # - "first_rules.yml"
+      # - "second_rules.yml"
+
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+    scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+      - job_name: "prometheus"
+
+        # metrics_path defaults to '/metrics'
+        # scheme defaults to 'http'.
+
+        static_configs:
+          - targets: ["metricgen1:8000"]
+          #- targets: ["localhost:9090"]
+    remote_write:
+      - url: "http://pmfprocessor1.ovm.svc.cluster.local:8081/api/v1/receive"
+        queue_config:
+          max_samples_per_send: 200
