@@ -1,46 +1,52 @@
 processors:
-  metricstransform:
-    transforms:
-      - include: .*
-        match_type: regexp
-        action: update
-        operations:
-          - action: experimental_scale_value
-            experimental_scale: 1
-{%- for signal_to_drop in signals_to_drop %}
-  filter/drop_{{ signal_to_drop.id }}:
+  filter/drop_general:
     error_mode: ignore
     metrics:
       metric:
+{% if signals_to_drop %}
+{%- for signal_to_drop in signals_to_drop %}
         - 'name == "{{ signal_to_drop.name }}"'
-        - '{{ signal_to_drop.condition }}'
+{%- endfor %}
+{% endif %}
+{%- for signal_to_adjust in signals_to_adjust %}
+  filter/m_{{ signal_to_adjust.name }}:
+    error_mode: ignore
+    metrics:
+      metric:
+        - 'name != {{ signal_to_adjust.name }}"'
+  interval/m_{{ signal_to_adjust.name }}:
+    interval: {{ signal_to_adjust.interval }}
+{%- endfor %}
+{%- for signal_to_adjust in signals_to_adjust %}
+        - 'name == {{ signal_to_adjust.name }}"'
 {%- endfor %}
 {% if config.counter_default_interval != "" and signals_to_adjust %}
-  interval:
+  interval/m_default:
     interval: {{ config.counter_default_interval }}
     pass_through:
       gauge: true
       summary: true
-    rules:
-{%- for signal_to_adjust in signals_to_adjust %}
-      - name: {{ signal_to_adjust.name }}
-        interval: {{signal_to_adjust.interval }}
-{%- endfor %}
 {% elif signals_to_adjust %}
-  interval:
+  interval/m_default:
     pass_through:
       gauge: true
       summary: true
-    rules:
-{%- for signal_to_adjust in signals_to_adjust %}
-      - name: {{ signal_to_adjust.name }}
-        interval: {{signal_to_adjust.interval }}
-{%- endfor %}
-{% elif config.counter_default_interval %}
-  interval:
+{% elif config.counter_default_interval  != "" %}
+  interval/m_default:
     interval: {{ config.counter_default_interval }}
     pass_through:
       gauge: true
       summary: true
 {% endif %}
+pipelines:
+{%- for signal_to_adjust in signals_to_adjust %}
+  metrics/{{signal_to_adjust.name}}:
+    receivers:  [ prometheus ]
+    processors: [ filter/drop_general, filter/{{signal_to_adjust.name}}, interval/{{signal_to_adjust.name}} ]
+    exporters:  [ prometheusremotewrite , debug]
+{%- endfor %}
+  metrics/m_default:
+    receivers:  [ prometheus ]
+    processors: [ filter/drop_general, filter/m_default ]
+    exporters:  [ prometheusremotewrite , debug]
 

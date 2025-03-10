@@ -46,7 +46,7 @@ def update_processors(main_config_path, update_config_path, output_path):
 
         # Update the processors pipline section
         logging.info('Updating pipline')
-        main_config['service']['pipelines']['metrics/1']['processors'] = list(main_config['processors'].keys())
+        main_config['service']['pipelines'] = update_config['pipelines']
 
         logging.info(f'Writing updated configuration to {output_path}')
         with open(output_path, 'w') as output_file:
