@@ -13,13 +13,22 @@ processors:
     error_mode: ignore
     metrics:
       metric:
-        - 'name != {{ signal_to_adjust.name }}"'
+        - 'name != "{{ signal_to_adjust.name }}"'
   interval/m_{{ signal_to_adjust.name }}:
     interval: {{ signal_to_adjust.interval }}
+    pass_through:
+      gauge: false
+      summary: false
 {%- endfor %}
+{% if signals_to_adjust %}
+  filter/m_default:
+    error_mode: ignore
+    metrics:
+      metric:
 {%- for signal_to_adjust in signals_to_adjust %}
-        - 'name == {{ signal_to_adjust.name }}"'
+        - 'name == "{{ signal_to_adjust.name }}"'
 {%- endfor %}
+{% endif %}
 {% if config.counter_default_interval != "" and signals_to_adjust %}
   interval/m_default:
     interval: {{ config.counter_default_interval }}
@@ -42,11 +51,15 @@ pipelines:
 {%- for signal_to_adjust in signals_to_adjust %}
   metrics/{{signal_to_adjust.name}}:
     receivers:  [ prometheus ]
-    processors: [ filter/drop_general, filter/{{signal_to_adjust.name}}, interval/{{signal_to_adjust.name}} ]
+    processors: [ filter/drop_general, filter/m_{{signal_to_adjust.name}}, interval/m_{{signal_to_adjust.name}} ]
     exporters:  [ prometheusremotewrite , debug]
 {%- endfor %}
   metrics/m_default:
     receivers:  [ prometheus ]
-    processors: [ filter/drop_general, filter/m_default ]
+{% if config.counter_default_interval != "" or signals_to_adjust %}
+    processors: [ filter/drop_general, filter/m_default, interval/m_default ]
+{% else %}
+    processors: [ filter/drop_general ]
+{% endif %}
     exporters:  [ prometheusremotewrite , debug]
 

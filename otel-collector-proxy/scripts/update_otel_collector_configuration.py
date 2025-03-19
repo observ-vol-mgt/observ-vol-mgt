@@ -41,13 +41,25 @@ def update_processors(main_config_path, update_config_path, output_path):
             update_config = yaml.safe_load(update_file)
 
         # Replace the processors section
+        logging.info(f"update_config = {update_config}")
         logging.info('Updating processors section in the main configuration')
         main_config['processors'] = update_config['processors']
 
         # Update the processors pipline section
         logging.info('Updating pipline')
-        main_config['service']['pipelines'] = update_config['pipelines']
+        if 'pipelines' in update_config.keys():
+            main_config['service']['pipelines'] = update_config['pipelines']
+        else:
+            logging.info('No piplines key')
+            main_config['service']['pipelines'] = {'metrics/1':
+                {
+                'receivers': ['prometheus'],
+                'processors': list(main_config['processors'].keys()),
+                'exporters': ['prometheusremotewrite']
+                }
+            }
 
+        logging.info(f"main_config = {main_config}")
         logging.info(f'Writing updated configuration to {output_path}')
         with open(output_path, 'w') as output_file:
             yaml.safe_dump(main_config, output_file)

@@ -199,7 +199,7 @@ services:
      - "8001:8001"
 
   otel_collector_proxy_east:
-    image: quay.io/observ-vol-mgt/otel_collector_proxy:v0.3
+    image: quay.io/kalmanmeth/otel_collector_proxy:interval_freq
     container_name: otel_collector_proxy_east
     entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_east" ]
     ports:
@@ -219,7 +219,7 @@ services:
       - otel_collector_proxy_east
 
   otel_collector_proxy_west:
-    image: quay.io/observ-vol-mgt/otel_collector_proxy:v0.3
+    image: quay.io/kalmanmeth/otel_collector_proxy:interval_freq
     container_name: otel_collector_proxy_west
     entrypoint: [ "sh", "-c", "cp /etc/otel-collector-config-from-host.yaml /shared/otel-collector-config.yaml && exec python3 rest_server.py --save-update-path=/shared/otel-collector-config_update.yaml --processor-file-to-update=/shared/otel-collector-config.yaml --docker-container-reset-on-update=otel_collector_west" ]
     ports:
