@@ -38,4 +38,6 @@ def delete_processor_file(processors_folder, processor_id):
 def read_processor_file(processors_folder, processor_id):
     processor_file = f"{processors_folder}/{processor_id}.yaml"
     with open(processor_file, 'r') as file:
-        return yaml.safe_load(file)
+        data = yaml.safe_load(file)
+    data["processor_id"] = processor_id
+    return data
